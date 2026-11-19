@@ -6,7 +6,7 @@ android {
    applicationId 'studio.transform.launcher'
    minSdk 28
    targetSdk 28
-   versionCode 7
-   versionName '7.0.0'
+   versionCode 8
+   versionName '8.0.0'
  }
 }
