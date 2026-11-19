@@ -1,9 +1,9 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><meta name="theme-color" content="#070b08"/><title>PARASITE — Infect Kindle</title><style>
 *{box-sizing:border-box}body{margin:0;background:#070b08;color:#d5f6d5;font-family:ui-monospace,Consolas,Menlo,monospace}main{max-width:820px;margin:auto;padding:25px 18px 65px}header{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #305438;padding-bottom:17px}.logo{font-size:26px;font-weight:900;letter-spacing:3px;color:#b5f7ad}.version{font-size:10px;color:#8cb494}h1{font-size:clamp(37px,9vw,72px);line-height:1;margin:45px 0 12px;letter-spacing:-2px}.accent{color:#a2f89a}p{color:#a1bfa6;line-height:1.58}.overline{color:#8fe69f;font-size:11px;letter-spacing:2px}.panel{background:#111b14;border:1px solid #365b3c;border-radius:9px;padding:20px;margin:23px 0}.prompt{background:#030703;border:1px solid #325438;padding:16px;color:#99ee9d;min-height:114px;line-height:1.9}.btn{display:block;width:100%;background:#a4f39f;color:#0a160b;font-weight:900;text-decoration:none;text-align:center;border-radius:5px;padding:20px 13px;font-size:19px;letter-spacing:1px;margin:17px 0}.btn.disabled{opacity:.45;pointer-events:none}.state{color:#e6c68c;font-size:12px;min-height:22px}.cards{display:grid;grid-template-columns:1fr 1fr;gap:12px}.card{border:1px solid #354d3d;background:#101a13;padding:14px;border-radius:6px}.card h3{margin:0 0 8px;font-size:15px}.card p{font-size:12px;margin:0 0 10px}.card a{color:#9cdea1;text-decoration:none;font-weight:bold;font-size:12px}footer{color:#72967b;font-size:11px;margin-top:24px}@media(max-width:520px){.cards{grid-template-columns:1fr}h1{margin-top:32px}}
-</style></head><body><main><header><div class="logo">PARASITE_</div><div class="version">FIRE EDITION / BETA 06</div></header>
+</style></head><body><main><header><div class="logo">PARASITE_</div><div class="version">FIRE EDITION / BETA 07</div></header>
 <div class="overline" style="margin-top:36px">ONE TABLET. ENDLESS INSTRUMENTS.</div><h1>INFECT YOUR<br><span class="accent">KINDLE.</span></h1>
 <p>Install PARASITE once. Your instrument library updates automatically when new sound machines are released.</p>
-<div class="panel"><div class="overline">01 / INFECTION</div><h2>PARASITE LAUNCHER</h2>
+<div class="panel"><div class="overline">01 / INFECTION</div><h2>PARASITE LAUNCHER V7</h2>
 <p>Download directly in Silk. Approve Android installation and open Parasite. PARASITE opens directly into your instrument hub. Press CHECK UPDATES to discover ORBIT-4, our first standalone audio instrument.</p>
 <a id="infect" href="#" class="btn disabled">CHECKING APK...</a><div class="state" id="status">Verifying that the Android installer is published.</div>
 <p style="font-size:12px">Important: Beta mode does <strong>not</strong> erase Amazon Fire OS. It's a reversible full-screen app. Android installation consent is required. It does not prevent access to Amazon apps or settings.</p></div>
@@ -17,7 +17,7 @@
 <div class="panel"><div class="overline">03 / HARDWARE TEST</div><p>ORBIT-4 is a first audio instrument release. Your hub updates through CHECK UPDATES; instrument installation requires Android consent. Amazon Fire OS remains intact.</p></div>
 <footer>PARASITE IS A THIRD-PARTY PROJECT. NOT AFFILIATED WITH AMAZON OR THE MAKERS OF THE HARDWARE-INSPIRED INSTRUMENTS.</footer>
 </main><script>fetch('./release.json?'+Date.now(),{cache:'no-store'}).then(r=>{if(!r.ok)throw Error();return r.json()}).then(v=>{
- if(v.version!==6||v.state!=='ready')throw Error();
+ if(v.version!==7||v.state!=='ready')throw Error();
  const b=document.getElementById('infect');b.href='./parasite-launcher.apk';b.classList.remove('disabled');b.textContent='INFECT KINDLE';
  document.getElementById('status').textContent='Ready. Tap INFECT KINDLE to download the Android installer.';
 }).catch(()=>{document.getElementById('infect').textContent='APK BUILD NOT READY';document.getElementById('status').textContent='The launcher installer is being prepared. Do not install an older APK.'});</script></body></html>
