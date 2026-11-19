@@ -144,7 +144,7 @@ public class MainActivity extends Activity {
  }
  void addDeckSlider(LinearLayout target,String title,float value,Change cb){
   LinearLayout line=horizontal();TextView name=text(title,10,INK);
-  line.addView(name,new LinearLayout.LayoutParams(dp(65),dp(28)));
+  line.addView(name,new LinearLayout.LayoutParams(dp(target.getOrientation()==LinearLayout.HORIZONTAL?49:65),dp(28)));
   SeekBar control=new SeekBar(this);control.setMax(100);
   control.setProgress(Math.round(Math.max(0,Math.min(1,value))*100));
   control.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
@@ -153,7 +153,8 @@ public class MainActivity extends Activity {
    public void onStopTrackingTouch(SeekBar bar){}
   });
   line.addView(control,new LinearLayout.LayoutParams(0,dp(31),1));
-  target.addView(line,new LinearLayout.LayoutParams(-1,dp(32)));
+  if(target.getOrientation()==LinearLayout.HORIZONTAL)target.addView(line,new LinearLayout.LayoutParams(0,dp(43),1));
+  else target.addView(line,new LinearLayout.LayoutParams(-1,dp(32)));
  }
  interface Change {void set(float value);}
  void updateStatus(){
@@ -220,7 +221,7 @@ public class MainActivity extends Activity {
     short[] captured=new short[MAX_SAMPLES];recorder.startRecording();int offset=0;
     while(offset<captured.length){int n=recorder.read(captured,offset,Math.min(2048,captured.length-offset));if(n<=0)break;offset+=n;}
     recorder.stop();
-    if(offset>0){short[] result=new short[offset];System.arraycopy(captured,0,result,0,offset);slots[index].sample=result;persist(index);}
+    if(offset>0){short[] result=new short[offset];System.arraycopy(captured,0,result,0,offset);slots[index].sample=result;slots[index].pos=0;slots[index].age=0;slots[index].active=playing;persist(index);}
     runOnUiThread(()->{refreshSlots();refreshControls();Toast.makeText(this,"TAPE CAPTURED",Toast.LENGTH_SHORT).show();});
    }catch(Exception e){runOnUiThread(()->Toast.makeText(this,"REC FAILED: "+e.getMessage(),Toast.LENGTH_LONG).show());}
    finally{if(recorder!=null)recorder.release();}
@@ -258,7 +259,7 @@ public class MainActivity extends Activity {
      if(channels==2)value=(value+(short)le16(wav,off+2))/2;
      dst[j]=(short)value;
     }
-    slots[index].sample=dst;persist(index);
+    slots[index].sample=dst;slots[index].pos=0;slots[index].age=0;slots[index].active=playing;persist(index);
     runOnUiThread(()->{refreshSlots();refreshControls();Toast.makeText(this,"WAV IMPORTED",Toast.LENGTH_SHORT).show();});
    }catch(Exception ex){runOnUiThread(()->Toast.makeText(this,"IMPORT FAILED: "+ex.getMessage(),Toast.LENGTH_LONG).show());}
   },"microverse-wav").start();
