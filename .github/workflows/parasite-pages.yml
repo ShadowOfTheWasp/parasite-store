@@ -6,6 +6,7 @@ on:
       - 'launcher/**'
       - 'microverse/**'
       - 'melt/**'
+      - 'tapeflute/**'
       - 'docs/**'
       - '.github/workflows/parasite-pages.yml'
   workflow_dispatch:
@@ -45,6 +46,9 @@ jobs:
       - name: Build MELT 003
         working-directory: melt
         run: gradle --no-daemon assembleDebug
+      - name: Build Tape Flute v1.1.0
+        working-directory: tapeflute
+        run: gradle --no-daemon assembleDebug
       - name: Prepare public installer files
         run: |
           set -euo pipefail
@@ -55,6 +59,10 @@ jobs:
           test -s melt/app/build/outputs/apk/debug/app-debug.apk
           cp melt/app/build/outputs/apk/debug/app-debug.apk docs/parasite-melt.apk
           printf '{"version":8,"state":"ready","apk":"parasite-launcher.apk"}\n' > docs/release.json
+          test -s tapeflute/app/build/outputs/apk/debug/app-debug.apk
+          cp tapeflute/app/build/outputs/apk/debug/app-debug.apk docs/parasite-tape-flute-v1.1.0.apk
+          unzip -p docs/parasite-tape-flute-v1.1.0.apk assets/index.html | cmp - docs/tape-flute/v1.1.0/index.html
+          unzip -p docs/parasite-tape-flute-v1.1.0.apk assets/effects.js | cmp - docs/tape-flute/v1.1.0/effects.js
           touch docs/.nojekyll
           sha256sum docs/*.apk
       - uses: actions/configure-pages@v5

@@ -1,0 +1,16 @@
+plugins { id 'com.android.application' }
+
+android {
+ namespace 'studio.parasite.tapeflute'
+ compileSdk 35
+ defaultConfig {
+  applicationId 'studio.parasite.tapeflute'
+  minSdk 23
+  targetSdk 28
+  versionCode 110
+  versionName '1.1.0'
+ }
+ sourceSets {
+  main.assets.srcDirs = ['../../docs/tape-flute/v1.1.0']
+ }
+}
