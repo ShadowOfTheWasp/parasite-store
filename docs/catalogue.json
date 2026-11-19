@@ -1,5 +1,12 @@
 {
   "schema": 1,
   "updated": "2026-11-19",
-  "units": []
+  "units": [
+    {
+      "package": "studio.parasite.orbit4",
+      "title": "ORBIT-4",
+      "description": "FOUR-RING GENERATIVE RHYTHM + SCRAPE SYNTH",
+      "installUrl": "https://shadowofthewasp.github.io/parasite-store/orbit4/"
+    }
+  ]
 }
