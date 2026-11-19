@@ -1,0 +1,27 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#080d12">
+<title>PARASITE MICROVERSE / INSTRUMENT 002</title><style>
+*{box-sizing:border-box}body{margin:0;background:#080e12;color:#e1e8de;font:15px ui-monospace,Consolas,monospace}
+main{max-width:760px;margin:auto;padding:27px 20px 65px}header{color:#91dcb0;font-size:13px;letter-spacing:2px;border-bottom:1px solid #334c54;padding-bottom:19px}
+h1{font-size:clamp(39px,9vw,70px);letter-spacing:-3px;margin:34px 0 7px}h2{font-size:17px}p{color:#a6bfc2;line-height:1.6}
+.panel{background:#142126;border:1px solid #375057;border-radius:12px;padding:19px;margin:27px 0}
+.grid{display:grid;gap:6px;margin:20px 0}.track{display:flex;align-items:center;gap:3px}
+.track span{width:47px;color:#b9cbbd;font-size:11px}.cell{height:18px;flex:1;background:#284047;border-radius:2px}
+.cell.hit{background:#a0e5b1}.cell.alt{background:#dfb876}
+.features{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}.features div{background:#24353a;padding:12px;color:#cde7d5;font-size:12px}
+a.button{display:block;margin:24px 0 10px;padding:20px;background:#a3eaae;color:#0c1913;text-align:center;text-decoration:none;font-weight:900;font-size:19px;border-radius:5px}
+a.disabled{opacity:.5;pointer-events:none}.meta{color:#88acb1;font-size:12px}
+</style></head><body><main><header>PARASITE_ / INSTRUMENT 002</header>
+<h1>MICRO<span style="color:#a1e9b0">VERSE</span></h1>
+<p>GRANULAR / ECHO / CAVERNOUS SPACE / EIGHT-SLOT SEQUENCER</p><div class="panel">
+<div class="grid" id="pattern" aria-label="32 step sequencer illustration"></div>
+<h2>RESAMPLE REALITY.</h2><p>Load eight short WAV recordings into an independent 32-step instrument. Shape every sound with ADSR, pitch and filtering. Send patterns into granular fragments, shifting pitch and cavernous stereo feedback. Recordings and presets remain on your Kindle.</p>
+<div class="features"><div>8 WAV SLOTS</div><div>32 STEP GRID</div><div>PER-SLOT ADSR</div><div>GRAIN SHIFTER</div><div>SCATTER / PITCH</div><div>STEREO SPACE</div><div>OFFLINE AUDIO</div><div>LOCAL PATTERNS</div></div>
+<a class="button disabled" href="#" id="download">CHECKING APK...</a><p id="status" class="meta">Verifying Android instrument package</p></div>
+<p class="meta">First hardware-test version for Fire 7 (9th generation). Unofficial original instrument, not affiliated with Hologram Electronics or EarthQuaker Devices. Use modest headphone volume and feedback initially.</p>
+<p><a style="color:#a1e9b0" href="../">BACK TO PARASITE</a></p></main>
+<script>
+const hit=[[0,8,16,24],[4,12,20,28],[2,6,10,14,18,22,26,30],[0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30],[],[],[],[]];
+let parent=document.getElementById('pattern');
+for(let lane=0;lane<8;lane++){let row=document.createElement('div');row.className='track';let name=document.createElement('span');name.textContent=String(lane+1).padStart(2,'0');row.appendChild(name);for(let step=0;step<32;step++){let el=document.createElement('div');el.className='cell'+(hit[lane].includes(step)?(lane%2===0?' hit':' alt'):'');row.appendChild(el)}parent.appendChild(row)}
+fetch('../parasite-microverse.apk',{method:'HEAD',cache:'no-store'}).then(r=>{if(!r.ok)throw Error();let a=document.getElementById('download');a.href='../parasite-microverse.apk';a.classList.remove('disabled');a.textContent='DOWNLOAD MICROVERSE';document.getElementById('status').textContent='APK ready for Kindle Silk installation';}).catch(()=>{document.getElementById('download').textContent='APK NOT READY';document.getElementById('status').textContent='Download not currently available';});
+</script></body></html>
