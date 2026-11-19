@@ -13,6 +13,12 @@
       "title": "PROPHET 5",
       "description": "5-VOICE POLYPHONIC ANALOGUE-STYLE SYNTH",
       "installUrl": "https://shadowofthewasp.github.io/parasite-store/prophet/"
+    },
+    {
+      "package": "studio.parasite.drum32",
+      "title": "DRUM/32",
+      "description": "8-SLOT WAV SAMPLER / 32-STEP DRUM SEQUENCER",
+      "installUrl": "https://shadowofthewasp.github.io/parasite-store/drum32/"
     }
   ]
 }
