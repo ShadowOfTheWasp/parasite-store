@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - 'launcher/**'
+      - 'microverse/**'
       - 'docs/**'
       - '.github/workflows/parasite-pages.yml'
   workflow_dispatch:
