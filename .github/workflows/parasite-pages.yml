@@ -42,7 +42,7 @@ jobs:
           set -euo pipefail
           test -s launcher/app/build/outputs/apk/debug/app-debug.apk
           cp launcher/app/build/outputs/apk/debug/app-debug.apk docs/parasite-launcher.apk
-          printf '{"version":6,"state":"ready","apk":"parasite-launcher.apk"}\n' > docs/release.json
+          printf '{"version":7,"state":"ready","apk":"parasite-launcher.apk"}\n' > docs/release.json
           touch docs/.nojekyll
           sha256sum docs/*.apk
       - uses: actions/configure-pages@v5
