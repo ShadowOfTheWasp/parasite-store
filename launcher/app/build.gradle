@@ -1,0 +1,12 @@
+plugins { id 'com.android.application' }
+android {
+ namespace 'studio.transform.launcher'
+ compileSdk 35
+ defaultConfig {
+   applicationId 'studio.transform.launcher'
+   minSdk 28
+   targetSdk 28
+   versionCode 3
+   versionName '3.0.0'
+ }
+}
