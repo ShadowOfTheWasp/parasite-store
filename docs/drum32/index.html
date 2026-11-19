@@ -1,0 +1,21 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#111714"><title>PARASITE — DRUM/32</title><style>
+*{box-sizing:border-box}body{margin:0;background:#0d1511;color:#e2eadb;font:15px ui-monospace,Consolas,monospace}
+main{max-width:760px;margin:auto;padding:26px 19px 60px;text-align:center}
+header{color:#8ceb9c;font-weight:bold;letter-spacing:3px}h1{font-size:clamp(43px,9vw,68px);letter-spacing:-2px;margin:25px 0 10px}
+.sub{color:#b4cfbb}.frame{margin:30px auto;background:#1c2820;padding:15px;border:2px solid #46694b;border-radius:10px}
+.rows{display:grid;gap:7px}.lane{display:flex;gap:5px;align-items:center}.lane span{font-size:11px;width:68px;text-align:left}.step{flex:1;height:22px;background:#2d4232;border-radius:3px}.on{background:#8deaa4}.accent{background:#d2a970}p{line-height:1.6;color:#b2c7b3}
+a.button{display:block;background:#a5f39f;color:#0e170e;text-decoration:none;font-weight:900;padding:18px;border-radius:6px;margin:25px 0 12px;font-size:19px}
+a.disabled{opacity:.45;pointer-events:none}.note{font-size:11px;color:#a0b8a1}
+</style></head><body><main><header>PARASITE_ / INSTRUMENT 003</header><h1>DRUM<span style="color:#9ce9a5">/32</span></h1>
+<p class="sub">EIGHT SAMPLE SLOTS / THIRTY-TWO STEPS / UNLIMITED PATTERNS TO EXPLORE</p>
+<div class="frame"><div class="rows" id="rows"></div></div>
+<p>Load your own mono or stereo WAV samples into eight slots, sequence 32 steps per sound, and shape each sound independently using pitch, tone, decay and level. Includes eight built-in sounds, live tempo and swing, pattern saving and touch auditioning.</p>
+<p id="state" class="sub">Checking Android installer...</p>
+<a href="#" id="download" class="button disabled">CHECKING RELEASE</a>
+<p class="note">Fire 7 (2019) test APK. Fully offline after installation. Fire OS remains installed. Start with your volume low.</p>
+<p><a href="../" style="color:#abefb2">RETURN TO PARASITE</a></p>
+</main><script>
+let names=['KICK','SNARE','CLAP','C-HAT','O-HAT','TOM','RIM','PERC'],patterns=[[0,8,16,24],[4,12,20,28],[12,28],[0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30],[14,30],[7,23],[4,12,20,28],[15,31]];
+let rows=document.getElementById('rows');for(let i=0;i<8;i++){let e=document.createElement('div');e.className='lane';let label=document.createElement('span');label.textContent=names[i];e.appendChild(label);for(let j=0;j<32;j++){let d=document.createElement('div');d.className='step'+(patterns[i].includes(j)?' on':'');e.appendChild(d)}rows.appendChild(e)}
+fetch('../parasite-drum32.apk',{method:'HEAD',cache:'no-store'}).then(r=>{if(!r.ok)throw Error('Not published');let a=document.getElementById('download');a.href='../parasite-drum32.apk';a.textContent='DOWNLOAD DRUM/32 APK';a.classList.remove('disabled');document.getElementById('state').textContent='APK available for Kindle Silk';}).catch(()=>{document.getElementById('download').textContent='APK BUILD NOT READY';document.getElementById('state').textContent='Installer will appear when the Android build is published';});
+</script></body></html>
