@@ -295,7 +295,7 @@ public class MainActivity extends Activity {
        float crushed=(float)Math.tanh((tone+dust)*(1.3+masterDust*8));
        float held=(float)(Math.round(crushed*(160-masterDust*140))/(160-masterDust*140));
        float env=Math.min(1,s.age/(float)Math.max(1,(int)(s.attack*SR)));
-       float remain=Math.max(0,(end-s.pos)/(SR*Math.max(.1,s.pitch)));
+       float remain=(float)Math.max(0,(end-s.pos)/(SR*Math.max(.1,s.pitch)));
        env*=Math.min(1,remain/Math.max(.02,s.release));
        float v=held*env*s.level*.42f;
        float left=v*(1-s.pan)*.5f,right=v*(1+s.pan)*.5f;
