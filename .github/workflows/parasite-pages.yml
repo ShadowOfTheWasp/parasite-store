@@ -37,11 +37,16 @@ jobs:
       - name: Build Parasite Launcher
         working-directory: launcher
         run: gradle --no-daemon assembleDebug
+      - name: Build Microverse V3
+        working-directory: microverse
+        run: gradle --no-daemon assembleDebug
       - name: Prepare public installer files
         run: |
           set -euo pipefail
           test -s launcher/app/build/outputs/apk/debug/app-debug.apk
           cp launcher/app/build/outputs/apk/debug/app-debug.apk docs/parasite-launcher.apk
+          test -s microverse/app/build/outputs/apk/debug/app-debug.apk
+          cp microverse/app/build/outputs/apk/debug/app-debug.apk docs/parasite-microverse.apk
           printf '{"version":8,"state":"ready","apk":"parasite-launcher.apk"}\n' > docs/release.json
           touch docs/.nojekyll
           sha256sum docs/*.apk
