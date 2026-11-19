@@ -13,6 +13,12 @@
       "title": "MICROVERSE",
       "description": "V3 / DUSTY CASSETTES / WOW & FLUTTER / 32-STEP TAPE ORGANISM",
       "installUrl": "https://shadowofthewasp.github.io/parasite-store/microverse/"
+    },
+    {
+      "package": "studio.parasite.melt",
+      "title": "MELT",
+      "description": "003 / FOUR BOUNCING CHOIR VOICES / PONG TAPE ECHO",
+      "installUrl": "https://shadowofthewasp.github.io/parasite-store/melt/"
     }
   ]
 }
