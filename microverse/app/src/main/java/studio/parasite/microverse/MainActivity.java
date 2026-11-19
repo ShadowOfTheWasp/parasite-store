@@ -5,6 +5,10 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.content.Context;
+import android.app.AlertDialog;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.media.AudioFormat;
@@ -20,12 +24,12 @@ import java.io.*;
 import java.util.Random;
 
 /**
- * PARASITE MICROVERSE V3 — standalone 8-voice tape organism.
+ * PARASITE MICROVERSE V4 — three visual cassette decks with an offline tape engine.
  * No cloud connection, adverts, permissions beyond microphone, or demo sounds.
  * Slot recordings and patterns are saved privately on the device.
  */
 public class MainActivity extends Activity {
- static final int SR=22050, N=8, STEPS=32, MAX_SAMPLES=SR*5;
+ static final int SR=22050, N=3, STEPS=32, MAX_SAMPLES=SR*5;
  static final int BG=0xff11100e, INK=0xfff5e8c8, MUTED=0xffa7a08a, ACID=0xffd9ff60,
    ORANGE=0xffff8d53, PANEL=0xff252119;
  final Slot[] slots=new Slot[N];
@@ -35,6 +39,9 @@ public class MainActivity extends Activity {
  AudioTrack player;
  Thread audioThread;
  LinearLayout slotColumn, controlColumn;
+ CassetteView[] cassetteViews=new CassetteView[N];
+ TextView[] deckLabels=new TextView[N];
+ LinearLayout[] deckColumns=new LinearLayout[N];
  TextView status, playButton, slotName;
  final Random random=new Random();
  final float[] delayL=new float[SR*2],delayR=new float[SR*2];
@@ -80,96 +87,123 @@ public class MainActivity extends Activity {
  }
  @Override public void onBackPressed(){playing=false;super.onBackPressed();}
  void show(){
-  LinearLayout root=vertical();root.setBackgroundColor(BG);root.setPadding(dp(13),dp(7),dp(13),dp(8));
+  LinearLayout root=vertical();root.setBackgroundColor(BG);root.setPadding(dp(12),dp(6),dp(12),dp(5));
   LinearLayout header=horizontal();
-  TextView title=text("MICROVERSE_",27,ACID);header.addView(title,new LinearLayout.LayoutParams(0,dp(51),1));
+  TextView brand=text("MICROVERSE_",26,ACID);header.addView(brand,new LinearLayout.LayoutParams(0,dp(43),1));
   header.addView(button("◀ PARASITE",()->finish(),MUTED));
   root.addView(header);
-  TextView subtitle=text("002 / TAPE ORGANISM    •    8 EMPTY CASSETTES    •    V3 / LOW FIDELITY",10,ORANGE);root.addView(subtitle);
-  LinearLayout bar=horizontal();
-  playButton=button("▶ RUN",()->{playing=!playing;playButton.setText(playing?"■ STOP":"▶ RUN");},ACID);
-  bar.addView(playButton,new LinearLayout.LayoutParams(0,dp(44),1));
-  bar.addView(button("–",()->{bpm=Math.max(35,bpm-2);getPreferences(0).edit().putInt("bpm",bpm).apply();updateStatus();},PANEL),new LinearLayout.LayoutParams(dp(42),dp(44)));
-  bar.addView(button("+",()->{bpm=Math.min(210,bpm+2);getPreferences(0).edit().putInt("bpm",bpm).apply();updateStatus();},ORANGE),new LinearLayout.LayoutParams(dp(42),dp(44)));
-  bar.addView(button("MANGLE",()->{masterWobble=Math.min(1,masterWobble+.16f);masterDust=Math.min(1,masterDust+.14f);refreshControls();},ORANGE),new LinearLayout.LayoutParams(dp(94),dp(44)));
-  root.addView(bar);
-  status=text("",11,MUTED);status.setPadding(0,dp(7),0,dp(6));root.addView(status);updateStatus();
-
-  LinearLayout area=horizontal();area.setGravity(Gravity.TOP);
-  ScrollView leftScroll=new ScrollView(this);slotColumn=vertical();leftScroll.addView(slotColumn);
-  area.addView(leftScroll,new LinearLayout.LayoutParams(0,dp(265),2));
-  ScrollView rightScroll=new ScrollView(this);controlColumn=vertical();controlColumn.setPadding(dp(10),0,0,0);rightScroll.addView(controlColumn);
-  area.addView(rightScroll,new LinearLayout.LayoutParams(0,dp(265),3));
-  root.addView(area);
-  TextView legend=text("STEP MACHINE / TOUCH THE BLOCKS TO INFECT THE PATTERN",11,ACID);
-  legend.setPadding(0,dp(6),0,dp(5));root.addView(legend);
-  HorizontalScrollView gridScroll=new HorizontalScrollView(this);
-  LinearLayout grid=vertical();grid.setBackgroundColor(PANEL);
-  for(int lane=0;lane<N;lane++){
-   final int index=lane;LinearLayout row=horizontal();
-   TextView name=text(String.format("%02d",lane+1),12,lane==selected?ACID:INK);
-   name.setGravity(Gravity.CENTER);row.addView(name,new LinearLayout.LayoutParams(dp(35),dp(30)));
-   for(int i=0;i<STEPS;i++){
-    final int s=i;TextView cell=text(" ",10,INK);cell.setGravity(Gravity.CENTER);
-    boolean on=slots[lane].steps[i];
-    cell.setBackgroundColor(on?ORANGE:(i%8==0?0xff574e38:0xff353025));
-    LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(dp(25),dp(24));lp.setMargins(dp(1),dp(2),dp(1),dp(2));row.addView(cell,lp);
-    cell.setOnClickListener(v->{slots[index].steps[s]=!slots[index].steps[s];persist(index);cell.setBackgroundColor(slots[index].steps[s]?ORANGE:(s%8==0?0xff574e38:0xff353025));});
-   }
-   grid.addView(row);
-  }
-  gridScroll.addView(grid);root.addView(gridScroll,new LinearLayout.LayoutParams(-1,0,1));
-  setContentView(root);
-  refreshSlots();refreshControls();
- }
- void updateStatus(){if(status!=null)status.setText("TEMPO "+bpm+" BPM     /     DUST "+(int)(masterDust*100)+"%     /     WOW "+(int)(masterWobble*100)+"%     /     "+(playing?"TAPE ROLLING":"TAPE STOPPED"));}
- void refreshSlots(){
-  if(slotColumn==null)return;slotColumn.removeAllViews();
+  root.addView(text("002  /  THREE TAPE MACHINES  /  PRESS RECORD THEN PLAY  /  V4",10,ORANGE));
+  LinearLayout transport=horizontal();
+  playButton=button("▶ PLAY ALL",()->{
+   playing=!playing;
+   if(playing){for(Slot slot:slots){slot.pos=slot.sample.length*slot.start;slot.age=0;slot.active=slot.sample.length>1;}}
+   playButton.setText(playing?"■ STOP":"▶ PLAY ALL");updateStatus();
+  },ACID);
+  transport.addView(playButton,new LinearLayout.LayoutParams(0,dp(43),2));
+  transport.addView(button("⟲ REWIND",()->{
+    for(Slot slot:slots){slot.pos=slot.sample.length*slot.start;slot.age=0;}
+    updateStatus();
+  },ORANGE),new LinearLayout.LayoutParams(0,dp(43),1));
+  root.addView(transport);
+  LinearLayout decks=horizontal();decks.setGravity(Gravity.TOP);
   for(int i=0;i<N;i++){
-   final int n=i;Slot slot=slots[i];boolean chosen=i==selected;
-   TextView pad=button(String.format("%02d",i+1)+"  "+(slot.sample.length==0?"EMPTY TAPE":"● "+String.format("%.1f",slot.sample.length/(float)SR)+"s"),()->{selected=n;refreshSlots();refreshControls();},chosen?ACID:PANEL);
-   if(!chosen)pad.setTextColor(INK);
-   LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(35));lp.bottomMargin=dp(3);slotColumn.addView(pad,lp);
+   final int index=i;
+   LinearLayout shell=vertical();deckColumns[i]=shell;
+   shell.setBackgroundColor(PANEL);shell.setPadding(dp(7),dp(6),dp(7),dp(5));
+   LinearLayout.LayoutParams shellParams=new LinearLayout.LayoutParams(0,-1,1);
+   shellParams.setMargins(dp(3),dp(3),dp(3),dp(3));decks.addView(shell,shellParams);
+   TextView deckTitle=text("TAPE 0"+(i+1)+"  /  EMPTY",13,i==0?ACID:(i==1?ORANGE:INK));
+   deckLabels[i]=deckTitle;shell.addView(deckTitle);
+   cassetteViews[i]=new CassetteView(this,i);
+   shell.addView(cassetteViews[i],new LinearLayout.LayoutParams(-1,0,1));
+   LinearLayout actions=horizontal();
+   actions.addView(button("● REC",()->record(index),ORANGE),new LinearLayout.LayoutParams(0,dp(40),1));
+   actions.addView(button("IMPORT",()->{selected=index;importWav();},MUTED),new LinearLayout.LayoutParams(0,dp(40),1));
+   actions.addView(button("×",()->new AlertDialog.Builder(this).setTitle("Erase tape 0"+(index+1)+"?")
+       .setMessage("Remove this tape recording?").setNegativeButton("CANCEL",null)
+       .setPositiveButton("ERASE",(d,w)->{slots[index].sample=new short[0];slots[index].active=false;persist(index);refreshSlots();}).show(),MUTED),
+       new LinearLayout.LayoutParams(dp(37),dp(40)));
+   shell.addView(actions);
+   addDeckSlider(shell,"SPEED",slots[index].pitch/2f,value->{slots[index].pitch=.35f+1.65f*value;persist(index);});
+   addDeckSlider(shell,"TONE",slots[index].lp,value->{slots[index].lp=value;persist(index);});
+   addDeckSlider(shell,"LEVEL",slots[index].level,value->{slots[index].level=value;persist(index);});
+   addDeckSlider(shell,"ECHO",slots[index].echo,value->{slots[index].echo=value;persist(index);});
+  }
+  root.addView(decks,new LinearLayout.LayoutParams(-1,0,1));
+  TextView masterTitle=text("MASTER / MAKE IT MELT",12,ACID);
+  root.addView(masterTitle);
+  LinearLayout masterRow=horizontal();
+  addDeckSlider(masterRow,"DARK",1-masterTone,v->{masterTone=1-v;updateStatus();});
+  addDeckSlider(masterRow,"WOBBLE",masterWobble,v->{masterWobble=v;updateStatus();});
+  addDeckSlider(masterRow,"DIRT",masterDust,v->{masterDust=v;updateStatus();});
+  addDeckSlider(masterRow,"SPACE",masterSpace,v->{masterSpace=v;updateStatus();});
+  root.addView(masterRow,new LinearLayout.LayoutParams(-1,dp(59)));
+  status=text("",10,MUTED);root.addView(status);updateStatus();
+  setContentView(root);
+  refreshSlots();
+ }
+ void addDeckSlider(LinearLayout target,String title,float value,Change cb){
+  LinearLayout line=horizontal();TextView name=text(title,10,INK);
+  line.addView(name,new LinearLayout.LayoutParams(dp(65),dp(28)));
+  SeekBar control=new SeekBar(this);control.setMax(100);
+  control.setProgress(Math.round(Math.max(0,Math.min(1,value))*100));
+  control.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
+   public void onProgressChanged(SeekBar bar,int progress,boolean fromUser){if(fromUser)cb.set(progress/100f);}
+   public void onStartTrackingTouch(SeekBar bar){}
+   public void onStopTrackingTouch(SeekBar bar){}
+  });
+  line.addView(control,new LinearLayout.LayoutParams(0,dp(31),1));
+  target.addView(line,new LinearLayout.LayoutParams(-1,dp(32)));
+ }
+ interface Change {void set(float value);}
+ void updateStatus(){
+  if(status!=null)status.setText(playing?"● TAPE ROLLING  /  DRAG TO CHANGE THE SOUND":"■ STOPPED  /  RECORD UP TO FIVE SECONDS IN EACH CASSETTE");
+ }
+ void refreshSlots(){
+  for(int i=0;i<N;i++){
+   Slot s=slots[i];if(deckLabels[i]!=null)deckLabels[i].setText("TAPE 0"+(i+1)+"  /  "+
+     (s.sample.length==0?"EMPTY":String.format(java.util.Locale.US,"%.1f SEC",s.sample.length/(float)SR)));
+   if(cassetteViews[i]!=null)cassetteViews[i].invalidate();
   }
  }
- void refreshControls(){
-  if(controlColumn==null)return;controlColumn.removeAllViews();
-  Slot s=slots[selected];slotName=text("TAPE "+String.format("%02d",selected+1)+" / "+(s.sample.length==0?"UNRECORDED":"RECORDED"),17,ACID);
-  controlColumn.addView(slotName);
-  LinearLayout actions=horizontal();
-  actions.addView(button("● REC 5s",()->record(selected),ORANGE),new LinearLayout.LayoutParams(0,dp(42),1));
-  actions.addView(button("IMPORT",()->importWav(),MUTED),new LinearLayout.LayoutParams(0,dp(42),1));
-  actions.addView(button("ERASE",()->{slots[selected].sample=new short[0];slots[selected].active=false;persist(selected);refreshSlots();refreshControls();},MUTED),new LinearLayout.LayoutParams(0,dp(42),1));
-  controlColumn.addView(actions);
-  slider("LEVEL",s.level,v->{s.level=v;persist(selected);});
-  slider("SPEED / PITCH",s.pitch/2,v->{s.pitch=.35f+v*1.65f;persist(selected);});
-  slider("ATTACK",s.attack/.5f,v->{s.attack=v*.5f;persist(selected);});
-  slider("RELEASE",s.release/2,v->{s.release=.03f+v*1.97f;persist(selected);});
-  slider("START",s.start,v->{s.start=Math.min(v,s.end-.02f);persist(selected);});
-  slider("END",s.end,v->{s.end=Math.max(v,s.start+.02f);persist(selected);});
-  slider("PAN",(s.pan+1)/2,v->{s.pan=v*2-1;persist(selected);});
-  slider("HIGH PASS",s.hp,v->{s.hp=v;persist(selected);});
-  slider("LOW PASS",s.lp,v->{s.lp=v;persist(selected);});
-  slider("TAPE ECHO SEND",s.echo,v->{s.echo=v;persist(selected);});
-  slider("CATHEDRAL SEND",s.space,v->{s.space=v;persist(selected);});
-  TextView fx=text("GLOBAL TAPE DESTRUCTION",13,ORANGE);fx.setPadding(0,dp(12),0,dp(2));controlColumn.addView(fx);
-  slider("TOP END CUT",1-masterTone,v->{masterTone=1-v;updateStatus();});
-  slider("WOW / FLUTTER",masterWobble,v->{masterWobble=v;updateStatus();});
-  slider("DUST / SATURATION",masterDust,v->{masterDust=v;updateStatus();});
-  slider("DELAY FEEDBACK",masterEcho,v->masterEcho=v);
-  slider("CATHEDRAL",masterSpace,v->masterSpace=v);
- }
- interface Change{void set(float v);}
- void slider(String name,float initial,Change cb){
-  LinearLayout row=horizontal();TextView label=text(name,10,INK);
-  row.addView(label,new LinearLayout.LayoutParams(dp(158),dp(27)));
-  SeekBar seek=new SeekBar(this);seek.setMax(100);seek.setProgress((int)(Math.max(0,Math.min(1,initial))*100));
-  seek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
-   public void onProgressChanged(SeekBar b,int progress,boolean user){if(user)cb.set(progress/100f);}
-   public void onStartTrackingTouch(SeekBar b){}
-   public void onStopTrackingTouch(SeekBar b){}
-  });
-  row.addView(seek,new LinearLayout.LayoutParams(0,dp(30),1));controlColumn.addView(row);
+ void refreshControls(){refreshSlots();}
+ final class CassetteView extends View{
+  final int index;final Paint paint=new Paint(3);
+  CassetteView(Context context,int i){super(context);index=i;setLayerType(View.LAYER_TYPE_SOFTWARE,null);}
+  @Override protected void onDraw(Canvas canvas){
+   super.onDraw(canvas);
+   float w=getWidth(),h=getHeight(),cy=h*.52f;
+   if(w<=1||h<=1)return;
+   float left=w*.06f,top=h*.1f,right=w*.94f,bottom=h*.92f;
+   paint.setColor(0xff161512);paint.setStyle(Paint.Style.FILL);
+   canvas.drawRoundRect(left,top,right,bottom,dp(9),dp(9),paint);
+   paint.setColor(0xff4c463a);paint.setStyle(Paint.Style.STROKE);paint.setStrokeWidth(dp(2));
+   canvas.drawRoundRect(left,top,right,bottom,dp(9),dp(9),paint);
+   paint.setStyle(Paint.Style.FILL);paint.setColor(0xff393a30);
+   canvas.drawRoundRect(w*.15f,h*.20f,w*.85f,h*.67f,dp(6),dp(6),paint);
+   Slot s=slots[index];float prog=s.sample.length>0?(float)(s.pos/Math.max(1,s.sample.length)):0;
+   float angle=playing?(float)(tick*.045*(.5f+s.pitch)):0;
+   float rad=Math.min(w*.115f,h*.19f),y=h*.43f;
+   float[] xs={w*.33f,w*.67f};
+   for(int n=0;n<2;n++){
+    float cx=xs[n];paint.setColor(0xffb8aa89);canvas.drawCircle(cx,y,rad,paint);
+    paint.setColor(0xff1c1b1a);canvas.drawCircle(cx,y,rad*.78f,paint);
+    paint.setColor(s.sample.length>0?ORANGE:0xff6d6253);
+    float wind=n==0?(1-prog):prog;canvas.drawCircle(cx,y,rad*(.40f+.27f*wind),paint);
+    paint.setColor(0xff2c2824);canvas.drawCircle(cx,y,rad*.25f,paint);
+    paint.setColor(0xffd6cba9);paint.setStrokeWidth(dp(2));
+    for(int j=0;j<3;j++){
+     double a=angle+(j*2*Math.PI/3);float x=(float)Math.cos(a)*rad*.20f,yOff=(float)Math.sin(a)*rad*.20f;
+     canvas.drawLine(cx-x*.6f,y-yOff*.6f,cx+x,y+yOff,paint);
+    }
+   }
+   paint.setColor(index==0?ACID:index==1?ORANGE:0xffe8c9c1);
+   canvas.drawRoundRect(w*.22f,h*.73f,w*.78f,h*.86f,dp(3),dp(3),paint);
+   paint.setColor(BG);paint.setTextSize(Math.max(dp(9),Math.min(dp(13),w*.055f)));
+   paint.setTypeface(Typeface.create(Typeface.MONOSPACE,Typeface.BOLD));
+   canvas.drawText(s.sample.length>0?"MAGNETIC TAPE":"BLANK CASSETTE",w*.25f,h*.825f,paint);
+   if(running)postInvalidateDelayed(60);
+  }
  }
  void record(int index){
   if(checkSelfPermission(Manifest.permission.RECORD_AUDIO)!=PackageManager.PERMISSION_GRANTED){
@@ -271,18 +305,13 @@ public class MainActivity extends Activity {
    while(running){
     int stepSamples=Math.max(1000,(int)(SR*60.0/(Math.max(35,bpm)*4)));
     for(int i=0;i<1024;i++){
-     if(playing && counter%stepSamples==0){
-      int beat=step;for(Slot slot:slots)if(slot.steps[beat]&&slot.sample.length>0){
-       slot.active=true;slot.pos=slot.sample.length*slot.start;slot.age=0;slot.phase=random.nextDouble()*6.28;
-      }
-      step=(step+1)%STEPS;
-     }
+
      float L=0,R=0,echoL=0,echoR=0,sendRoom=0;
      if(playing){
       for(Slot s:slots){
        short[] pcm=s.sample;if(!s.active||pcm.length<2)continue;
        int end=Math.max(2,Math.min(pcm.length,(int)(pcm.length*s.end)));
-       int p=(int)s.pos;if(p<0||p>=end-1){s.active=false;continue;}
+       int p=(int)s.pos;if(p<0||p>=end-1){s.pos=s.sample.length*s.start;s.age=0;p=(int)s.pos;if(p>=end-1){s.active=false;continue;}}
        double wow=1+masterWobble*(.028*Math.sin(tick*.00054+s.phase)+.009*Math.sin(tick*.016+s.phase*3))+.003*masterWobble*(random.nextFloat()-.5f);
        float f=pcm[p]/32768f, next=pcm[p+1]/32768f;
        f+=(next-f)*(float)(s.pos-p);
