@@ -44,7 +44,7 @@ jobs:
           test -s docs/parasite-model-d.apk
           test -s docs/parasite-prophet.apk
           cp launcher/app/build/outputs/apk/debug/app-debug.apk docs/parasite-launcher.apk
-          printf '{"version":4,"state":"ready","apk":"parasite-launcher.apk"}\n' > docs/release.json
+          printf '{"version":5,"state":"ready","apk":"parasite-launcher.apk"}\n' > docs/release.json
           touch docs/.nojekyll
           sha256sum docs/*.apk
       - uses: actions/configure-pages@v5
