@@ -24,14 +24,14 @@ import java.io.*;
 import java.util.Random;
 
 /**
- * PARASITE MICROVERSE V4 — three visual cassette decks with an offline tape engine.
+ * PARASITE MICROVERSE V5 — Orbit-family full-screen cassette decks with an offline tape engine.
  * No cloud connection, adverts, permissions beyond microphone, or demo sounds.
  * Slot recordings and patterns are saved privately on the device.
  */
 public class MainActivity extends Activity {
  static final int SR=22050, N=3, STEPS=32, MAX_SAMPLES=SR*5;
- static final int BG=0xff11100e, INK=0xfff5e8c8, MUTED=0xffa7a08a, ACID=0xffd9ff60,
-   ORANGE=0xffff8d53, PANEL=0xff252119;
+ static final int BG=0xff080e0a, INK=0xffdfe6d8, MUTED=0xff90b29b, ACID=0xffa1edaa,
+   ORANGE=0xffd8c28d, PANEL=0xff142119;
  final Slot[] slots=new Slot[N];
  volatile boolean running=true, playing=false;
  volatile int step=0;
@@ -41,6 +41,7 @@ public class MainActivity extends Activity {
  LinearLayout slotColumn, controlColumn;
  CassetteView[] cassetteViews=new CassetteView[N];
  TextView[] deckLabels=new TextView[N];
+ TextView[] directionButtons=new TextView[N];
  LinearLayout[] deckColumns=new LinearLayout[N];
  TextView status, playButton, slotName;
  final Random random=new Random();
@@ -54,6 +55,7 @@ public class MainActivity extends Activity {
  static class Slot {
   volatile short[] sample=new short[0];
   boolean[] steps=new boolean[STEPS];
+  volatile boolean reverse=false;
   float level=.78f, pitch=1f, attack=.005f, release=.22f, start=0f, end=1f, pan=0f;
   float hp=.0f, lp=.55f, echo=.35f, space=.4f;
   double pos=0, phase=0;
@@ -74,12 +76,20 @@ public class MainActivity extends Activity {
  LinearLayout horizontal(){LinearLayout l=new LinearLayout(this);l.setOrientation(0);l.setGravity(Gravity.CENTER_VERTICAL);return l;}
  @Override public void onCreate(Bundle b){
   super.onCreate(b);
-  getWindow().getDecorView().setSystemUiVisibility(5894|1024|512);
+  immersive();
   for(int i=0;i<N;i++){slots[i]=new Slot();restore(i);}
   bpm=getPreferences(0).getInt("bpm",76);
   show();
   startAudio();
  }
+ private void immersive(){
+  getWindow().getDecorView().setSystemUiVisibility(
+   View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+   View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
+   View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+ }
+ @Override public void onWindowFocusChanged(boolean focused){super.onWindowFocusChanged(focused);if(focused)immersive();}
+ @Override protected void onResume(){super.onResume();immersive();}
  @Override protected void onDestroy(){
   running=false;
   if(player!=null){try{player.pause();player.flush();player.release();}catch(Exception ignored){}}
@@ -92,16 +102,16 @@ public class MainActivity extends Activity {
   TextView brand=text("MICROVERSE_",26,ACID);header.addView(brand,new LinearLayout.LayoutParams(0,dp(43),1));
   header.addView(button("◀ PARASITE",()->finish(),MUTED));
   root.addView(header);
-  root.addView(text("002  /  THREE TAPE MACHINES  /  PRESS RECORD THEN PLAY  /  V4",10,ORANGE));
+  root.addView(text("PARASITE_ / 002    •    THREE TAPE MACHINES    •    V5",10,ORANGE));
   LinearLayout transport=horizontal();
   playButton=button("▶ PLAY ALL",()->{
    playing=!playing;
-   if(playing){for(Slot slot:slots){slot.pos=slot.sample.length*slot.start;slot.age=0;slot.active=slot.sample.length>1;}}
+   if(playing){for(Slot slot:slots){slot.pos=slot.sample.length*(slot.reverse?slot.end:slot.start);slot.age=0;slot.active=slot.sample.length>1;}}
    playButton.setText(playing?"■ STOP":"▶ PLAY ALL");updateStatus();
   },ACID);
   transport.addView(playButton,new LinearLayout.LayoutParams(0,dp(43),2));
   transport.addView(button("⟲ REWIND",()->{
-    for(Slot slot:slots){slot.pos=slot.sample.length*slot.start;slot.age=0;}
+    for(Slot slot:slots){slot.pos=slot.sample.length*(slot.reverse?slot.end:slot.start);slot.age=0;}
     updateStatus();
   },ORANGE),new LinearLayout.LayoutParams(0,dp(43),1));
   root.addView(transport);
@@ -124,13 +134,23 @@ public class MainActivity extends Activity {
        .setPositiveButton("ERASE",(d,w)->{slots[index].sample=new short[0];slots[index].active=false;persist(index);refreshSlots();}).show(),MUTED),
        new LinearLayout.LayoutParams(dp(37),dp(40)));
    shell.addView(actions);
+   TextView direction=button(slots[index].reverse?"◀ REVERSE":"▶ FORWARD",()->{
+     Slot tape=slots[index];
+     tape.reverse=!tape.reverse;
+     tape.pos=tape.sample.length*(tape.reverse?tape.end:tape.start);
+     tape.age=0;
+     persist(index);
+     refreshSlots();
+   },ACID);
+   shell.addView(direction,new LinearLayout.LayoutParams(-1,dp(38)));
+   directionButtons[index]=direction;
    addDeckSlider(shell,"SPEED",slots[index].pitch/2f,value->{slots[index].pitch=.35f+1.65f*value;persist(index);});
    addDeckSlider(shell,"TONE",slots[index].lp,value->{slots[index].lp=value;persist(index);});
    addDeckSlider(shell,"LEVEL",slots[index].level,value->{slots[index].level=value;persist(index);});
    addDeckSlider(shell,"ECHO",slots[index].echo,value->{slots[index].echo=value;persist(index);});
   }
   root.addView(decks,new LinearLayout.LayoutParams(-1,0,1));
-  TextView masterTitle=text("MASTER / MAKE IT MELT",12,ACID);
+  TextView masterTitle=text("MASTER / TAPE ENVIRONMENT",12,ACID);
   root.addView(masterTitle);
   LinearLayout masterRow=horizontal();
   addDeckSlider(masterRow,"DARK",1-masterTone,v->{masterTone=1-v;updateStatus();});
@@ -164,6 +184,7 @@ public class MainActivity extends Activity {
   for(int i=0;i<N;i++){
    Slot s=slots[i];if(deckLabels[i]!=null)deckLabels[i].setText("TAPE 0"+(i+1)+"  /  "+
      (s.sample.length==0?"EMPTY":String.format(java.util.Locale.US,"%.1f SEC",s.sample.length/(float)SR)));
+   if(directionButtons[i]!=null)directionButtons[i].setText(s.reverse?"◀ REVERSE":"▶ FORWARD");
    if(cassetteViews[i]!=null)cassetteViews[i].invalidate();
   }
  }
@@ -176,29 +197,29 @@ public class MainActivity extends Activity {
    float w=getWidth(),h=getHeight(),cy=h*.52f;
    if(w<=1||h<=1)return;
    float left=w*.06f,top=h*.1f,right=w*.94f,bottom=h*.92f;
-   paint.setColor(0xff161512);paint.setStyle(Paint.Style.FILL);
+   paint.setColor(0xff0b1410);paint.setStyle(Paint.Style.FILL);
    canvas.drawRoundRect(left,top,right,bottom,dp(9),dp(9),paint);
-   paint.setColor(0xff4c463a);paint.setStyle(Paint.Style.STROKE);paint.setStrokeWidth(dp(2));
+   paint.setColor(0xff405546);paint.setStyle(Paint.Style.STROKE);paint.setStrokeWidth(dp(2));
    canvas.drawRoundRect(left,top,right,bottom,dp(9),dp(9),paint);
-   paint.setStyle(Paint.Style.FILL);paint.setColor(0xff393a30);
+   paint.setStyle(Paint.Style.FILL);paint.setColor(0xff223428);
    canvas.drawRoundRect(w*.15f,h*.20f,w*.85f,h*.67f,dp(6),dp(6),paint);
    Slot s=slots[index];float prog=s.sample.length>0?(float)(s.pos/Math.max(1,s.sample.length)):0;
-   float angle=playing?(float)(tick*.045*(.5f+s.pitch)):0;
+   float angle=playing?(float)(tick*.045*(.5f+s.pitch)*(s.reverse?-1:1)):0;
    float rad=Math.min(w*.115f,h*.19f),y=h*.43f;
    float[] xs={w*.33f,w*.67f};
    for(int n=0;n<2;n++){
-    float cx=xs[n];paint.setColor(0xffb8aa89);canvas.drawCircle(cx,y,rad,paint);
-    paint.setColor(0xff1c1b1a);canvas.drawCircle(cx,y,rad*.78f,paint);
-    paint.setColor(s.sample.length>0?ORANGE:0xff6d6253);
+    float cx=xs[n];paint.setColor(0xffbde3c2);canvas.drawCircle(cx,y,rad,paint);
+    paint.setColor(0xff101c14);canvas.drawCircle(cx,y,rad*.78f,paint);
+    paint.setColor(s.sample.length>0?ACID:0xff50785d);
     float wind=n==0?(1-prog):prog;canvas.drawCircle(cx,y,rad*(.40f+.27f*wind),paint);
-    paint.setColor(0xff2c2824);canvas.drawCircle(cx,y,rad*.25f,paint);
-    paint.setColor(0xffd6cba9);paint.setStrokeWidth(dp(2));
+    paint.setColor(0xff16251b);canvas.drawCircle(cx,y,rad*.25f,paint);
+    paint.setColor(0xffbde3c2);paint.setStrokeWidth(dp(2));
     for(int j=0;j<3;j++){
      double a=angle+(j*2*Math.PI/3);float x=(float)Math.cos(a)*rad*.20f,yOff=(float)Math.sin(a)*rad*.20f;
      canvas.drawLine(cx-x*.6f,y-yOff*.6f,cx+x,y+yOff,paint);
     }
    }
-   paint.setColor(index==0?ACID:index==1?ORANGE:0xffe8c9c1);
+   paint.setColor(index==0?ACID:index==1?ORANGE:0xff98b8aa);
    canvas.drawRoundRect(w*.22f,h*.73f,w*.78f,h*.86f,dp(3),dp(3),paint);
    paint.setColor(BG);paint.setTextSize(Math.max(dp(9),Math.min(dp(13),w*.055f)));
    paint.setTypeface(Typeface.create(Typeface.MONOSPACE,Typeface.BOLD));
@@ -221,7 +242,7 @@ public class MainActivity extends Activity {
     short[] captured=new short[MAX_SAMPLES];recorder.startRecording();int offset=0;
     while(offset<captured.length){int n=recorder.read(captured,offset,Math.min(2048,captured.length-offset));if(n<=0)break;offset+=n;}
     recorder.stop();
-    if(offset>0){short[] result=new short[offset];System.arraycopy(captured,0,result,0,offset);slots[index].sample=result;slots[index].pos=0;slots[index].age=0;slots[index].active=playing;persist(index);}
+    if(offset>0){short[] result=new short[offset];System.arraycopy(captured,0,result,0,offset);slots[index].sample=result;slots[index].pos=slots[index].reverse?result.length-1:0;slots[index].age=0;slots[index].active=playing;persist(index);}
     runOnUiThread(()->{refreshSlots();refreshControls();Toast.makeText(this,"TAPE CAPTURED",Toast.LENGTH_SHORT).show();});
    }catch(Exception e){runOnUiThread(()->Toast.makeText(this,"REC FAILED: "+e.getMessage(),Toast.LENGTH_LONG).show());}
    finally{if(recorder!=null)recorder.release();}
@@ -259,7 +280,7 @@ public class MainActivity extends Activity {
      if(channels==2)value=(value+(short)le16(wav,off+2))/2;
      dst[j]=(short)value;
     }
-    slots[index].sample=dst;slots[index].pos=0;slots[index].age=0;slots[index].active=playing;persist(index);
+    slots[index].sample=dst;slots[index].pos=slots[index].reverse?Math.max(0,dst.length-1):0;slots[index].age=0;slots[index].active=playing;persist(index);
     runOnUiThread(()->{refreshSlots();refreshControls();Toast.makeText(this,"WAV IMPORTED",Toast.LENGTH_SHORT).show();});
    }catch(Exception ex){runOnUiThread(()->Toast.makeText(this,"IMPORT FAILED: "+ex.getMessage(),Toast.LENGTH_LONG).show());}
   },"microverse-wav").start();
@@ -278,7 +299,8 @@ public class MainActivity extends Activity {
      .putFloat("level"+i,s.level).putFloat("pitch"+i,s.pitch).putFloat("attack"+i,s.attack)
      .putFloat("release"+i,s.release).putFloat("start"+i,s.start).putFloat("end"+i,s.end)
      .putFloat("pan"+i,s.pan).putFloat("hp"+i,s.hp).putFloat("lp"+i,s.lp)
-     .putFloat("echo"+i,s.echo).putFloat("space"+i,s.space).apply();
+     .putFloat("echo"+i,s.echo).putFloat("space"+i,s.space)
+     .putBoolean("reverse"+i,s.reverse).apply();
   }catch(Exception ignored){}
  }
  void restore(int i){
@@ -296,6 +318,7 @@ public class MainActivity extends Activity {
   s.start=getPreferences(0).getFloat("start"+i,s.start);s.end=getPreferences(0).getFloat("end"+i,s.end);
   s.pan=getPreferences(0).getFloat("pan"+i,s.pan);s.hp=getPreferences(0).getFloat("hp"+i,s.hp);
   s.lp=getPreferences(0).getFloat("lp"+i,s.lp);s.echo=getPreferences(0).getFloat("echo"+i,s.echo);s.space=getPreferences(0).getFloat("space"+i,s.space);
+  s.reverse=getPreferences(0).getBoolean("reverse"+i,false);
  }
  void startAudio(){
   int bufSize=Math.max(4096,AudioTrack.getMinBufferSize(SR,AudioFormat.CHANNEL_OUT_STEREO,AudioFormat.ENCODING_PCM_16BIT));
@@ -312,7 +335,11 @@ public class MainActivity extends Activity {
       for(Slot s:slots){
        short[] pcm=s.sample;if(!s.active||pcm.length<2)continue;
        int end=Math.max(2,Math.min(pcm.length,(int)(pcm.length*s.end)));
-       int p=(int)s.pos;if(p<0||p>=end-1){s.pos=s.sample.length*s.start;s.age=0;p=(int)s.pos;if(p>=end-1){s.active=false;continue;}}
+       int start=Math.max(0,Math.min(end-2,(int)(pcm.length*s.start)));
+       int p=(int)s.pos;
+       if(s.pos<start || s.pos>=end-1){
+        s.pos=s.reverse?end-2:start;s.age=0;p=(int)s.pos;
+       }
        double wow=1+masterWobble*(.028*Math.sin(tick*.00054+s.phase)+.009*Math.sin(tick*.016+s.phase*3))+.003*masterWobble*(random.nextFloat()-.5f);
        float f=pcm[p]/32768f, next=pcm[p+1]/32768f;
        f+=(next-f)*(float)(s.pos-p);
@@ -325,12 +352,12 @@ public class MainActivity extends Activity {
        float crushed=(float)Math.tanh((tone+dust)*(1.3+masterDust*8));
        float held=(float)(Math.round(crushed*(160-masterDust*140))/(160-masterDust*140));
        float env=Math.min(1,s.age/(float)Math.max(1,(int)(s.attack*SR)));
-       float remain=(float)Math.max(0,(end-s.pos)/(SR*Math.max(.1,s.pitch)));
+       float remain=(float)Math.max(0,(s.reverse?s.pos-start:end-s.pos)/(SR*Math.max(.1,s.pitch)));
        env*=Math.min(1,remain/Math.max(.02,s.release));
        float v=held*env*s.level*.42f;
        float left=v*(1-s.pan)*.5f,right=v*(1+s.pan)*.5f;
        L+=left;R+=right;echoL+=left*s.echo;echoR+=right*s.echo;sendRoom+=v*s.space;
-       s.pos+=s.pitch*wow;s.age++;
+       s.pos+=(s.reverse?-1:1)*s.pitch*wow;s.age++;
       }
      }
      int d=tail%delayL.length;float dl=delayL[d],dr=delayR[d];
