@@ -10,12 +10,12 @@ h1{font-size:clamp(39px,9vw,70px);letter-spacing:-3px;margin:34px 0 7px}h2{font-
 .features{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}.features div{background:#24353a;padding:12px;color:#cde7d5;font-size:12px}
 a.button{display:block;margin:24px 0 10px;padding:20px;background:#a3eaae;color:#0c1913;text-align:center;text-decoration:none;font-weight:900;font-size:19px;border-radius:5px}
 a.disabled{opacity:.5;pointer-events:none}.meta{color:#88acb1;font-size:12px}
-</style></head><body><main><header>PARASITE_ / INSTRUMENT 002</header>
+</style></head><body><main><header>PARASITE_ / INSTRUMENT 002 / V2</header>
 <h1>MICRO<span style="color:#a1e9b0">VERSE</span></h1>
 <p>GRANULAR / ECHO / CAVERNOUS SPACE / EIGHT-SLOT SEQUENCER</p><div class="panel">
 <div class="grid" id="pattern" aria-label="32 step sequencer illustration"></div>
-<h2>RESAMPLE REALITY.</h2><p>Load eight short WAV recordings into an independent 32-step instrument. Shape every sound with ADSR, pitch and filtering. Send patterns into granular fragments, shifting pitch and cavernous stereo feedback. Recordings and presets remain on your Kindle.</p>
-<div class="features"><div>8 WAV SLOTS</div><div>32 STEP GRID</div><div>PER-SLOT ADSR</div><div>GRAIN SHIFTER</div><div>SCATTER / PITCH</div><div>STEREO SPACE</div><div>OFFLINE AUDIO</div><div>LOCAL PATTERNS</div></div>
+<h2>RESAMPLE REALITY.</h2><p>Every sample slot starts empty. Record a five-second sound into any slot with the Kindle microphone, or import a WAV file. Trim its start and end, then edit ADSR, pan, level, high-pass and low-pass filters, cathedral reverb send and tape echo send. Create evolving 32-step sequences with granular fragments, stereo reverberation and space effects. Recordings and patterns stay on your Kindle.</p>
+<div class="features"><div>8 EMPTY SLOTS</div><div>32 STEP GRID</div><div>5 SEC MIC RECORDING</div><div>GRAIN SHIFTER</div><div>ADSR / TRIM / PAN</div><div>HPF / LPF / FX SENDS</div><div>OFFLINE AUDIO</div><div>LOCAL PATTERNS</div></div>
 <a class="button disabled" href="#" id="download">CHECKING APK...</a><p id="status" class="meta">Verifying Android instrument package</p></div>
 <p class="meta">First hardware-test version for Fire 7 (9th generation). Unofficial original instrument, not affiliated with Hologram Electronics or EarthQuaker Devices. Use modest headphone volume and feedback initially.</p>
 <p><a style="color:#a1e9b0" href="../">BACK TO PARASITE</a></p></main>
@@ -23,5 +23,5 @@ a.disabled{opacity:.5;pointer-events:none}.meta{color:#88acb1;font-size:12px}
 const hit=[[0,8,16,24],[4,12,20,28],[2,6,10,14,18,22,26,30],[0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30],[],[],[],[]];
 let parent=document.getElementById('pattern');
 for(let lane=0;lane<8;lane++){let row=document.createElement('div');row.className='track';let name=document.createElement('span');name.textContent=String(lane+1).padStart(2,'0');row.appendChild(name);for(let step=0;step<32;step++){let el=document.createElement('div');el.className='cell'+(hit[lane].includes(step)?(lane%2===0?' hit':' alt'):'');row.appendChild(el)}parent.appendChild(row)}
-fetch('../parasite-microverse.apk',{method:'HEAD',cache:'no-store'}).then(r=>{if(!r.ok)throw Error();let a=document.getElementById('download');a.href='../parasite-microverse.apk';a.classList.remove('disabled');a.textContent='DOWNLOAD MICROVERSE';document.getElementById('status').textContent='APK ready for Kindle Silk installation';}).catch(()=>{document.getElementById('download').textContent='APK NOT READY';document.getElementById('status').textContent='Download not currently available';});
+fetch('../parasite-microverse.apk',{method:'HEAD',cache:'no-store'}).then(r=>{if(!r.ok)throw Error();let a=document.getElementById('download');a.href='../parasite-microverse.apk';a.classList.remove('disabled');a.textContent='DOWNLOAD / UPDATE MICROVERSE V2';document.getElementById('status').textContent='APK ready for Kindle Silk installation';}).catch(()=>{document.getElementById('download').textContent='APK NOT READY';document.getElementById('status').textContent='Download not currently available';});
 </script></body></html>
