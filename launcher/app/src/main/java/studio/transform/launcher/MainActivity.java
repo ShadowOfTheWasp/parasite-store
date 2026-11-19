@@ -1,6 +1,8 @@
 package studio.transform.launcher;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.provider.Settings;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Typeface;
@@ -17,7 +19,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
-/** PARASITE V6 — empty-first standalone instrument hub, no embedded synths. */
+/** PARASITE V8 — reversible full-screen standalone instrument hub, no embedded synths. */
 public final class MainActivity extends Activity {
  private static final String SITE="https://shadowofthewasp.github.io/parasite-store/";
  private static final String CATALOGUE=SITE+"catalogue.json";
@@ -34,6 +36,7 @@ public final class MainActivity extends Activity {
  private Button bootButton;
  private int generation=0;
  private boolean autoBoot;
+ private boolean zombieMode;
 
  private int dp(int n){return (int)(n*getResources().getDisplayMetrics().density+.5f);}
  private TextView label(String value,int size,int color,boolean bold){
@@ -57,7 +60,10 @@ public final class MainActivity extends Activity {
  @Override public void onCreate(Bundle b){
   super.onCreate(b);
   autoBoot=getSharedPreferences(PREFS,MODE_PRIVATE).getBoolean("launch-at-boot",false);
+  zombieMode=getSharedPreferences(PREFS,MODE_PRIVATE).getBoolean("zombie-mode",false);
+  loadCached();
   show();
+  refresh();
  }
  @Override protected void onResume(){
   super.onResume();
@@ -68,8 +74,10 @@ public final class MainActivity extends Activity {
   getWindow().getDecorView().setSystemUiVisibility(5894|1024|512);
   LinearLayout root=new LinearLayout(this);root.setOrientation(LinearLayout.VERTICAL);
   root.setBackgroundColor(BG);root.setPadding(dp(22),dp(13),dp(22),dp(12));
-  root.addView(label("PARASITE_",31,GREEN,true));
-  TextView sub=label("INSTRUMENT HUB  /  FIRE EDITION  /  V6",12,MUTED,false);
+  TextView brand=label("PARASITE_",31,GREEN,true);
+  brand.setOnLongClickListener(v->{showSystemMenu();return true;});
+  root.addView(brand);
+  TextView sub=label("ZOMBIE MODE  /  FIRE EDITION  /  V8",12,MUTED,false);
   sub.setPadding(0,0,0,dp(14));root.addView(sub);
 
   LinearLayout top=new LinearLayout(this);top.setOrientation(LinearLayout.HORIZONTAL);
@@ -91,13 +99,54 @@ public final class MainActivity extends Activity {
   },false);
   root.addView(bootButton,new LinearLayout.LayoutParams(-1,dp(47)));
   updateBootButton();
-  LinearLayout bottom=new LinearLayout(this);
-  bottom.addView(button("EXIT TO FIRE OS",this::finish,false),new LinearLayout.LayoutParams(-1,dp(46)));
-  root.addView(bottom);
-  TextView foot=label("FIRE OS REMAINS INSTALLED  /  AUTO-START IS DEVICE DEPENDENT",10,MUTED,false);
+  root.addView(button("PARASITE SYSTEM  /  SETTINGS",this::showSystemMenu,false),new LinearLayout.LayoutParams(-1,dp(46)));
+  TextView foot=label("FIRE OS INTACT  /  HOME REPLACEMENT DEPENDS ON DEVICE",10,MUTED,false);
   foot.setPadding(0,dp(7),0,0);root.addView(foot);
   setContentView(root);
   draw();
+ }
+ @Override public void onBackPressed(){
+  if(zombieMode){Toast.makeText(this,"PARASITE Home: open System Settings to return to Fire OS",Toast.LENGTH_SHORT).show();}
+  else super.onBackPressed();
+ }
+ private void showSystemMenu(){
+  final String[] choices={"Enable PARASITE home mode","Disable PARASITE home mode","Choose default Home app (Fire OS settings)","Revert to Amazon OS (instructions)","Close"};
+  new AlertDialog.Builder(this).setTitle("PARASITE SYSTEM  /  V8")
+   .setItems(choices,(dialog,which)->{
+    if(which==0){setZombie(true);openHomeSettings();}
+    else if(which==1){setZombie(false);Toast.makeText(this,"PARASITE home mode disabled",Toast.LENGTH_LONG).show();}
+    else if(which==2){openHomeSettings();}
+    else if(which==3){
+     setZombie(false);
+     new AlertDialog.Builder(this).setTitle("REVERT TO AMAZON OS")
+      .setMessage("Fire OS has not been removed. In the next screen, select the Amazon/Fire launcher as your default Home app if that option is available. You can also uninstall PARASITE from Fire OS Settings. Some Fire OS versions do not offer a Home-app chooser.")
+      .setPositiveButton("OPEN HOME SETTINGS",(d,w)->openHomeSettings())
+      .setNegativeButton("CANCEL",null).show();
+    }
+   }).setNegativeButton("DONE",null).show();
+ }
+ private void setZombie(boolean enabled){
+  zombieMode=enabled;
+  getSharedPreferences(PREFS,MODE_PRIVATE).edit().putBoolean("zombie-mode",enabled).apply();
+ }
+ private void openHomeSettings(){
+  try{startActivity(new Intent(Settings.ACTION_HOME_SETTINGS));}
+  catch(Exception e){
+   Toast.makeText(this,"Home chooser unavailable on this Fire OS; use Fire OS Settings > Apps instead",Toast.LENGTH_LONG).show();
+  }
+ }
+ private void loadCached(){
+  try{
+   String saved=getSharedPreferences(PREFS,MODE_PRIVATE).getString("catalogue-cache",null);
+   if(saved==null)return;
+   JSONObject obj=new JSONObject(saved);JSONArray list=obj.getJSONArray("units");
+   if(list.length()>32)return;
+   for(int i=0;i<list.length();i++){
+    JSONObject entry=list.getJSONObject(i);
+    String pkg=entry.getString("package"),title=entry.getString("title"),desc=entry.optString("description",""),url=entry.getString("installUrl");
+    if(pkg.matches("[a-zA-Z][a-zA-Z0-9_]*(\\.[a-zA-Z0-9_]+)+") && trustedUrl(url))units.add(new Unit(pkg,title,desc,url));
+   }
+  }catch(Exception ignored){}
  }
  private void updateBootButton(){
   if(bootButton!=null)bootButton.setText(autoBoot?"START AT BOOT  /  ON":"START AT BOOT  /  OFF");
@@ -167,14 +216,16 @@ public final class MainActivity extends Activity {
     }
     runOnUiThread(()->{
      if(isFinishing()||id!=generation)return;
-     units.clear();units.addAll(next);draw();
+     units.clear();units.addAll(next);
+     getSharedPreferences(PREFS,MODE_PRIVATE).edit().putString("catalogue-cache",obj.toString()).apply();
+     draw();
      status.setText(units.isEmpty()?"ONLINE / LIBRARY EMPTY  /  READY FOR FIRST RELEASE":
        "ONLINE / "+units.size()+" INSTRUMENT"+(units.size()==1?"":"S")+" AVAILABLE");
     });
    }catch(Exception e){
     runOnUiThread(()->{
      if(isFinishing()||id!=generation)return;
-     status.setText("OFFLINE / CANNOT CHECK FOR NEW INSTRUMENTS");
+     status.setText(units.isEmpty()?"OFFLINE / FIRST ONLINE CHECK REQUIRED":"OFFLINE / CACHED INSTRUMENT LIBRARY");
      draw();
     });
    }
