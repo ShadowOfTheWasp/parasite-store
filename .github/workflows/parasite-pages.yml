@@ -39,7 +39,7 @@ jobs:
       - name: Build Parasite Launcher
         working-directory: launcher
         run: gradle --no-daemon assembleDebug
-      - name: Build Microverse V4
+      - name: Build Microverse V5
         working-directory: microverse
         run: gradle --no-daemon assembleDebug
       - name: Build MELT 003
