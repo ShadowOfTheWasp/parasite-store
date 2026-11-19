@@ -1,0 +1,18 @@
+{
+  "schema": 1,
+  "updated": "2026-11-19",
+  "units": [
+    {
+      "package": "studio.transform.modeld",
+      "title": "MODEL D",
+      "description": "3 OSC / ANALOGUE-STYLE SYNTH",
+      "installUrl": "https://shadowofthewasp.github.io/parasite-store/model-d/"
+    },
+    {
+      "package": "studio.parasite.prophet",
+      "title": "PROPHET 5",
+      "description": "5-VOICE POLYPHONIC ANALOGUE-STYLE SYNTH",
+      "installUrl": "https://shadowofthewasp.github.io/parasite-store/prophet/"
+    }
+  ]
+}
