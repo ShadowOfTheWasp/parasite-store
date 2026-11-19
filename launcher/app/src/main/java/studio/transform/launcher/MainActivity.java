@@ -26,7 +26,6 @@ public final class MainActivity extends Activity {
                           GREEN=0xff8cfa8a, MUTED=0xff8baf90;
  private static final String STORE="https://shadowofthewasp.github.io/parasite-store";
  private static final String CATALOGUE=STORE+"/catalogue.json";
- private static final String FALLBACK_URL="https://shadowofthewasp.github.io/parasite-store/model-d/";
  private static final class Unit {
   final String id,title,description,url;
   Unit(String id,String title,String description,String url){
@@ -58,13 +57,8 @@ public final class MainActivity extends Activity {
   try{return getPackageManager().getLaunchIntentForPackage(pkg);}
   catch(Exception e){return null;}
  }
- private void addFallback(){
-  units.clear();
-  units.add(new Unit("studio.transform.modeld","MODEL D",
-    "3 OSC / ANALOGUE-STYLE SYNTH",FALLBACK_URL));
- }
  @Override public void onCreate(Bundle b){
-  super.onCreate(b);addFallback();show();updateCatalogue();
+  super.onCreate(b);show();updateCatalogue();
  }
  @Override protected void onResume(){super.onResume();if(cards!=null)updateCatalogue();}
  private void show(){
@@ -86,7 +80,7 @@ public final class MainActivity extends Activity {
   cards=new LinearLayout(this);cards.setOrientation(LinearLayout.VERTICAL);
   scroll.addView(cards);
   root.addView(scroll,new LinearLayout.LayoutParams(-1,0,1));
-  status=text("PARASITE V2 / CHECKING LIBRARY...",11,MUTED,false);
+  status=text("PARASITE V4 / CHECKING LIBRARY...",11,MUTED,false);
   status.setPadding(0,dp(5),0,dp(6));root.addView(status);
   root.addView(text("FIRE OS REMAINS INSTALLED / NO FIRMWARE MODIFICATION",10,MUTED,false));
   setContentView(root);
@@ -95,6 +89,10 @@ public final class MainActivity extends Activity {
  private void drawCards(){
   if(cards==null)return;
   cards.removeAllViews();
+  if(units.isEmpty()){
+   TextView empty=text("NO INSTRUMENTS RELEASED / FLAGSHIP IN DEVELOPMENT",15,GREEN,true);
+   empty.setPadding(dp(15),dp(28),dp(12),dp(22));cards.addView(empty);
+  }
   for(Unit item:units){
    Intent app=launchIntent(item.id);
    boolean installed=app!=null;
@@ -137,7 +135,7 @@ public final class MainActivity extends Activity {
     JSONObject root=new JSONObject(bytes.toString("UTF-8"));
     if(root.getInt("schema")!=1)throw new Exception("Unsupported catalogue schema");
     JSONArray records=root.getJSONArray("units");
-    if(records.length()>32||records.length()==0)throw new Exception("Invalid catalogue");
+    if(records.length()>32)throw new Exception("Invalid catalogue");
     ArrayList<Unit> next=new ArrayList<>();
     for(int i=0;i<records.length();i++){
      JSONObject item=records.getJSONObject(i);
@@ -152,7 +150,7 @@ public final class MainActivity extends Activity {
     runOnUiThread(()->{
      if(isFinishing()||current!=generation)return;
      units.clear();units.addAll(next);drawCards();
-     status.setText("CATALOGUE ONLINE / "+units.size()+" UNIT"+(units.size()==1?"":"S")+" AVAILABLE");
+     status.setText(units.isEmpty()?"CATALOGUE ONLINE / FLAGSHIP IN DEVELOPMENT":"CATALOGUE ONLINE / "+units.size()+" UNIT"+(units.size()==1?"":"S")+" AVAILABLE");
     });
    }catch(Exception e){
     runOnUiThread(()->{
