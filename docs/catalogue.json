@@ -7,6 +7,12 @@
       "title": "ORBIT-4",
       "description": "FOUR-RING GENERATIVE SYNTH / RHYTHM & SCRAPE",
       "installUrl": "https://shadowofthewasp.github.io/parasite-store/orbit4/"
+    },
+    {
+      "package": "studio.parasite.microverse",
+      "title": "MICROVERSE",
+      "description": "8-SLOT / 32-STEP GRANULAR AMBIENT SAMPLER",
+      "installUrl": "https://shadowofthewasp.github.io/parasite-store/microverse/"
     }
   ]
 }
