@@ -1,0 +1,446 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#080e0a">
+<title>PARASITE / TAPE FLUTE V1.0.0</title>
+<style>
+:root{color-scheme:dark;--bg:#080e0a;--panel:#142119;--line:#405546;--green:#a1edaa;--gold:#d8c18c;--text:#e3e9dd;--muted:#a3bcac}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:ui-monospace,Consolas,monospace}
+main{max-width:1000px;margin:auto;padding:16px clamp(12px,3vw,28px) 24px}
+header,.heading,.transport,.rail{display:flex;align-items:center;justify-content:space-between;gap:12px}
+header{border-bottom:1px solid var(--line);padding-bottom:10px;font-size:11px;letter-spacing:.12em;color:var(--muted)}
+header a{color:var(--green);text-decoration:none;font-weight:bold}
+h1{font-size:clamp(32px,7vw,64px);line-height:.95;letter-spacing:-.075em;margin:12px 0 7px}
+h1 span{color:var(--green)}
+.heading p{margin:0;color:var(--muted);font-size:11px;letter-spacing:.1em}
+button{border:1px solid #5f8067;background:#223428;color:var(--text);font:inherit;font-size:12px;font-weight:700;border-radius:5px;min-height:42px;padding:6px 11px;cursor:pointer;touch-action:manipulation}
+button[disabled]{opacity:.55;cursor:default}button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--green);outline-offset:3px}
+.primary{background:var(--green);color:#0c180f;white-space:nowrap}
+.deck{margin-top:14px;background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:12px}
+.transport{justify-content:flex-start;background:#0a120d;border:1px solid #304436;border-radius:6px;padding:10px 12px}
+.reel{width:42px;height:42px;flex:0 0 42px;border:2px solid #537461;border-radius:50%;position:relative;background:repeating-conic-gradient(from 15deg,#668b73 0deg 28deg,#1b2c22 28deg 120deg);animation:spin 4s linear infinite paused}
+.reel:after{content:"";position:absolute;inset:13px;border-radius:50%;background:var(--bg);border:1px solid var(--gold)}
+.running .reel{animation-play-state:running}.reel:last-child{animation-duration:3.2s}
+@keyframes spin{to{transform:rotate(1turn)}}
+.tape{flex:1;min-width:0}.tape label{display:block;color:var(--gold);font-size:11px;letter-spacing:.08em;margin-bottom:6px}
+progress{display:block;width:100%;height:7px;border:0;border-radius:2px;overflow:hidden;appearance:none;background:#2d4335;color:var(--green)}
+progress::-webkit-progress-bar{background:#2d4335}progress::-webkit-progress-value{background:var(--green)}progress::-moz-progress-bar{background:var(--green)}
+.controls{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:12px}
+.controls label{display:block;background:#18271e;border:1px solid #344c3a;border-radius:5px;padding:8px;min-width:0}
+.controls span{display:flex;justify-content:space-between;gap:4px;font-size:11px}.controls output{color:var(--green)}
+input[type=range]{display:block;width:100%;height:24px;accent-color:var(--green);margin:4px 0 0}
+.rail{margin:12px 0 8px}.octaves,.actions{display:flex;align-items:center;gap:6px}
+#octave{min-width:26px;text-align:center;font-size:12px;color:var(--gold)}
+.keyboard{position:relative;height:clamp(112px,25vh,206px);display:flex;gap:2px;touch-action:none;user-select:none;-webkit-user-select:none}
+.key{flex:1;min-width:0;background:#e4e0ca;color:#23322a;display:flex;align-items:flex-end;justify-content:center;padding:0 0 8px;border:1px solid #b5b49f;border-radius:0 0 5px 5px;font-size:10px;touch-action:none}
+.key.black{position:absolute;z-index:1;top:0;height:62%;width:4.25%;background:#14221a;color:#e3e9dd;border-color:#526858;box-shadow:0 3px 4px #0007;transform:translateX(-50%)}
+.key.active{background:var(--green);color:#0c180f;border-color:var(--green)}
+.hints{color:var(--muted);font-size:11px;line-height:1.5;margin:8px 0 0}
+@media(max-width:500px){.controls{gap:4px}.controls label{padding:5px}.controls span{font-size:10px}.key.black span{display:none}.heading{gap:4px}.deck{padding:8px}}
+@media(prefers-reduced-motion:reduce){.reel{animation:none}}
+</style>
+</head>
+<body>
+<main>
+  <header><a href="../../">PARASITE_</a><span>INSTRUMENT 004 / V1.0.0</span></header>
+  <div class="heading">
+    <div><h1>TAPE <span>FLUTE</span></h1><p>POLYPHONIC TAPE KEYBOARD</p></div>
+    <button class="primary" id="power" type="button">Enable audio</button>
+  </div>
+  <div class="deck">
+    <div class="transport" id="transport">
+      <div class="reel" aria-hidden="true"></div>
+      <div class="tape">
+        <label for="tape">Tape remaining <span id="time" aria-hidden="true">8.0 s</span></label>
+        <progress id="tape" max="8" value="8"></progress>
+      </div>
+      <div class="reel" aria-hidden="true"></div>
+    </div>
+    <div class="controls">
+      <label><span>Tone <output id="tone-value" for="tone">54%</output></span><input id="tone" type="range" min="0" max="100" value="54"></label>
+      <label><span>Wear <output id="wear-value" for="wear">35%</output></span><input id="wear" type="range" min="0" max="100" value="35"></label>
+      <label><span>Room <output id="room-value" for="room">18%</output></span><input id="room" type="range" min="0" max="100" value="18"></label>
+      <label><span>Level <output id="level-value" for="level">68%</output></span><input id="level" type="range" min="0" max="100" value="68"></label>
+    </div>
+    <div class="rail">
+      <div class="octaves" aria-label="Keyboard octave">
+        <button type="button" id="oct-down" aria-label="Octave down">−</button><output id="octave">0</output><button type="button" id="oct-up" aria-label="Octave up">+</button>
+      </div>
+      <div class="actions">
+        <button type="button" id="demo">Play demo</button>
+        <button type="button" id="full" hidden>Full screen</button>
+      </div>
+    </div>
+    <div class="keyboard" id="keyboard" role="group" aria-label="Two-octave piano keyboard"></div>
+    <p class="hints" id="status" role="status">Touch the keys to play chords. Hold a note for up to eight seconds.</p>
+  </div>
+  <p class="hints">Computer keys · A S D F G H J K L + W E T Y U O</p>
+</main>
+<script>
+'use strict';
+
+const get = id => document.getElementById(id);
+const keyboard = get('keyboard');
+const power = get('power');
+const demo = get('demo');
+const AudioEngine = window.AudioContext || window.webkitAudioContext;
+const tapeSeconds = 8;
+const controls = ['tone', 'wear', 'room', 'level'];
+const active = new Map();
+const pointers = new Set();
+const buffers = new Map();
+const keys = [];
+const mappedKeys = {a:0,w:1,s:2,e:3,d:4,f:5,t:6,g:7,y:8,h:9,u:10,j:11,k:12,o:13,l:14};
+const noteNames = ['C','C♯','D','D♯','E','F','F♯','G','G♯','A','A♯','B'];
+const demoPhrase = [[0,7,16],[2,9,17],[4,11,19],[2,9,21],[0,7,16]];
+let context, tone, master, wet, dry, wowDepth, flutterDepth, wow, flutter;
+let starting, octave = 0, demoTimers = [], demoPlaying = false;
+
+function randomGenerator(seed) {
+  return () => {
+    seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
+    return seed / 4294967296 * 2 - 1;
+  };
+}
+
+// Generate a bank of finite tape strips from a breath-excited harmonic model.
+function makeStrip(note) {
+  const rate = 24000;
+  const duration = 9.3;
+  const buffer = context.createBuffer(1, rate * duration, rate);
+  const data = buffer.getChannelData(0);
+  const frequency = 440 * Math.pow(2, (note - 69) / 12);
+  const random = randomGenerator(note);
+  const tau = 2 * Math.PI;
+  let phase = 0, slow = 0, fast = 0, drift = 0;
+  for (let i = 0; i < data.length; i++) {
+    const t = i / rate;
+    const noise = random();
+    slow += 0.09 * (noise - slow);
+    fast += 0.46 * (noise - fast);
+    drift += 0.0012 * (noise - drift);
+    const onset = Math.min(1, t / 0.105);
+    const chiff = Math.exp(-t * 15);
+    phase += tau * frequency / rate * (1 - 0.014 * chiff + 0.015 * drift
+      + 0.0011 * Math.sin(tau * (3.1 + note % 5 * 0.27) * t) * onset);
+    if (phase > tau) phase -= tau;
+    const pressure = 0.91 + 0.065 * Math.sin(tau * 0.7 * t + note)
+      + 0.025 * Math.sin(tau * 2.2 * t);
+    const flute = Math.sin(phase) + (0.21 + 0.055 * Math.sin(tau * 1.4 * t)) * Math.sin(phase * 2 + .33)
+      + (0.105 + 0.08 * chiff) * Math.sin(phase * 3 + .65)
+      + 0.048 * Math.sin(phase * 4) + 0.025 * Math.sin(phase * 5 + .8);
+    const breath = (fast - slow) * (0.34 + 0.68 * chiff) + noise * 0.015;
+    let sample = Math.sqrt(onset) * pressure * flute * 0.63 + Math.min(1, t / .018) * breath;
+    data[i] = sample / (1 + 0.45 * Math.abs(sample));
+  }
+  return buffer;
+}
+
+function makeRoom() {
+  const rate = context.sampleRate;
+  const buffer = context.createBuffer(2, Math.ceil(rate * 1.25), rate);
+  for (let channel = 0; channel < 2; channel++) {
+    const random = randomGenerator(100 + channel);
+    const data = buffer.getChannelData(channel);
+    let noise = 0;
+    for (let i = Math.round(rate * .016); i < data.length; i++) {
+      noise += .44 * (random() - noise);
+      data[i] = noise * Math.pow(1 - i / data.length, 3.7);
+    }
+  }
+  return buffer;
+}
+
+function updateControl(name) {
+  const value = get(name).value / 100;
+  get(name + '-value').value = Math.round(value * 100) + '%';
+  if (!context) return;
+  const now = context.currentTime;
+  if (name === 'tone') tone.frequency.setTargetAtTime(1150 * Math.pow(8, value), now, .025);
+  if (name === 'wear') {
+    wowDepth.gain.setTargetAtTime(2 + 27 * value, now, .025);
+    flutterDepth.gain.setTargetAtTime(1 + 6 * value, now, .025);
+  }
+  if (name === 'room') {
+    wet.gain.setTargetAtTime(value * .72, now, .025);
+    dry.gain.setTargetAtTime(1 - value * .28, now, .025);
+  }
+  if (name === 'level') master.gain.setTargetAtTime(value * .9, now, .025);
+}
+
+function initialize() {
+  context = new AudioEngine();
+  tone = context.createBiquadFilter();
+  tone.type = 'lowpass';
+  tone.Q.value = .45;
+  dry = context.createGain();
+  wet = context.createGain();
+  const reverb = context.createConvolver();
+  reverb.buffer = makeRoom();
+  const limiter = context.createDynamicsCompressor();
+  limiter.threshold.value = -12;
+  limiter.ratio.value = 8;
+  master = context.createGain();
+  tone.connect(dry).connect(limiter);
+  tone.connect(reverb).connect(wet).connect(limiter);
+  limiter.connect(master).connect(context.destination);
+  wow = context.createOscillator();
+  flutter = context.createOscillator();
+  wow.frequency.value = .61;
+  flutter.frequency.value = 7.3;
+  wowDepth = context.createGain();
+  flutterDepth = context.createGain();
+  wow.connect(wowDepth);
+  flutter.connect(flutterDepth);
+  wow.start();
+  flutter.start();
+  controls.forEach(updateControl);
+}
+
+async function enableAudio() {
+  if (starting) return starting;
+  if (context?.state === 'running') return true;
+  if (!AudioEngine) {
+    get('status').textContent = 'This browser does not support Web Audio.';
+    return false;
+  }
+  try {
+    if (!context) initialize();
+    power.textContent = 'Starting…';
+    power.disabled = true;
+    starting = context.resume().then(() => {
+      power.textContent = 'Audio on';
+      return context.state === 'running';
+    }, () => {
+      power.textContent = 'Enable audio';
+      power.disabled = false;
+      get('status').textContent = 'Audio could not start. Tap Enable audio to try again.';
+      return false;
+    });
+    return await starting;
+  } catch {
+    power.textContent = 'Enable audio';
+    power.disabled = false;
+    get('status').textContent = 'Audio could not start. Tap Enable audio to try again.';
+    return false;
+  } finally {
+    starting = null;
+  }
+}
+
+function paintKey(index) {
+  keys[index].classList.toggle('active', Array.from(active.values()).some(voice => voice.index === index));
+}
+
+function release(id, expected) {
+  const voice = active.get(id);
+  if (!voice || (expected && voice !== expected)) return;
+  active.delete(id);
+  paintKey(voice.index);
+  if (!voice.source) return;
+  const now = context.currentTime;
+  const level = voice.gain.gain;
+  if (level.cancelAndHoldAtTime) level.cancelAndHoldAtTime(now);
+  else {
+    level.cancelScheduledValues(now);
+    const age = now - voice.start;
+    const envelope = Math.max(0, Math.min(1, age / .034, (tapeSeconds - age) / .09));
+    level.setValueAtTime(.23 * envelope, now);
+  }
+  level.setTargetAtTime(0, now, .022);
+  voice.source.stop(now + .12);
+}
+
+async function play(id, index) {
+  if (active.get(id)?.index === index) return;
+  release(id);
+  if (active.size >= 10) release(active.keys().next().value);
+  const voice = {index, start: null};
+  active.set(id, voice);
+  paintKey(index);
+  if (!context || context.state !== 'running') {
+    if (!await enableAudio()) {
+      release(id, voice);
+      return;
+    }
+  }
+  if (active.get(id) !== voice) return;
+  const note = 60 + octave * 12 + index;
+  const root = Math.round(note / 3) * 3;
+  if (!buffers.has(root)) buffers.set(root, makeStrip(root));
+  // Keep only the current bank's most recently used strips resident.
+  const strip = buffers.get(root);
+  buffers.delete(root);
+  buffers.set(root, strip);
+  if (buffers.size > 12) buffers.delete(buffers.keys().next().value);
+  const source = context.createBufferSource();
+  const gain = context.createGain();
+  const now = context.currentTime;
+  source.buffer = strip;
+  source.playbackRate.value = Math.pow(2, (note - root) / 12);
+  wowDepth.connect(source.detune);
+  flutterDepth.connect(source.detune);
+  gain.gain.setValueAtTime(0, now);
+  gain.gain.linearRampToValueAtTime(.23, now + .034);
+  gain.gain.setValueAtTime(.23, now + tapeSeconds - .09);
+  gain.gain.linearRampToValueAtTime(0, now + tapeSeconds);
+  source.connect(gain).connect(tone);
+  Object.assign(voice, {source, gain, start: now});
+  source.onended = () => {
+    wowDepth.disconnect(source.detune);
+    flutterDepth.disconnect(source.detune);
+    source.disconnect();
+    gain.disconnect();
+    if (active.get(id) === voice) {
+      active.delete(id);
+      paintKey(index);
+    }
+  };
+  source.start(now);
+  source.stop(now + tapeSeconds);
+}
+
+function setOctave(value) {
+  octave = value;
+  get('octave').value = value > 0 ? '+' + value : String(value);
+  get('oct-down').disabled = value === -1;
+  get('oct-up').disabled = value === 1;
+  keys.forEach((key, index) => {
+    const name = noteNames[index % 12];
+    const number = 4 + octave + Math.floor(index / 12);
+    key.setAttribute('aria-label', name + number);
+    key.firstChild.textContent = name === 'C' ? name + number : name;
+  });
+}
+
+let whiteCount = 0;
+for (let index = 0; index < 24; index++) {
+  const key = document.createElement('button');
+  key.type = 'button';
+  key.dataset.index = index;
+  key.className = 'key';
+  key.appendChild(document.createElement('span'));
+  if (noteNames[index % 12].includes('♯')) {
+    key.classList.add('black');
+    key.style.left = (whiteCount / 14 * 100) + '%';
+  } else {
+    whiteCount++;
+  }
+  key.addEventListener('click', event => {
+    if (event.detail !== 0) return;
+    const id = 'access-' + index;
+    play(id, index);
+    const voice = active.get(id);
+    setTimeout(() => release(id, voice), 330);
+  });
+  keys.push(key);
+  keyboard.appendChild(key);
+}
+setOctave(0);
+
+function playPointer(event) {
+  const key = document.elementFromPoint(event.clientX, event.clientY)?.closest('.key');
+  const id = 'pointer-' + event.pointerId;
+  if (key && keyboard.contains(key)) play(id, Number(key.dataset.index));
+  else release(id);
+}
+keyboard.addEventListener('pointerdown', event => {
+  if (event.button !== 0) return;
+  event.preventDefault();
+  keyboard.setPointerCapture(event.pointerId);
+  pointers.add(event.pointerId);
+  playPointer(event);
+});
+keyboard.addEventListener('pointermove', event => {
+  if (pointers.has(event.pointerId)) playPointer(event);
+});
+for (const name of ['pointerup','pointercancel','lostpointercapture']) {
+  keyboard.addEventListener(name, event => {
+    pointers.delete(event.pointerId);
+    release('pointer-' + event.pointerId);
+  });
+}
+document.addEventListener('keydown', event => {
+  const key = event.key.toLowerCase();
+  if (!(key in mappedKeys) || event.ctrlKey || event.altKey || event.metaKey) return;
+  if (!event.repeat) play('key-' + key, mappedKeys[key]);
+});
+document.addEventListener('keyup', event => release('key-' + event.key.toLowerCase()));
+
+function stopDemo() {
+  demoTimers.forEach(clearTimeout);
+  demoTimers = [];
+  for (const id of active.keys()) if (id.startsWith('demo-')) release(id);
+  demoPlaying = false;
+  demo.textContent = 'Play demo';
+  demo.setAttribute('aria-pressed', 'false');
+}
+demo.setAttribute('aria-pressed', 'false');
+demo.addEventListener('click', async () => {
+  if (demoPlaying) return stopDemo();
+  demoPlaying = true;
+  demo.textContent = 'Stop demo';
+  demo.setAttribute('aria-pressed', 'true');
+  if ((!context || context.state !== 'running') && !await enableAudio()) return stopDemo();
+  if (!demoPlaying || demoTimers.length) return;
+  demoPhrase.forEach((chord, step) => {
+    chord.forEach((note, part) => {
+      const id = 'demo-' + step + '-' + part;
+      const onset = step * 990 + part * 53;
+      demoTimers.push(setTimeout(() => play(id, note), onset));
+      demoTimers.push(setTimeout(() => release(id), onset + (step === 4 ? 1490 : 790)));
+    });
+  });
+  demoTimers.push(setTimeout(stopDemo, 5650));
+});
+function releaseAll() {
+  stopDemo();
+  pointers.clear();
+  for (const id of active.keys()) release(id);
+}
+window.addEventListener('blur', releaseAll);
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) releaseAll();
+});
+power.addEventListener('click', enableAudio);
+get('oct-down').addEventListener('click', () => setOctave(octave - 1));
+get('oct-up').addEventListener('click', () => setOctave(octave + 1));
+controls.forEach(name => get(name).addEventListener('input', () => updateControl(name)));
+
+const full = get('full');
+if (document.fullscreenEnabled) {
+  full.hidden = false;
+  full.addEventListener('click', async () => {
+    try {
+      if (document.fullscreenElement) await document.exitFullscreen();
+      else await document.documentElement.requestFullscreen();
+    } catch {
+      get('status').textContent = 'Full screen is unavailable in this browser.';
+    }
+  });
+  document.addEventListener('fullscreenchange', () => {
+    full.textContent = document.fullscreenElement ? 'Exit full screen' : 'Full screen';
+  });
+}
+
+function drawTransport() {
+  let remaining = tapeSeconds, running = false;
+  for (const voice of active.values()) {
+    if (voice.start === null) continue;
+    remaining = Math.min(remaining, tapeSeconds - (context.currentTime - voice.start));
+    running = true;
+  }
+  remaining = Math.max(0, remaining);
+  get('transport').classList.toggle('running', running);
+  get('tape').value = remaining;
+  const label = remaining.toFixed(1) + ' s';
+  if (get('time').textContent !== label) get('time').textContent = label;
+  requestAnimationFrame(drawTransport);
+}
+requestAnimationFrame(drawTransport);
+</script>
+</body>
+</html>

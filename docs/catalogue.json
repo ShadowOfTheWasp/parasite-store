@@ -19,6 +19,12 @@
       "title": "MELT",
       "description": "003 / FOUR BOUNCING CHOIR VOICES / PONG TAPE ECHO",
       "installUrl": "https://shadowofthewasp.github.io/parasite-store/melt/"
+    },
+    {
+      "package": "studio.parasite.tapeflute",
+      "title": "TAPE FLUTE",
+      "description": "004 / V1.0.0 / POLYPHONIC TAPE KEYS / WEB AUDIO",
+      "installUrl": "https://shadowofthewasp.github.io/parasite-store/tape-flute/v1.0.0/"
     }
   ]
 }
