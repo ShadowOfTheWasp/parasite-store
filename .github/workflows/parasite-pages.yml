@@ -51,5 +51,7 @@ jobs:
           path: docs
       - name: Allow uploaded Pages artifact to become available
         run: sleep 18
+      - name: Give GitHub Pages time to index the uploaded artifact
+        run: sleep 20
       - id: deployment
         uses: actions/deploy-pages@v4
