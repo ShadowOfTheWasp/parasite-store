@@ -5,6 +5,7 @@ on:
     paths:
       - 'launcher/**'
       - 'microverse/**'
+      - 'melt/**'
       - 'docs/**'
       - '.github/workflows/parasite-pages.yml'
   workflow_dispatch:
@@ -41,6 +42,9 @@ jobs:
       - name: Build Microverse V3
         working-directory: microverse
         run: gradle --no-daemon assembleDebug
+      - name: Build MELT 003
+        working-directory: melt
+        run: gradle --no-daemon assembleDebug
       - name: Prepare public installer files
         run: |
           set -euo pipefail
@@ -48,6 +52,8 @@ jobs:
           cp launcher/app/build/outputs/apk/debug/app-debug.apk docs/parasite-launcher.apk
           test -s microverse/app/build/outputs/apk/debug/app-debug.apk
           cp microverse/app/build/outputs/apk/debug/app-debug.apk docs/parasite-microverse.apk
+          test -s melt/app/build/outputs/apk/debug/app-debug.apk
+          cp melt/app/build/outputs/apk/debug/app-debug.apk docs/parasite-melt.apk
           printf '{"version":8,"state":"ready","apk":"parasite-launcher.apk"}\n' > docs/release.json
           touch docs/.nojekyll
           sha256sum docs/*.apk
