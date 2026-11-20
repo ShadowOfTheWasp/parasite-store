@@ -9,12 +9,6 @@
       "installUrl": "https://shadowofthewasp.github.io/parasite-store/orbit4/"
     },
     {
-      "package": "studio.parasite.microverse",
-      "title": "MICROVERSE",
-      "description": "V5 / ORBIT STYLING / 3 CASSETTES / REVERSE TAPE LOOPS",
-      "installUrl": "https://shadowofthewasp.github.io/parasite-store/microverse/"
-    },
-    {
       "package": "studio.parasite.melt",
       "title": "MELT",
       "description": "003 / FOUR BOUNCING CHOIR VOICES / PONG TAPE ECHO",
@@ -25,24 +19,6 @@
       "title": "TAPE FLUTE",
       "description": "004 / V1.1.0 / TAPE KEYS / SPACE ECHO / PLATE REVERB",
       "installUrl": "https://shadowofthewasp.github.io/parasite-store/tape-flute/"
-    },
-    {
-      "package": "studio.parasite.twig",
-      "title": "TWIG",
-      "description": "005 / V1.0.0 / THREE OSCILLATORS / PSYCHEDELIC TAPE ECHO",
-      "installUrl": "https://shadowofthewasp.github.io/parasite-store/twig/"
-    },
-    {
-      "package": "studio.parasite.afterbeat",
-      "title": "AFTERBEAT",
-      "description": "006 / V1.0.0 / 808-STYLE DRUMS / 16-STEP A/B SEQUENCER",
-      "installUrl": "https://shadowofthewasp.github.io/parasite-store/afterbeat/"
-    },
-    {
-      "package": "studio.parasite.jasper",
-      "title": "JASPER VERSION ONE",
-      "description": "007 / V1.0.0 / LOOPING MARBLE TRACK / MUSICAL TRIGGERS",
-      "installUrl": "https://shadowofthewasp.github.io/parasite-store/jasper/"
     }
   ]
 }
