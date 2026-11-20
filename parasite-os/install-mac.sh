@@ -1,10 +1,10 @@
 #!/bin/bash
 set -euo pipefail
 ADB="$HOME/Downloads/adb-old/platform-tools/adb"
-APK="$HOME/Downloads/parasite-home-v2.apk"
-URL="https://github.com/ShadowOfTheWasp/parasite-store/releases/download/parasite-home-v2/parasite-home-v2.apk"
+APK="$HOME/Downloads/parasite-home-v3.apk"
+URL="https://github.com/ShadowOfTheWasp/parasite-store/releases/download/parasite-home-v3/parasite-home-v3.apk"
 export ADB_LIBUSB=0
-echo "=== PARASITE HOME V2 INSTALL ==="
+echo "=== PARASITE HOME V3 INSTALL ==="
 if [ ! -x "$ADB" ]; then echo "ADB missing: $ADB"; exit 1; fi
 "$ADB" start-server
 if ! "$ADB" get-state 2>/dev/null | grep -qx device; then echo "Kindle not authorised/connected. Unlock it and approve USB debugging."; exit 1; fi
