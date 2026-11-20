@@ -37,6 +37,12 @@
       "title": "AFTERBEAT",
       "description": "006 / V1.0.0 / 808-STYLE DRUMS / 16-STEP A/B SEQUENCER",
       "installUrl": "https://shadowofthewasp.github.io/parasite-store/afterbeat/"
+    },
+    {
+      "package": "studio.parasite.jasper",
+      "title": "JASPER VERSION ONE",
+      "description": "007 / V1.0.0 / LOOPING MARBLE TRACK / MUSICAL TRIGGERS",
+      "installUrl": "https://shadowofthewasp.github.io/parasite-store/jasper/"
     }
   ]
 }

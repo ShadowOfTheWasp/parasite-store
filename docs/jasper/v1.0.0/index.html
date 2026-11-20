@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#111b40"><title>JASPER / Version One</title>
+<style>
+:root{color-scheme:dark;--yellow:#ffdc49;--red:#f34e56;--blue:#4e9aff;--text:#fff4d1}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;background:#111b40;color:var(--text);font:15px system-ui,sans-serif}
+main{max-width:960px;margin:auto;padding:15px clamp(12px,3vw,30px) 25px}
+header,.top,.transport{display:flex;align-items:center;justify-content:space-between;gap:8px}
+header{border-bottom:1px solid #465881;padding-bottom:10px;font:11px ui-monospace,monospace}
+a{color:var(--yellow)}h1{font-size:clamp(48px,10vw,90px);line-height:.9;letter-spacing:-.075em;margin:17px 0 4px;color:var(--yellow)}
+.subtitle{margin:0;color:#a9cafa}.transport{justify-content:start}
+button,select{min-height:42px;border:1px solid #6383ae;border-radius:7px;background:#1e3664;color:var(--text);font:700 13px system-ui,sans-serif;padding:5px 12px;cursor:pointer;touch-action:manipulation}
+.primary{background:var(--yellow);border-color:var(--yellow);color:#122247}.danger{color:#ff9ba0}
+button:disabled{opacity:.5}.stage{position:relative;margin:15px 0 8px;background:#152650;border:1px solid #3a5687;border-radius:18px;overflow:hidden}
+canvas{width:100%;height:clamp(250px,45vh,410px);display:block;touch-action:none}
+#markers{position:absolute;inset:0;pointer-events:none}#markers button{position:absolute;pointer-events:auto;transform:translate(-50%,-50%);border-radius:50%;height:36px;min-height:36px;width:36px;padding:0;font-size:11px;background:var(--red);border:2px solid #ffb3a9;color:white;touch-action:none}
+#markers button.selected{border-color:var(--yellow);box-shadow:0 0 0 3px #ffdc4933}#markers button.flash{background:var(--yellow);color:#10204b}
+.rack{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+label{display:block;font-size:12px;background:#1b3159;border-radius:8px;padding:8px;min-width:0}
+output{float:right;color:var(--yellow)}input{width:100%;accent-color:var(--yellow);min-height:25px;margin:3px 0 0}select{width:100%;min-height:30px;padding:2px}
+.detail{border-top:1px solid #465881;margin-top:14px;padding-top:9px}.detail h2{font-size:16px;margin:0 0 8px}
+#status{font-size:12px;color:#bbd6f8;margin:9px 0;line-height:1.5}#remove{margin-top:9px}
+:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
+@media(max-width:560px){.top{align-items:start}.transport{flex-direction:column;margin-top:14px}.rack{grid-template-columns:repeat(2,minmax(0,1fr))}canvas{height:285px}button{padding:5px 9px}}
+</style></head><body><main>
+<header><a id="hub" href="../../">PARASITE_</a><span>INSTRUMENT 007 / V1.0.0</span></header>
+<div class="top"><div><h1>JASPER</h1><p class="subtitle">Version One · Marble music</p></div>
+<div class="transport"><button id="play" class="primary" type="button">Roll marble</button><button id="add" type="button">Add trigger</button></div></div>
+<div class="stage"><canvas id="track" aria-label="Looping marble track. Tap near the track to add a trigger."></canvas><div id="markers" role="group" aria-label="Musical triggers"></div></div>
+<p id="status" role="status">Tap the track to add a trigger. Drag triggers along the rail. Tap Roll marble to play.</p>
+<div class="rack">
+<label>Loop time <output id="speed-out"></output><input id="speed" type="range" min="3" max="20" value="8"></label>
+<label>Echo <output id="echo-out"></output><input id="echo" type="range" min="0" max="85" value="28"></label>
+<label>Master <output id="volume-out"></output><input id="volume" type="range" min="0" max="100" value="55"></label>
+<label>Scale <select id="scale"><option value="0">C major</option><option value="2">D major</option><option value="5">F major</option><option value="7">G major</option></select></label>
+</div>
+<section class="detail" aria-labelledby="trigger-title"><h2 id="trigger-title"></h2>
+<div class="rack"><label>Note <select id="note"></select></label>
+<label>Oscillator <select id="wave"><option>sine</option><option>triangle</option><option>sawtooth</option><option>square</option></select></label>
+<label>Decay <output id="decay-out"></output><input id="decay" type="range" min="8" max="150" value="48"></label>
+<label>Level <output id="level-out"></output><input id="level" type="range" min="0" max="100" value="72"></label></div>
+<button id="remove" class="danger" type="button">Remove selected trigger</button></section>
+</main><script src="./jasper.js"></script></body></html>

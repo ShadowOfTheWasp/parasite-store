@@ -8,6 +8,7 @@ on:
       - 'melt/**'
       - 'tapeflute/**'
       - 'twig/**'
+      - 'jasper/**'
       - 'afterbeat/**'
       - 'docs/**'
       - '.github/workflows/parasite-pages.yml'
@@ -57,6 +58,9 @@ jobs:
       - name: Build AFTERBEAT v1.0.0
         working-directory: afterbeat
         run: gradle --no-daemon assembleDebug
+      - name: Build JASPER v1.0.0
+        working-directory: jasper
+        run: gradle --no-daemon assembleDebug
       - name: Prepare public installer files
         run: |
           set -euo pipefail
@@ -79,6 +83,11 @@ jobs:
           cp afterbeat/app/build/outputs/apk/debug/app-debug.apk docs/parasite-afterbeat-v1.0.0.apk
           for file in index.html panel.css panel.js drums.js; do
             unzip -p docs/parasite-afterbeat-v1.0.0.apk "assets/$file" | cmp - "docs/afterbeat/v1.0.0/$file"
+          done
+          test -s jasper/app/build/outputs/apk/debug/app-debug.apk
+          cp jasper/app/build/outputs/apk/debug/app-debug.apk docs/parasite-jasper-v1.0.0.apk
+          for file in index.html jasper.js; do
+            unzip -p docs/parasite-jasper-v1.0.0.apk "assets/$file" | cmp - "docs/jasper/v1.0.0/$file"
           done
           touch docs/.nojekyll
           sha256sum docs/*.apk
