@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0c100d">
+<meta name="apple-mobile-web-app-title" content="Hub Remote">
+<link rel="apple-touch-icon" href="/icon-180.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="stylesheet" href="/style.css">
+<script src="/app.js" defer></script>
+<title>Parasite / Hub Remote</title>
+</head><body>
+<main>
+<header><div><a class="brand" href="/">PARASITE<span>_</span></a><span class="product">Hub Remote</span></div><button id="lock" type="button" class="quiet" hidden>Lock</button></header>
+<section id="setup" hidden>
+<h1>Design your<br>next instrument<span>.</span></h1>
+<p class="intro">Your private chat for Parasite instrument requests.</p>
+<form id="unlock"><label for="code">Creator access code</label>
+<input id="code" required type="password" autocomplete="current-password" autocapitalize="characters" maxlength="90">
+<button class="primary" type="submit">Open Hub Remote</button></form>
+</section>
+<div id="workspace" hidden>
+<nav class="toolbar" aria-label="Instrument requests"><button id="new" type="button">+ New instrument</button><button id="history-toggle" type="button" aria-expanded="false">History</button><button id="refresh" type="button" class="quiet">Refresh</button></nav>
+<section id="history-panel" hidden aria-label="Request history"><h2>Your requests</h2><div id="history"></div></section>
+<div id="conversation" aria-label="Instrument conversation" aria-live="polite"></div>
+<form id="brief-form" class="composer">
+<div id="followup" hidden><span id="followup-text"></span><button id="cancel-followup" class="quiet" type="button">New request</button></div>
+<label class="sr-only" for="brief">Describe your instrument or revision</label>
+<textarea id="brief" rows="3" minlength="10" maxlength="4000" required placeholder="Describe your next Parasite instrument…"></textarea>
+<div class="composer-bottom"><output id="count" for="brief">0 / 4,000</output><button id="submit" class="primary" type="submit">Send to build ↑</button></div>
+<p id="cadence">Requests are checked about once an hour. Build progress appears here.</p>
+</form>
+</div>
+<p id="status" role="status"></p>
+<footer><a href="https://shadowofthewasp.github.io/parasite-store/">Infect Your Kindle ↗</a><button id="install-help" class="quiet" type="button">Keep on my phone</button></footer>
+<p id="install-note" hidden>On iPhone, open this page in Safari, tap Share, then Add to Home Screen. Use your keyboard’s microphone to dictate a request.</p>
+</main>
+</body></html>
