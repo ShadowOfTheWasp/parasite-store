@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b100e">
+<title>Parasite / Members Hub</title>
+<link rel="stylesheet" href="./style.css">
+<script src="./app.js" defer></script>
+</head>
+<body>
+<main>
+  <header>
+    <a href="./" class="brand">PARASITE<span>_</span></a>
+    <a class="existing" href="https://shadowofthewasp.github.io/parasite-store/">Existing Fire Hub</a>
+  </header>
+  <section class="hero">
+    <div>
+      <h1>Members<br><em>Hub.</em></h1>
+      <p>Discover and download member instruments directly on your Fire tablet over Wi‑Fi.</p>
+    </div>
+    <section id="membership" class="card" aria-label="Membership">
+      <p id="mode" class="status-label" hidden></p>
+      <h2 id="state-title">Parasite Membership</h2>
+      <div id="offer"><span class="price">£4.99</span><span class="interval"> / month</span></div>
+      <p id="state-detail">Billed monthly. Manage or cancel your subscription from this hub.</p>
+      <form id="email-form" hidden>
+        <label for="email">Email address</label>
+        <div class="row"><input id="email" name="email" type="email" autocomplete="email" required>
+        <button class="primary" type="submit">Send code</button></div>
+      </form>
+      <form id="code-form" hidden>
+        <label for="code">Email sign-in code</label>
+        <div class="row"><input id="code" name="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6,10}" required>
+        <button class="primary" type="submit">Sign in</button></div>
+        <button id="change-email" class="plain" type="button">Use a different email</button>
+      </form>
+      <div class="buttons">
+        <button id="preview" class="primary" hidden>Try preview</button>
+        <button id="checkout" class="primary" hidden>Subscribe</button>
+        <button id="billing" hidden>Manage billing</button>
+        <button id="signout" class="plain" hidden>Sign out</button>
+      </div>
+      <p id="notice" role="status"></p>
+    </section>
+  </section>
+  <section id="library" hidden>
+    <h2>Member instruments</h2>
+    <div id="releases"></div>
+  </section>
+</main>
+</body>
+</html>

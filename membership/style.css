@@ -1,0 +1,31 @@
+:root{color-scheme:dark;--ink:#eef4eb;--muted:#adbdaf;--line:#405347;--accent:#aeefaa;--panel:#18251d}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:#0b100e;color:var(--ink);font:16px/1.45 system-ui,sans-serif}
+main{max-width:1080px;padding:0 clamp(17px,5vw,60px) 50px;margin:auto}
+header{display:flex;align-items:center;justify-content:space-between;padding:20px 0;border-bottom:1px solid var(--line);gap:16px}
+a{color:var(--accent)}.brand{font:900 21px ui-monospace,monospace;letter-spacing:.12em;text-decoration:none;color:var(--ink)}.brand span{color:var(--accent)}
+.existing{font-size:13px}
+.hero{display:grid;grid-template-columns:1fr minmax(320px,1fr);align-items:center;gap:30px;padding:clamp(28px,7vw,90px) 0 30px}
+h1{font-size:clamp(63px,11vw,128px);letter-spacing:-.09em;line-height:.82;margin:0 0 24px}h1 em{color:var(--accent);font-style:normal}
+h2{margin:0;font-size:22px}
+p{color:var(--muted);max-width:37ch;margin:12px 0}
+.card{border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:clamp(15px,3vw,30px)}
+.status-label{font:700 12px ui-monospace,monospace;letter-spacing:.1em;color:#e5c58a;margin:0 0 12px}
+.price{font-weight:850;font-size:38px;letter-spacing:-.055em;color:var(--accent)}
+.interval{color:var(--muted)}
+label{display:block;font-size:14px;margin-bottom:5px}
+.row,.buttons{display:flex;gap:8px;flex-wrap:wrap}
+form,.buttons{margin-top:16px}
+input,button{min-height:44px;font:inherit;border:1px solid #61776a;border-radius:5px}
+input{background:#0c1510;color:var(--ink);padding:0 8px;flex:1 1 130px;min-width:0}
+button{cursor:pointer;padding:7px 13px;background:#213329;color:var(--ink);font-weight:700}
+button.primary{background:var(--accent);color:#0d1a11;border-color:var(--accent)}
+button.plain{border-color:transparent;background:transparent;color:var(--accent);text-decoration:underline;padding-left:4px}
+button:disabled{opacity:.6;cursor:default}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+#notice{color:#e5c58a;margin-bottom:0}
+#notice:empty{display:none}
+#releases{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:12px}
+.release button{margin-top:12px}
+@media(max-width:700px){.hero{grid-template-columns:1fr;gap:18px}}
