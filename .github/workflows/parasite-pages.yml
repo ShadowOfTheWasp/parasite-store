@@ -8,6 +8,7 @@ on:
       - 'melt/**'
       - 'tapeflute/**'
       - 'twig/**'
+      - 'afterbeat/**'
       - 'docs/**'
       - '.github/workflows/parasite-pages.yml'
   workflow_dispatch:
@@ -53,6 +54,9 @@ jobs:
       - name: Build TWIG v1.0.0
         working-directory: twig
         run: gradle --no-daemon assembleDebug
+      - name: Build AFTERBEAT v1.0.0
+        working-directory: afterbeat
+        run: gradle --no-daemon assembleDebug
       - name: Prepare public installer files
         run: |
           set -euo pipefail
@@ -71,6 +75,11 @@ jobs:
           cp twig/app/build/outputs/apk/debug/app-debug.apk docs/parasite-twig-v1.0.0.apk
           unzip -p docs/parasite-twig-v1.0.0.apk assets/index.html | cmp - docs/twig/v1.0.0/index.html
           unzip -p docs/parasite-twig-v1.0.0.apk assets/twig.js | cmp - docs/twig/v1.0.0/twig.js
+          test -s afterbeat/app/build/outputs/apk/debug/app-debug.apk
+          cp afterbeat/app/build/outputs/apk/debug/app-debug.apk docs/parasite-afterbeat-v1.0.0.apk
+          for file in index.html panel.css panel.js drums.js; do
+            unzip -p docs/parasite-afterbeat-v1.0.0.apk "assets/$file" | cmp - "docs/afterbeat/v1.0.0/$file"
+          done
           touch docs/.nojekyll
           sha256sum docs/*.apk
       - uses: actions/configure-pages@v5

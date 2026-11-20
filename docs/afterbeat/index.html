@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#080e0a">
+<title>PARASITE / Download Afterbeat</title>
+<style>
+:root{color-scheme:dark}*{box-sizing:border-box}
+body{margin:0;background:#080e0a;color:#e3e9dd;font:15px/1.6 ui-monospace,Consolas,monospace}
+main{max-width:720px;margin:0 auto;padding:20px clamp(16px,5vw,38px)}
+header{display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid #405546;padding-bottom:12px;color:#a3bcac;font-size:11px;letter-spacing:.1em}
+a{color:#a1edaa}
+h1{font-size:clamp(40px,10vw,70px);line-height:1;margin:32px 0 10px;letter-spacing:-.075em}
+h1 span{color:#a1edaa}
+p{color:#a3bcac}
+section{border:1px solid #405546;border-radius:8px;background:#142119;padding:20px;margin-top:20px}
+button,.download{display:block;text-align:center;padding:14px 9px;border-radius:5px;font-weight:bold;text-decoration:none}
+.download{color:#0c180f;background:#a1edaa}
+.download[aria-disabled="true"]{color:#a3bcac;background:#26362b;pointer-events:none}
+#status{font-size:13px;min-height:22px}
+</style>
+</head>
+<body>
+<main>
+<header><a href="../">PARASITE_</a><span>INSTRUMENT 006 / V1.0.0</span></header>
+<h1>AFTER<span>BEAT</span></h1>
+<p>808-style synthesized drums and a 16-step sequencer with A/B patterns.</p>
+<section aria-label="Install on Fire">
+<a id="download" class="download" aria-disabled="true">Checking Android download…</a>
+<p id="status" role="status"></p>
+<p>Open the downloaded APK in Silk and confirm installation. Return to Parasite and select <strong>Open</strong>. Afterbeat plays offline after installation.</p>
+<a href="./v1.0.0/">Play in your browser</a>
+</section>
+</main>
+<script>
+'use strict';
+const path = '../parasite-afterbeat-v1.0.0.apk';
+const download = document.getElementById('download');
+const status = document.getElementById('status');
+fetch(path, {method:'HEAD', cache:'no-store'}).then(response => {
+  if (!response.ok) throw new Error('Download unavailable');
+  download.href = path;
+  download.removeAttribute('aria-disabled');
+  download.textContent = 'Download APK · V1.0.0';
+  status.textContent = 'Ready for Amazon Fire and compatible Android tablets.';
+}).catch(() => {
+  download.textContent = 'Android download unavailable';
+  status.textContent = 'Try refreshing this page. The browser instrument is available below.';
+});
+</script>
+</body>
+</html>

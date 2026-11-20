@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#121b20">
+<title>AFTERBEAT / PARASITE</title>
+<link rel="stylesheet" href="./panel.css">
+<script src="./drums.js" defer></script>
+<script src="./panel.js" defer></script>
+</head>
+<body><main>
+<header><a id="hub" href="../../">PARASITE_</a><span>INSTRUMENT 006 / V1.0.0</span></header>
+<div class="title"><div><h1>AFTER<span>BEAT</span></h1><p>808-style rhythm machine</p></div><button class="primary" type="button" id="transport">Play</button></div>
+<div class="rack">
+ <label>Tempo <output id="bpm-out"></output><input type="range" id="bpm" min="40" max="240"></label>
+ <label>Swing <output id="swing-out"></output><input type="range" id="swing" min="0" max="50"></label>
+ <label>Accent <output id="accent-out"></output><input type="range" id="accent" min="0" max="65"></label>
+ <label>Master <output id="volume-out"></output><input type="range" id="volume" min="0" max="100"></label>
+</div>
+<div class="pattern">
+ <div role="group" aria-label="Pattern to edit"><button type="button" id="bank-a" aria-pressed="true">A</button><button type="button" id="bank-b" aria-pressed="false">B</button><button type="button" id="chain" aria-pressed="false">A → B</button></div>
+ <p id="playing" aria-hidden="true"></p>
+ <div><button type="button" id="demo">Load demo</button><button type="button" id="clear">Clear</button></div>
+</div>
+<div class="editor" aria-label="Step sequencer"><div id="grid"></div></div>
+<section class="detail" aria-labelledby="voice-name"><h2 id="voice-name"></h2>
+ <div class="rack voice-settings">
+  <label>Level <output id="level-out"></output><input type="range" id="level" min="0" max="100"></label>
+  <label>Tune <output id="tune-out"></output><input type="range" id="tune" min="-12" max="12"></label>
+  <label>Decay <output id="decay-out"></output><input type="range" id="decay" min="0" max="100"></label>
+  <label>Tone <output id="tone-out"></output><input type="range" id="tone" min="0" max="100"></label>
+  <label id="snappy-control" hidden>Snappy <output id="snappy-out"></output><input type="range" id="snappy" min="0" max="100"></label>
+  <label id="alternate-control" hidden>Voice <select id="alternate"></select></label>
+ </div>
+</section>
+<p id="status" role="status">Tap steps to program. Tap a drum name to hear it and adjust its sound.</p>
+</main></body></html>

@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#11121a">
+<title>MELT / PARASITE</title>
+<style>
+:root{color-scheme:dark;--edge:#49435c;--muted:#c8bfd4;--lime:#d8ef82}
+*{box-sizing:border-box}
+body{margin:0;background:#11121a;color:#eee6d8;font:15px ui-monospace,monospace}
+main{max-width:775px;margin:auto;padding:14px clamp(12px,4vw,25px) 28px}
+header,.title,.lane{display:flex;justify-content:space-between;align-items:center;gap:8px}
+header{font-size:11px;color:var(--muted);padding-bottom:12px;border-bottom:1px solid var(--edge)}
+a{color:var(--lime)}h1{margin:14px 0 8px;font-size:clamp(58px,17vw,98px);line-height:.82;letter-spacing:-.105em;color:#f4a4c8}
+p{color:var(--muted);font-size:12px;line-height:1.5;margin:8px 0}
+button{min-height:42px;border:1px solid #727a55;border-radius:5px;color:var(--lime);background:#272c28;font:700 12px ui-monospace,monospace;padding:4px 8px;touch-action:manipulation;cursor:pointer}
+#play{background:var(--lime);color:#192015}.deck{margin-top:12px;border:1px solid var(--edge);border-radius:8px;background:#222436;padding:8px}
+.lane{color:#f2a8cb;padding:5px 2px;border-bottom:1px solid var(--edge)}.lane:nth-child(2){color:#8adfdb}.lane:nth-child(3){color:#dfc28d}.lane:nth-child(4){color:#baa9ef;border:0}
+.track{flex:1;height:48px;position:relative;touch-action:none;min-width:70px;margin:0 6px}
+.track:before{content:"";position:absolute;top:50%;width:100%;height:1px;background:#534e65}
+.ball{position:absolute;left:0;top:50%;border-radius:50%;height:var(--size,13px);width:var(--size,13px);transform:translate(-50%,-50%);background:currentColor;box-shadow:0 0 10px currentColor;pointer-events:none}
+.wall{position:absolute;top:16%;bottom:16%;width:4px;border-radius:2px;background:currentColor;pointer-events:none}.lane-controls{display:flex;gap:6px}
+label{font-size:11px;display:block}.lane-controls label{width:clamp(42px,12vw,105px)}input{width:100%;display:block;accent-color:currentColor;min-height:27px;margin:0}
+.effects{display:grid;grid-template-columns:repeat(auto-fit,minmax(91px,1fr));gap:7px;margin-top:10px}
+.effects label{background:#1d2230;padding:5px;color:var(--lime)}.effects output{float:right;color:#eee6d8}
+:focus-visible{outline:2px solid var(--lime);outline-offset:2px}
+</style></head><body><main>
+<header><a href="../../../">PARASITE_</a><span>INSTRUMENT 003 / WEB 1.0.0</span></header>
+<div class="title"><h1>MELT_</h1><div><button type="button" id="play">Dive in</button> <button type="button" id="reset">Reset</button></div></div>
+<p>Four bouncing choir voices. Drag the walls to change how often each one sounds.</p>
+<div id="lanes" class="deck"></div><div id="effects" class="effects"></div>
+<p id="status" role="status">Tap Dive in to start.</p>
+</main><script src="./melt.js"></script></body></html>
