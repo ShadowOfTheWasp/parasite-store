@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updated": "2026-11-19",
+  "updated": "2026-11-20",
   "units": [
     {
       "package": "studio.parasite.orbit4",
@@ -25,6 +25,12 @@
       "title": "TAPE FLUTE",
       "description": "004 / V1.1.0 / TAPE KEYS / SPACE ECHO / PLATE REVERB",
       "installUrl": "https://shadowofthewasp.github.io/parasite-store/tape-flute/"
+    },
+    {
+      "package": "studio.parasite.twig",
+      "title": "TWIG",
+      "description": "005 / V1.0.0 / THREE OSCILLATORS / PSYCHEDELIC TAPE ECHO",
+      "installUrl": "https://shadowofthewasp.github.io/parasite-store/twig/"
     }
   ]
 }

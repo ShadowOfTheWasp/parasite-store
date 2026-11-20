@@ -1,0 +1,16 @@
+plugins { id 'com.android.application' }
+
+android {
+ namespace 'studio.parasite.twig'
+ compileSdk 35
+ defaultConfig {
+  applicationId 'studio.parasite.twig'
+  minSdk 23
+  targetSdk 28
+  versionCode 100
+  versionName '1.0.0'
+ }
+ sourceSets {
+  main.assets.srcDirs = ['../../docs/twig/v1.0.0']
+ }
+}

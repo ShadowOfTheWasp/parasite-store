@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0a100b">
+<title>PARASITE / TWIG V1.0.0</title>
+<style>
+:root{color-scheme:dark;--paper:#ebefdf;--green:#c5f181;--quiet:#a6bb9e;--edge:#3d5743}
+*{box-sizing:border-box}body{margin:0;background:#0a100b;color:var(--paper);font:16px system-ui,sans-serif}
+main{max-width:1020px;margin:auto;padding:14px clamp(12px,4vw,40px) 25px}
+header{display:flex;justify-content:space-between;border-bottom:1px solid var(--edge);padding:4px 0 12px;color:var(--quiet)}
+header,small,label,button,select,a{font-family:ui-monospace,Consolas,monospace}
+a{color:var(--green)}.hero{display:flex;justify-content:space-between;align-items:end;gap:12px;margin:20px 0}
+h1{font-size:clamp(55px,12vw,104px);line-height:.8;letter-spacing:-.10em;margin:0}h1 span{color:var(--green)}
+p{margin:10px 0 0;color:var(--quiet)}.transport{display:flex;gap:8px;flex-wrap:wrap;justify-content:end}
+button,select{min-height:42px;border-radius:5px;border:1px solid #56745c;background:#203228;color:var(--paper);font-size:13px;font-weight:700;padding:6px 9px}
+button{cursor:pointer;touch-action:manipulation}button.primary{color:#10200c;background:var(--green);border-color:var(--green)}
+:focus-visible{outline:2px solid var(--green);outline-offset:3px}
+#voices{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.voice{border:1px solid var(--edge);border-radius:10px;padding:12px;background:#111e15;min-width:0;--accent:#c5f181}
+.voice:nth-child(2){--accent:#f3bc85}.voice:nth-child(3){--accent:#aeb8fc}
+.voice-head{display:flex;align-items:center;justify-content:space-between;gap:6px}.voice-head button{color:var(--accent)}
+.voice h2{font:800 16px ui-monospace,monospace;margin:0}.voice button[aria-pressed=false]{opacity:.62}
+.trace{position:relative;height:40px;border-bottom:1px solid var(--edge);overflow:hidden;margin-bottom:8px}
+.trace i{position:absolute;top:17px;left:0;width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 12px var(--accent);animation:pass var(--speed) linear infinite paused}
+.playing .trace i{animation-play-state:running}
+@keyframes pass{0%{left:0;opacity:.9}100%{left:98%;opacity:.12}}
+@media(prefers-reduced-motion:reduce){.trace i{animation:none}}
+.controls{display:grid;gap:7px;grid-template-columns:1fr 1fr}.controls label{display:grid;gap:3px;min-width:0;padding:6px;background:#17281d;border-radius:4px}
+.controls select{width:100%;min-height:36px}.controls span{display:flex;justify-content:space-between;gap:4px;font-size:11px}
+output{color:var(--accent,var(--green));white-space:nowrap}input[type=range]{margin:1px 0;width:100%;min-height:24px;accent-color:var(--accent,var(--green))}
+.master{display:grid;grid-template-columns:minmax(150px,280px) 1fr;gap:16px;align-items:center;margin:14px 0}
+.master label{font-size:12px}.master p{font-size:12px;margin:0}
+@media(max-width:640px){#voices{grid-template-columns:1fr}.controls{grid-template-columns:repeat(3,minmax(0,1fr))}.hero{align-items:start}.master{grid-template-columns:1fr;gap:6px}}
+@media(max-width:360px){.controls{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<main>
+<header><a id="hub" href="../../">PARASITE_</a><small>INSTRUMENT 005 / V1.0.0</small></header>
+<section class="hero">
+<div><h1>TWIG<span>.</span></h1><p>Three oscillators. Three echoes.</p></div>
+<div class="transport"><button id="start" class="primary" type="button">Start sound</button><button id="shuffle" type="button">Mutate</button></div>
+</section>
+<div class="master"><label for="volume">Master level <output id="volume-value">35%</output><input id="volume" type="range" min="0" max="100" value="35"></label>
+<p id="status" role="status">Shape each voice or tap Mutate for a new sound.</p></div>
+<div id="voices"></div>
+</main>
+<script src="./twig.js"></script>
+</body>
+</html>
