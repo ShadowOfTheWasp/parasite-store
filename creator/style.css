@@ -1,0 +1,33 @@
+:root{color-scheme:dark;--bg:#0c100d;--surface:#141b16;--line:#344438;--green:#b9ef8d;--ink:#eef4eb;--muted:#a6b5a8;--warn:#edcd9c}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.4 system-ui,sans-serif}
+main{max-width:610px;min-height:100svh;margin:0 auto;padding:max(18px,env(safe-area-inset-top)) max(19px,env(safe-area-inset-right)) max(24px,env(safe-area-inset-bottom)) max(19px,env(safe-area-inset-left))}
+header,.requests-head,.draft-line{display:flex;justify-content:space-between;align-items:center;gap:10px}
+header{min-height:53px;border-bottom:1px solid var(--line)}
+header strong{font:800 19px ui-monospace,monospace;letter-spacing:.12em}
+h1 span,header strong span{color:var(--green)}
+h1{margin:clamp(27px,6vw,53px) 0 10px;font-size:clamp(53px,12vw,86px);line-height:.95;letter-spacing:-.078em}
+.intro{margin:0 0 27px;color:var(--muted);max-width:32ch}
+label{display:block;font-weight:650;margin-bottom:8px}
+input,textarea,button{font:inherit}
+input,textarea{width:100%;font-size:16px;border:1px solid var(--line);border-radius:10px;padding:13px;background:var(--surface);color:var(--ink)}
+textarea{display:block;min-height:155px;resize:vertical}
+textarea::placeholder{color:#8c9c8e}
+button{min-height:44px;border:1px solid transparent;border-radius:8px;cursor:pointer;font-weight:750}
+button:disabled{opacity:.55;cursor:default}
+:focus-visible{outline:2px solid var(--green);outline-offset:3px}
+.primary{margin-top:12px;width:100%;padding:12px;background:var(--green);color:#111b10}
+.quiet{padding:0 8px;background:transparent;color:var(--green)}
+.draft-line{margin-top:7px;color:var(--muted);font-size:12px}
+.requests{margin-top:26px;border-top:1px solid var(--line)}
+h2{font-size:17px}
+#history article{padding:13px;background:var(--surface);border:1px solid var(--line);border-radius:8px;margin-bottom:8px}
+article summary{overflow-wrap:anywhere;cursor:pointer}
+article p{white-space:pre-wrap;overflow-wrap:anywhere;color:var(--muted);margin:.6em 0}
+.meta,.empty{color:var(--muted);font-size:13px}
+.meta{display:block;margin-top:5px}
+#status{color:var(--warn);margin:12px 0}
+#status:empty{display:none}
+footer{margin:21px 0;font-size:13px}
+a{color:var(--green)}
