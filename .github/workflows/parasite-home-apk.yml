@@ -29,9 +29,9 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          cp parasite-os/app/build/outputs/apk/debug/app-debug.apk parasite-home-v1.apk
-          if gh release view parasite-home-v1 >/dev/null 2>&1; then
-            gh release upload parasite-home-v1 parasite-home-v1.apk --clobber
+          cp parasite-os/app/build/outputs/apk/debug/app-debug.apk parasite-home-v2.apk
+          if gh release view parasite-home-v2 >/dev/null 2>&1; then
+            gh release upload parasite-home-v2 parasite-home-v2.apk --clobber
           else
-            gh release create parasite-home-v1 parasite-home-v1.apk --title "Parasite Home V1" --notes "Experimental reversible Fire OS home application. Amazon firmware remains installed."
+            gh release create parasite-home-v2 parasite-home-v2.apk --title "Parasite Home V2" --notes "Experimental reversible Fire OS home application. Amazon firmware remains installed."
           fi
