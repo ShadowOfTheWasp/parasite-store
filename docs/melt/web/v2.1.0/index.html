@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#080d0b"><title>MELT / 2.1 — PARASITE</title>
+<meta name="theme-color" content="#080d0b"><title>BOUNCE / 3.0 — PARASITE</title>
 <style>
 :root{color-scheme:dark;--bg:#090e0d;--panel:#13201c;--line:#365047;--ink:#edf1df;--muted:#a2b4a6;--lime:#c5df9e;--pink:#edb9cc;--cyan:#a7d9ce;--gold:#dfcfa5;--violet:#c3b8df}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",sans-serif}body{overflow-x:hidden}button,select,input{font:inherit;touch-action:manipulation}button{cursor:pointer}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
@@ -11,26 +11,26 @@ main{width:min(1180px,100%);margin:auto;padding:12px 18px 22px;background:radial
 @media(min-width:1000px) and (max-height:760px){main{padding-top:7px}.title{margin:10px 0}.title h1{font-size:38px}canvas{height:218px}.knob{padding-top:7px}.dial{width:32px;height:32px;margin-top:6px}.dial:after{left:13px;height:10px}.workbench{gap:9px}.voice{padding-top:7px}.voice label{margin-top:5px}}
 @media(max-width:760px){main{padding:10px}.workbench{grid-template-columns:1fr}.voice-panel{grid-column:auto}.controls{grid-template-columns:repeat(3,minmax(0,1fr))}.knob{padding:9px}.choir{grid-template-columns:repeat(2,minmax(0,1fr))}.status{margin-left:0}.title p{font-size:9px}canvas{height:240px}}@media(max-width:380px){.title h1{font-size:40px}.title{gap:12px}.presets{grid-template-columns:repeat(2,minmax(0,1fr))}.bar small{font-size:8px}.transport{gap:5px}.play{min-width:170px}.secondary{padding:10px}.voice{padding:8px}.eyebrow{font-size:8px;letter-spacing:1px}}
 </style></head><body><main>
-<header><span class="brand">parasite_</span><span class="eyebrow">003 / HARMONIC CHAMBER / V2.1</span></header>
-<section class="title"><h1>MELT<span>.</span></h1><p>FOUR VOICES IN CONTINUOUS MOTION<br>HARMONIC BLOOM / MAGNETIC MEMORY</p></section>
+<header><span class="brand">parasite_</span><span class="eyebrow">003 / BOUNCE / V3.0</span></header>
+<section class="title"><h1>BOUNCE<span>.</span></h1><p>FOUR VOICES IN CONTINUOUS MOTION<br>HARMONIC BLOOM / MAGNETIC MEMORY</p></section>
 <div class="transport"><button class="play" id="play">▶ WAKE THE CHAMBER</button><button class="secondary" id="regen">✧ RESEED</button><button class="secondary" id="quiet">CLEAR TAILS</button><span class="status" role="status"><i class="pulse" id="pulse"></i><span id="state">AUDIO ASLEEP</span></span></div>
 <div class="workbench"><section class="chamber-panel"><div class="bar"><h2>01 / THE CHAMBER</h2><small>DRAG THE FOUR WALLS</small></div><div class="stage"><canvas id="scene" aria-label="Four bouncing musical balls. Drag walls or use each voice wall slider below."></canvas><div class="stage-hint">COLLISION → HARMONY → ECHO</div></div><div class="presets" id="presets" aria-label="Sound worlds"></div></section>
 <section class="effects-panel"><div class="bar"><h2>02 / ATMOSPHERE</h2><small>SIX INTERCONNECTED COLOURS</small></div><div class="controls" id="global"></div><p class="effect-note">BLOOM / TUNED PARTIALS · SPACE / DIFFUSE TAIL<br>ECHO / TAPE MEMORY · DRIFT / SLOW DETUNING</p></section>
 <section class="voice-panel"><div class="bar"><h2>03 / FOUR VOICES</h2><small>PITCH · MOTION · COLOUR · DISTANCE</small></div><div class="choir" id="voices"></div></section></div>
-<footer><details><summary>HOW TO PLAY / ABOUT MELT</summary><p>Wake the chamber to enable audio. Each ball triggers its voice when it reaches a wall. Drag the glowing walls, or use WALL POSITION, to change the distance and rhythm. Choose a world to recall an atmosphere. Start quietly with headphones.</p><p>Original synthesized harmonic voices, modulated tape echo and reverb. This instrument contains no proprietary pedal code or samples. Use Back to return to your Parasite hub.</p></details></footer>
+<footer><details><summary>HOW TO PLAY / ABOUT BOUNCE</summary><p>Wake the chamber to enable audio. Each ball triggers its voice when it reaches a wall. Drag the glowing walls, or use WALL POSITION, to change the distance and rhythm. Choose a world to recall an atmosphere. Start quietly with headphones.</p><p>Original synthesized harmonic voices, modulated tape echo and reverb. This instrument contains no proprietary pedal code or samples. Use Back to return to your Parasite hub.</p></details></footer>
 </main><script>
 'use strict';
 const colors=['#f0b3d5','#9cddd8','#e8d09b','#cbb6ff'];
 const pitches=[-12,-9,-7,-5,-4,-2,0,2,3,5,7,9,10,12,14,15,17,19,22,24];
 const names=['C3','D♯3','F3','G3','G♯3','B♭3','C4','D4','E♭4','F4','G4','A4','B♭4','C5','D5','E♭5','F5','G5','B♭5','C6'];
 const voices=[
- {name:'HALO',color:colors[0],note:6,speed:.75,tone:.68,level:.64,wall:.82,x:.15,dir:1,last:0,flash:0},
- {name:'TIDE',color:colors[1],note:9,speed:.53,tone:.48,level:.62,wall:.75,x:.3,dir:-1,last:0,flash:0},
- {name:'EMBER',color:colors[2],note:11,speed:.93,tone:.36,level:.57,wall:.9,x:.12,dir:1,last:0,flash:0},
- {name:'AURA',color:colors[3],note:14,speed:.41,tone:.76,level:.57,wall:.67,x:.4,dir:1,last:0,flash:0}
+ {name:'HALO',color:colors[0],note:6,speed:.75,tone:.68,level:.64,attack:.14,release:.61,wall:.82,x:.15,dir:1,last:0,flash:0},
+ {name:'TIDE',color:colors[1],note:9,speed:.53,tone:.48,level:.62,attack:.22,release:.77,wall:.75,x:.3,dir:-1,last:0,flash:0},
+ {name:'EMBER',color:colors[2],note:11,speed:.93,tone:.36,level:.57,attack:.10,release:.68,wall:.9,x:.12,dir:1,last:0,flash:0},
+ {name:'AURA',color:colors[3],note:14,speed:.41,tone:.76,level:.57,attack:.28,release:.82,wall:.67,x:.4,dir:1,last:0,flash:0}
 ];
-const params={bloom:.7,space:.75,echo:.6,flutter:.24,warmth:.64,drift:.42};
-const meta=[['bloom','HARMONICS'],['space','CATHEDRAL'],['echo','TAPE ECHO'],['flutter','WOW / FLUTTER'],['warmth','WARMTH'],['drift','DRIFT']];
+const params={bloom:.7,space:.75,echo:.6,flutter:.24,warmth:.64,drift:.42,grains:.46,shimmer:.62};
+const meta=[['bloom','HARMONICS'],['space','CATHEDRAL'],['echo','TAPE ECHO'],['flutter','WOW / FLUTTER'],['warmth','WARMTH'],['drift','DRIFT'],['grains','HAZE GRAINS'],['shimmer','SHIMMER']];
 const $=id=>document.getElementById(id);
 let running=false,audio=null,lastFrame=0,drag=-1,frameId=0,particles=[],presetName='AFTERGLOW';
 let ctx,mix,master,compressor,dry,delayL,delayR,feedbackL,feedbackR,delayToneL,delayToneR,delayWet,verb,verbWet,masterTone,lfo,lfoGain;
@@ -51,17 +51,17 @@ function buildControls(){
   const el=document.createElement('div');el.className='voice';el.style.setProperty('--vc',v.color);
   let options=names.map((n,j)=>'<option value="'+j+'"'+(v.note===j?' selected':'')+'>'+n+'</option>').join('');
   el.innerHTML='<div class="head"><span>0'+(i+1)+' / '+v.name+'</span><span>●</span></div><select aria-label="'+v.name+' pitch">'+options+'</select>'+
-  ['speed','tone','level','wall'].map(k=>'<label>'+({speed:'VELOCITY',tone:'BRILLIANCE',level:'LEVEL',wall:'WALL POSITION'}[k])+' <output id="v-'+i+'-'+k+'">'+Math.round(v[k]*100)+'%</output></label><input aria-label="'+v.name+' '+k+'" type="range" min="'+(k==='wall'?.24:.04)+'" max="'+(k==='wall'?.94:1)+'" step="0.01" value="'+v[k]+'" data-k="'+k+'">').join('');
+  ['speed','tone','level','wall','attack','release'].map(k=>'<label>'+({speed:'VELOCITY',tone:'BRILLIANCE',level:'LEVEL',wall:'WALL POSITION',attack:'AMP ATTACK',release:'AMP RELEASE'}[k])+' <output id="v-'+i+'-'+k+'">'+Math.round(v[k]*100)+'%</output></label><input aria-label="'+v.name+' '+k+'" type="range" min="'+(k==='wall'?.24:.04)+'" max="'+(k==='wall'?.94:1)+'" step="0.01" value="'+v[k]+'" data-k="'+k+'">').join('');
   $('voices').appendChild(el);
   el.querySelector('select').onchange=e=>v.note=+e.target.value;
   el.querySelectorAll('input').forEach(input=>input.oninput=e=>{const k=e.target.dataset.k;v[k]=+e.target.value;$('v-'+i+'-'+k).textContent=Math.round(v[k]*100)+'%'});
  });
 }
 const presets={
- 'AFTERGLOW':{values:[.7,.75,.6,.24,.64,.42],notes:[6,9,11,14],speeds:[.75,.53,.93,.41],walls:[.82,.75,.9,.67]},
- 'GLASS GARDEN':{values:[.94,.82,.43,.11,.44,.74],notes:[9,14,16,19],speeds:[.38,.52,.76,.31],walls:[.7,.84,.65,.91]},
- 'DUSK CHOIR':{values:[.57,.93,.78,.37,.88,.25],notes:[2,6,9,11],speeds:[.47,.63,.37,.84],walls:[.88,.73,.69,.93]},
- 'LOST CASSETTE':{values:[.33,.59,.87,.85,.95,.55],notes:[0,4,6,9],speeds:[.54,.81,.46,.67],walls:[.83,.78,.92,.61]}
+ 'AFTERGLOW':{values:[.7,.75,.6,.24,.64,.42,.46,.62],notes:[6,9,11,14],speeds:[.75,.53,.93,.41],walls:[.82,.75,.9,.67]},
+ 'GLASS GARDEN':{values:[.94,.82,.43,.11,.44,.74,.75,.91],notes:[9,14,16,19],speeds:[.38,.52,.76,.31],walls:[.7,.84,.65,.91]},
+ 'DUSK CHOIR':{values:[.57,.93,.78,.37,.88,.25,.71,.64],notes:[2,6,9,11],speeds:[.47,.63,.37,.84],walls:[.88,.73,.69,.93]},
+ 'LOST CASSETTE':{values:[.33,.59,.87,.85,.95,.55,.38,.25],notes:[0,4,6,9],speeds:[.54,.81,.46,.67],walls:[.83,.78,.92,.61]}
 };
 function applyPreset(name){
  const p=presets[name];presetName=name;
@@ -122,15 +122,15 @@ function trigger(v,i,edge){
  if(!running||!ctx)return;
  const now=ctx.currentTime;if(now-v.last<.09)return;v.last=now;
  // A bounce creates a harmonic cloud, not a hard percussive beep.
- const duration=1.6+params.bloom*2.9;const base=noteFreq(v.note);
+ const duration=2+params.bloom*3.5+v.release*2;const base=noteFreq(v.note);
  const output=ctx.createGain();output.gain.value=0;
  const panner=ctx.createStereoPanner?ctx.createStereoPanner():null;
  if(panner){panner.pan.value=clamp((i-1.5)*.43+(edge?.14:-.14),-.9,.9);output.connect(panner);panner.connect(dry);panner.connect(delayL);panner.connect(verb)}
  else{output.connect(dry);output.connect(delayL);output.connect(verb)}
  const volume=.07+v.level*.13;
  output.gain.setValueAtTime(.0001,now);
- output.gain.exponentialRampToValueAtTime(Math.max(.0002,volume),now+.16);
- output.gain.setTargetAtTime(.0001,now+.32,duration/4.2);
+ output.gain.exponentialRampToValueAtTime(Math.max(.0002,volume),now+.02+v.attack*.58);
+ output.gain.setTargetAtTime(.0001,now+.39+v.attack*.4,duration/(3.2+v.release));
  const tone=ctx.createBiquadFilter();tone.type='lowpass';tone.frequency.value=900+v.tone*4700+params.warmth*700;tone.Q.value=.6+params.bloom*1.6;tone.connect(output);
  const partials=[1,2,3,4,5,7,8];
  partials.forEach((ratio,n)=>{
@@ -156,11 +156,35 @@ function trigger(v,i,edge){
   ho.connect(halo);halo.connect(verb);halo.connect(delayL);
   ho.start(now);ho.stop(now+duration+.05);
  }
+ // Original stereo haze: short tuned micro-grains with independent pitch and time offsets.
+ if(params.grains>.1){
+   const count=Math.min(5,1+Math.round(params.grains*4));
+   for(let k=0;k<count;k++){
+     const at=now+.15+k*(.11+.13*(1-params.grains));
+     const dur=.09+params.grains*.23;
+     const osc=ctx.createOscillator(),env=ctx.createGain();
+     osc.type='sine';osc.frequency.value=base*[.5,1.5,2,3][(k+i)%4];
+     env.gain.setValueAtTime(.0001,at);
+     env.gain.linearRampToValueAtTime(.014*params.grains,at+dur*.3);
+     env.gain.exponentialRampToValueAtTime(.0001,at+dur);
+     osc.connect(env);env.connect(verb);env.connect(delayR);
+     osc.start(at);osc.stop(at+dur+.03);
+   }
+ }
+ if(params.shimmer>.08){
+   const osc=ctx.createOscillator(),env=ctx.createGain();
+   osc.type='sine';osc.frequency.value=base*4;
+   env.gain.setValueAtTime(.0001,now);
+   env.gain.linearRampToValueAtTime(.02*params.shimmer,now+.28);
+   env.gain.exponentialRampToValueAtTime(.0001,now+duration);
+   osc.connect(env);env.connect(verb);
+   osc.start(now);osc.stop(now+duration+.05);
+ }
  setTimeout(()=>{try{output.disconnect();tone.disconnect()}catch(e){}},Math.ceil((duration+2)*1000));
  v.flash=1;
  for(let j=0;j<15;j++)particles.push({voice:i,phase:rand(0,Math.PI*2),r:rand(4,32),life:1,drift:rand(.5,1.8)});
 }
-async function toggle(){
+async async function toggle(){
  try{
   if(!ctx)initAudio();
   if(ctx.state==='suspended')await ctx.resume();
