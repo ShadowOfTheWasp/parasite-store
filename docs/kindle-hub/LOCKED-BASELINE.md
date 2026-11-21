@@ -21,10 +21,11 @@ Approved configuration: 2026-11-21.
 - **Direct planetary interaction is locked:** touch the moving ball and drag up/down to change the selected orbit's base pitch in semitones; drag horizontally to lengthen/shorten its revolution time. Moving both axes adjusts both parameters. Preserve on-screen pitch/seconds readout and all underlying DSP.
 
 ## 02 / Bounce (former MELT)
-- Tuned bell/mallet engine **only** with four moving balls and adjustable collision walls; chime, vibraphone, wood marimba, celesta.
-- Individual pitch, movement, material, brightness, level and envelope controls.
-- Tape delay/repeats **followed by reverb**, with optional shimmer/short micro-grain haze.
-- Keep the four voice and atmosphere panels, collision visuals, and sound-world presets.
+- **One intelligent bouncing ball** within one clearly defined rectangular room. Do not restore the four-ball layout without explicit owner approval.
+- Four room walls correspond to musical pitch/material impacts. The one ball changes course on collision, with restrained non-repeating trajectory variation.
+- Touch and flick the single ball to redirect its motion on iPhone. Adjustable speed, energy, gravity and intelligence.
+- Source is tuned bell/mallet synthesis (chime, vibraphone, marimba, celesta), one voice triggered per collision. Velocity controls impact strength.
+- Delay feeds a **post-delay reverb**, with original atmospheric DSP. Keep the established Parasite design language.
 
 ## 03 / Mellowtron
 - A **microphone/audio-file sampler**, not a fixed flute synth. One recorded or imported tape sample mapped across two octaves at different pitches.
