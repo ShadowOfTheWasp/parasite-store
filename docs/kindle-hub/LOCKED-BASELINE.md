@@ -17,6 +17,8 @@ Approved configuration: 2026-11-21.
 - The signal has **post-engine convolution reverb** using an impulse response for a space.
 - Default: an original simulated hall impulse; allow importing a measured impulse-response audio file to use as the actual convolution kernel. Never claim the simulated hall is a captured real room.
 - Keep the full instrument and its familiar orbit interface, not a trivial single bell.
+- **Orbit performance view is circle-first:** only the four orbit visual, transport and a short gesture readout are initially prominent; advanced sequencer/synthesis are tucked into collapsible panels.
+- **Direct planetary interaction is locked:** touch the moving ball and drag up/down to change the selected orbit's base pitch in semitones; drag horizontally to lengthen/shorten its revolution time. Moving both axes adjusts both parameters. Preserve on-screen pitch/seconds readout and all underlying DSP.
 
 ## 02 / Bounce (former MELT)
 - Tuned bell/mallet engine **only** with four moving balls and adjustable collision walls; chime, vibraphone, wood marimba, celesta.
