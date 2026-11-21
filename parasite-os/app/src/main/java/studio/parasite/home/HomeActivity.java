@@ -15,7 +15,7 @@ import java.io.*;
 
 public class HomeActivity extends Activity {
   private static final String HUB_URL = "https://parasite-kindle.vercel.app";
-  private static final String RELEASE_API = "https://api.github.com/repos/ShadowOfTheWasp/parasite-store/releases/tags/parasite-home-v3";
+  private static final String RELEASE_API = "https://api.github.com/repos/ShadowOfTheWasp/parasite-store/releases/tags/parasite-home-v4";
   private static final int IMMERSIVE = View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY |
     View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN |
     View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
@@ -56,7 +56,7 @@ public class HomeActivity extends Activity {
     displayedHub=false;begin();brand();
     addButton("HUB",this::hub);
     addButton("UPDATES",this::updates);
-    root.addView(label("V3 • Tap logo five times for settings",11,Color.rgb(110,135,114)));
+    root.addView(label("V4 • Tap logo five times for settings",11,Color.rgb(110,135,114)));
   }
   private String configuredUrl(){return getPreferences(0).getString("hub_url",HUB_URL);}
   private void hub() {
@@ -64,7 +64,7 @@ public class HomeActivity extends Activity {
     addButton("‹ PARASITE HOME",this::home);
     FrameLayout holder=new FrameLayout(this);
     root.addView(holder,new LinearLayout.LayoutParams(-1,0,1));
-    web=new WebView(this);web.setBackgroundColor(Color.rgb(8,13,9));
+    web=new WebView(this);web.setBackgroundColor(Color.rgb(8,13,9));web.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
     web.getSettings().setJavaScriptEnabled(true);web.getSettings().setDomStorageEnabled(true);
     web.getSettings().setMediaPlaybackRequiresUserGesture(false);
     web.getSettings().setAllowFileAccess(false);web.getSettings().setAllowContentAccess(false);
@@ -87,25 +87,48 @@ public class HomeActivity extends Activity {
   }
   private void updates(){
     displayedHub=false;begin();brand();
-    TextView state=label("CHECKING GITHUB RELEASES…",15,Color.WHITE);root.addView(state);
+    TextView state=label("CHECKING LIVE INSTRUMENT CATALOGUE…",15,Color.WHITE);
+    root.addView(state);
+    addButton("OPEN HUB",this::hub);
     addButton("BACK TO HOME",this::home);
     new Thread(()->{
       String outcome;
       HttpURLConnection connection=null;
       try{
-        URL address=new URL(RELEASE_API);
+        URL address=new URL("https://raw.githubusercontent.com/ShadowOfTheWasp/parasite-store/main/docs/catalogue.json?t="+System.currentTimeMillis());
         connection=(HttpURLConnection)address.openConnection();
-        connection.setConnectTimeout(8000);connection.setReadTimeout(8000);
-        connection.setRequestProperty("Accept","application/vnd.github+json");
-        connection.setRequestProperty("User-Agent","ParasiteHome/3");
-        int code=connection.getResponseCode();
-        if(code==200)outcome="PARASITE HOME V3 AVAILABLE\n\nThis device is running V3.\n\nThe instrument catalogue is not connected to this updater yet.";
-        else if(code==404)outcome="No V3 release currently published.\nYour installed Home screen is unchanged.";
-        else outcome="Update server responded with HTTP "+code+".\nPlease try again.";
-      } catch(Exception e){outcome="Cannot reach the update server.\nCheck Wi-Fi and try again.";}
-      finally{if(connection!=null)connection.disconnect();}
+        connection.setConnectTimeout(9000);connection.setReadTimeout(9000);
+        connection.setRequestProperty("User-Agent","ParasiteHome/4");
+        connection.setUseCaches(false);
+        if(connection.getResponseCode()!=200)throw new IOException("Catalogue HTTP "+connection.getResponseCode());
+        java.io.ByteArrayOutputStream bytes=new java.io.ByteArrayOutputStream();
+        try(java.io.InputStream in=connection.getInputStream()){
+          byte[] block=new byte[4096];int n;
+          while((n=in.read(block))!=-1){
+            bytes.write(block,0,n);
+            if(bytes.size()>65536)throw new IOException("Catalogue exceeds limit");
+          }
+        }
+        org.json.JSONObject cat=new org.json.JSONObject(bytes.toString("UTF-8"));
+        org.json.JSONArray units=cat.getJSONArray("units");
+        StringBuilder lines=new StringBuilder();
+        lines.append("CATALOGUE UP TO DATE\n\n");
+        lines.append(units.length()).append(" AVAILABLE INSTRUMENTS\n\n");
+        for(int i=0;i<units.length();i++){
+          org.json.JSONObject u=units.getJSONObject(i);
+          lines.append("• ").append(u.optString("title","Instrument"));
+          String version=u.optString("version","");
+          if(!version.isEmpty())lines.append("  /  ").append(version);
+          lines.append("\n");
+        }
+        lines.append("\nCatalogue updated: ").append(cat.optString("updated","not specified"));
+        lines.append("\n\nOpen HUB to load the latest web instruments.");
+        outcome=lines.toString();
+      }catch(Exception e){
+        outcome="COULD NOT CHECK UPDATES\n\nCheck your Wi-Fi connection. Your installed instruments have not been changed.";
+      }finally{if(connection!=null)connection.disconnect();}
       final String message=outcome;
-      runOnUiThread(()->state.setText(message));
+      runOnUiThread(()->{if(state.getParent()!=null)state.setText(message);});
     }).start();
   }
   private void settings(){
