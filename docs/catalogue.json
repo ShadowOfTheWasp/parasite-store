@@ -4,9 +4,10 @@
   "units": [
     {
       "package": "studio.parasite.orbit4",
-      "title": "ORBIT-4",
-      "description": "FOUR-RING GENERATIVE SYNTH / RHYTHM & SCRAPE",
-      "installUrl": "https://shadowofthewasp.github.io/parasite-store/orbit4/"
+      "title": "ORBIT-4 / SLOW BELLS",
+      "description": "SLOW BELL HARMONIES / GENTLE TAPE DELAY / FOUR EASY-TO-FOLLOW ORBITS",
+      "installUrl": "https://shadowofthewasp.github.io/parasite-store/orbit4/",
+      "version": "2.1"
     },
     {
       "package": "studio.parasite.melt",
