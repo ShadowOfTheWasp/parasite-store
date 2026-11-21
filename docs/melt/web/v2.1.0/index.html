@@ -12,22 +12,22 @@ main{width:min(1180px,100%);margin:auto;padding:12px 18px 22px;background:radial
 @media(max-width:760px){main{padding:10px}.workbench{grid-template-columns:1fr}.voice-panel{grid-column:auto}.controls{grid-template-columns:repeat(3,minmax(0,1fr))}.knob{padding:9px}.choir{grid-template-columns:repeat(2,minmax(0,1fr))}.status{margin-left:0}.title p{font-size:9px}canvas{height:240px}}@media(max-width:380px){.title h1{font-size:40px}.title{gap:12px}.presets{grid-template-columns:repeat(2,minmax(0,1fr))}.bar small{font-size:8px}.transport{gap:5px}.play{min-width:170px}.secondary{padding:10px}.voice{padding:8px}.eyebrow{font-size:8px;letter-spacing:1px}}
 </style></head><body><main>
 <header><span class="brand">parasite_</span><span class="eyebrow">003 / BOUNCE / V3.0</span></header>
-<section class="title"><h1>BOUNCE<span>.</span></h1><p>FOUR VOICES IN CONTINUOUS MOTION<br>HARMONIC BLOOM / MAGNETIC MEMORY</p></section>
+<section class="title"><h1>BOUNCE<span>.</span></h1><p>FOUR TUNED BELLS AND MALLETS IN CONTINUOUS MOTION<br>CHIMES / VIBRAPHONE / MARIMBA / CELESTA</p></section>
 <div class="transport"><button class="play" id="play">▶ WAKE THE CHAMBER</button><button class="secondary" id="regen">✧ RESEED</button><button class="secondary" id="quiet">CLEAR TAILS</button><span class="status" role="status"><i class="pulse" id="pulse"></i><span id="state">AUDIO ASLEEP</span></span></div>
 <div class="workbench"><section class="chamber-panel"><div class="bar"><h2>01 / THE CHAMBER</h2><small>DRAG THE FOUR WALLS</small></div><div class="stage"><canvas id="scene" aria-label="Four bouncing musical balls. Drag walls or use each voice wall slider below."></canvas><div class="stage-hint">COLLISION → HARMONY → ECHO</div></div><div class="presets" id="presets" aria-label="Sound worlds"></div></section>
 <section class="effects-panel"><div class="bar"><h2>02 / ATMOSPHERE</h2><small>SIX INTERCONNECTED COLOURS</small></div><div class="controls" id="global"></div><p class="effect-note">BLOOM / TUNED PARTIALS · SPACE / DIFFUSE TAIL<br>ECHO / TAPE MEMORY · DRIFT / SLOW DETUNING</p></section>
-<section class="voice-panel"><div class="bar"><h2>03 / FOUR VOICES</h2><small>PITCH · MOTION · COLOUR · DISTANCE</small></div><div class="choir" id="voices"></div></section></div>
-<footer><details><summary>HOW TO PLAY / ABOUT BOUNCE</summary><p>Wake the chamber to enable audio. Each ball triggers its voice when it reaches a wall. Drag the glowing walls, or use WALL POSITION, to change the distance and rhythm. Choose a world to recall an atmosphere. Start quietly with headphones.</p><p>Original synthesized harmonic voices, modulated tape echo and reverb. This instrument contains no proprietary pedal code or samples. Use Back to return to your Parasite hub.</p></details></footer>
+<section class="voice-panel"><div class="bar"><h2>03 / FOUR MALLET INSTRUMENTS</h2><small>PITCH · MOTION · COLOUR · DISTANCE</small></div><div class="choir" id="voices"></div></section></div>
+<footer><details><summary>HOW TO PLAY / ABOUT BOUNCE</summary><p>Wake the chamber to play tuned bell, vibraphone, marimba and celesta. Each ball strikes its mallet instrument when it reaches a wall. Drag the glowing walls, or use WALL POSITION, to change the distance and rhythm. Choose a world to recall an atmosphere. Start quietly with headphones.</p><p>Original synthesized harmonic voices, modulated tape echo and reverb. This instrument contains no proprietary pedal code or samples. Use Back to return to your Parasite hub.</p></details></footer>
 </main><script>
 'use strict';
 const colors=['#f0b3d5','#9cddd8','#e8d09b','#cbb6ff'];
 const pitches=[-12,-9,-7,-5,-4,-2,0,2,3,5,7,9,10,12,14,15,17,19,22,24];
 const names=['C3','D♯3','F3','G3','G♯3','B♭3','C4','D4','E♭4','F4','G4','A4','B♭4','C5','D5','E♭5','F5','G5','B♭5','C6'];
 const voices=[
- {name:'HALO',color:colors[0],note:6,speed:.75,tone:.68,level:.64,attack:.14,release:.61,wall:.82,x:.15,dir:1,last:0,flash:0},
- {name:'TIDE',color:colors[1],note:9,speed:.53,tone:.48,level:.62,attack:.22,release:.77,wall:.75,x:.3,dir:-1,last:0,flash:0},
- {name:'EMBER',color:colors[2],note:11,speed:.93,tone:.36,level:.57,attack:.10,release:.68,wall:.9,x:.12,dir:1,last:0,flash:0},
- {name:'AURA',color:colors[3],note:14,speed:.41,tone:.76,level:.57,attack:.28,release:.82,wall:.67,x:.4,dir:1,last:0,flash:0}
+ {name:'CHIME',material:0,color:colors[0],note:6,speed:.75,tone:.68,level:.64,attack:.14,release:.61,wall:.82,x:.15,dir:1,last:0,flash:0},
+ {name:'VIBRA',material:1,color:colors[1],note:9,speed:.53,tone:.48,level:.62,attack:.22,release:.77,wall:.75,x:.3,dir:-1,last:0,flash:0},
+ {name:'MARIMBA',material:2,color:colors[2],note:11,speed:.93,tone:.36,level:.57,attack:.10,release:.68,wall:.9,x:.12,dir:1,last:0,flash:0},
+ {name:'CELESTA',material:3,color:colors[3],note:14,speed:.41,tone:.76,level:.57,attack:.28,release:.82,wall:.67,x:.4,dir:1,last:0,flash:0}
 ];
 const params={bloom:.7,space:.75,echo:.6,flutter:.24,warmth:.64,drift:.42,grains:.46,shimmer:.62};
 const meta=[['bloom','HARMONICS'],['space','CATHEDRAL'],['echo','TAPE ECHO'],['flutter','WOW / FLUTTER'],['warmth','WARMTH'],['drift','DRIFT'],['grains','HAZE GRAINS'],['shimmer','SHIMMER']];
@@ -50,10 +50,12 @@ function buildControls(){
  voices.forEach((v,i)=>{
   const el=document.createElement('div');el.className='voice';el.style.setProperty('--vc',v.color);
   let options=names.map((n,j)=>'<option value="'+j+'"'+(v.note===j?' selected':'')+'>'+n+'</option>').join('');
-  el.innerHTML='<div class="head"><span>0'+(i+1)+' / '+v.name+'</span><span>●</span></div><select aria-label="'+v.name+' pitch">'+options+'</select>'+
+  el.innerHTML='<div class="head"><span>0'+(i+1)+' / '+v.name+'</span><span>●</span></div><select aria-label="'+v.name+' pitch">'+options+'</select><select data-material><option value="0">BELL / CHIME</option><option value="1">VIBRAPHONE</option><option value="2">WOOD MARIMBA</option><option value="3">CELESTA</option></select>'+
   ['speed','tone','level','wall','attack','release'].map(k=>'<label>'+({speed:'VELOCITY',tone:'BRILLIANCE',level:'LEVEL',wall:'WALL POSITION',attack:'AMP ATTACK',release:'AMP RELEASE'}[k])+' <output id="v-'+i+'-'+k+'">'+Math.round(v[k]*100)+'%</output></label><input aria-label="'+v.name+' '+k+'" type="range" min="'+(k==='wall'?.24:.04)+'" max="'+(k==='wall'?.94:1)+'" step="0.01" value="'+v[k]+'" data-k="'+k+'">').join('');
   $('voices').appendChild(el);
   el.querySelector('select').onchange=e=>v.note=+e.target.value;
+  el.querySelector('[data-material]').value=String(v.material);
+  el.querySelector('[data-material]').onchange=e=>v.material=+e.target.value;
   el.querySelectorAll('input').forEach(input=>input.oninput=e=>{const k=e.target.dataset.k;v[k]=+e.target.value;$('v-'+i+'-'+k).textContent=Math.round(v[k]*100)+'%'});
  });
 }
@@ -122,7 +124,7 @@ function trigger(v,i,edge){
  if(!running||!ctx)return;
  const now=ctx.currentTime;if(now-v.last<.09)return;v.last=now;
  // A bounce creates a harmonic cloud, not a hard percussive beep.
- const duration=2+params.bloom*3.5+v.release*2;const base=noteFreq(v.note);
+ const duration=(v.material===2?1.1:v.material===1?3.5:2.2)+params.bloom*2.4+v.release*1.4;const base=noteFreq(v.note);
  const output=ctx.createGain();output.gain.value=0;
  const panner=ctx.createStereoPanner?ctx.createStereoPanner():null;
  if(panner){panner.pan.value=clamp((i-1.5)*.43+(edge?.14:-.14),-.9,.9);output.connect(panner);panner.connect(dry);panner.connect(delayL);panner.connect(verb)}
@@ -132,21 +134,19 @@ function trigger(v,i,edge){
  output.gain.exponentialRampToValueAtTime(Math.max(.0002,volume),now+.02+v.attack*.58);
  output.gain.setTargetAtTime(.0001,now+.39+v.attack*.4,duration/(3.2+v.release));
  const tone=ctx.createBiquadFilter();tone.type='lowpass';tone.frequency.value=900+v.tone*4700+params.warmth*700;tone.Q.value=.6+params.bloom*1.6;tone.connect(output);
- const partials=[1,2,3,4,5,7,8];
- partials.forEach((ratio,n)=>{
-  const osc=ctx.createOscillator();osc.type=n===0?'sine':'triangle';
-  osc.frequency.value=base*ratio;
-  osc.detune.value=rand(-3,3)+Math.sin(now*.17+i)*params.drift*10;
-  const gain=ctx.createGain();
-  gain.gain.value=(n===0?.66:(params.bloom*.26+v.tone*.12)/(1+n*.8));
-  osc.connect(gain);gain.connect(tone);
-  if(n===1||n===3){
-   const l=ctx.createOscillator(),lg=ctx.createGain();l.frequency.value=.1+params.flutter*6+rand(0,.5);
-   lg.gain.value=.4+params.flutter*11;l.connect(lg);lg.connect(osc.detune);
-   l.start(now);l.stop(now+duration+1);
-  }
-  osc.start(now);osc.stop(now+duration+1);
+
+ const materialRatios=[[1,2.01,2.92,4.14,5.43,6.78],[1,3.98,9.84,16.2],[1,3.91,9.77,15.7],[1,2.0,3.0,4.01,6.01]];
+ const materialAmps=[[1,.38,.24,.17,.11,.07],[1,.23,.055,.02],[1,.18,.03,.012],[1,.24,.14,.08,.04]];
+ const ratios=materialRatios[v.material],amps=materialAmps[v.material];
+ ratios.forEach((ratio,n)=>{
+   const osc=ctx.createOscillator(),gain=ctx.createGain();
+   osc.type='sine';osc.frequency.value=base*ratio;
+   osc.detune.value=rand(-.6,.6)+params.drift*2;
+   gain.gain.value=(amps[n]||.01)*(n===0?.75:params.bloom*.42+v.tone*.12);
+   osc.connect(gain);gain.connect(tone);
+   osc.start(now);osc.stop(now+duration+1);
  });
+
  // Octave and perfect-fifth halo, a musically tuned shimmer, independently faded.
  if(params.bloom>.07){
   const halo=ctx.createGain();halo.gain.setValueAtTime(.0001,now);
