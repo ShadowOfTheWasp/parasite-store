@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updated": "2026-11-20",
+  "updated": "2026-11-21",
   "units": [
     {
       "package": "studio.parasite.orbit4",
@@ -10,9 +10,11 @@
     },
     {
       "package": "studio.parasite.melt",
-      "title": "MELT",
-      "description": "003 / FOUR BOUNCING CHOIR VOICES / PONG TAPE ECHO",
-      "installUrl": "https://shadowofthewasp.github.io/parasite-store/melt/"
+      "title": "MELT 2.0",
+      "description": "FOUR BOUNCING HARMONIC VOICES / BLOOM + CATHEDRAL + SHIMMER + MAGNETIC ECHO",
+      "installUrl": "https://shadowofthewasp.github.io/parasite-store/melt/",
+      "version": "2.0.0",
+      "playUrl": "https://shadowofthewasp.github.io/parasite-store/melt/web/v2/"
     },
     {
       "package": "studio.parasite.tapeflute",
