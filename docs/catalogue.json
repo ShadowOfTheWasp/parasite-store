@@ -4,10 +4,10 @@
   "units": [
     {
       "package": "studio.parasite.orbit4",
-      "title": "ORBIT-4 / SLOW BELLS",
-      "description": "SLOW BELL HARMONIES / GENTLE TAPE DELAY / FOUR EASY-TO-FOLLOW ORBITS",
+      "title": "ORBIT-4 / PSYCHEDELIC BELLS",
+      "description": "SLOW BELL HARMONIES / LONG TAPE TAILS / 10–25 SECOND ORBITS",
       "installUrl": "https://shadowofthewasp.github.io/parasite-store/orbit4/",
-      "version": "2.1"
+      "version": "2.2.0"
     },
     {
       "package": "studio.parasite.melt",
