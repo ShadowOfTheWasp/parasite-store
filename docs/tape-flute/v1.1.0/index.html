@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#080e0a">
-<title>PARASITE / TAPE FLUTE V1.1.0</title>
+<title>PARASITE / MELLOWTRON V2</title>
 <style>
 :root{color-scheme:dark;--bg:#080e0a;--panel:#142119;--line:#405546;--green:#a1edaa;--gold:#d8c18c;--text:#e3e9dd;--muted:#a3bcac}
 *{box-sizing:border-box}
@@ -55,7 +55,7 @@ input[type=range]{display:block;width:100%;height:24px;accent-color:var(--green)
 <main>
   <header><a id="hub" href="../../">PARASITE_</a><span>INSTRUMENT 004 / V1.1.0</span></header>
   <div class="heading">
-    <div><h1>TAPE <span>FLUTE</span></h1><p>POLYPHONIC TAPE KEYBOARD</p></div>
+    <div><h1>MELLOW<span>TRON</span></h1><p>POLYPHONIC TAPE KEYBOARD / HAZE GRAINS / SHIMMER SPACE</p></div>
     <button class="primary" id="power" type="button">Enable audio</button>
   </div>
   <div class="deck">
@@ -72,6 +72,8 @@ input[type=range]{display:block;width:100%;height:24px;accent-color:var(--green)
       <label><span>Wear <output id="wear-value" for="wear">35%</output></span><input id="wear" type="range" min="0" max="100" value="35"></label>
       <label><span>Room <output id="room-value" for="room">18%</output></span><input id="room" type="range" min="0" max="100" value="18"></label>
       <label><span>Level <output id="level-value" for="level">68%</output></span><input id="level" type="range" min="0" max="100" value="68"></label>
+      <label><span>Grains <output id="grains-value" for="grains">55%</output></span><input id="grains" type="range" min="0" max="100" value="55"></label>
+      <label><span>Shimmer <output id="shimmer-value" for="shimmer">66%</output></span><input id="shimmer" type="range" min="0" max="100" value="66"></label>
     </div>
     <div class="rail">
       <div class="octaves" aria-label="Keyboard octave">
@@ -124,7 +126,7 @@ const power = get('power');
 const demo = get('demo');
 const AudioEngine = window.AudioContext || window.webkitAudioContext;
 const tapeSeconds = 8;
-const controls = ['tone', 'wear', 'room', 'level'];
+const controls = ['tone', 'wear', 'room', 'level', 'grains', 'shimmer'];
 const active = new Map();
 const pointers = new Set();
 const buffers = new Map();
@@ -355,6 +357,23 @@ async function play(id, index) {
   };
   source.start(now);
   source.stop(now + tapeSeconds);
+  // Micro-grains overlap short passages of the original synthesis tape strip.
+  const density=Number(get('grains').value)/100;
+  const shimmer=Number(get('shimmer').value)/100;
+  const grainCount=Math.round(density*6);
+  for(let k=0;k<grainCount;k++){
+    const at=now+.16+k*(.11+.08*(1-density));
+    const duration=.10+.19*density;
+    const grain=context.createBufferSource(),shape=context.createGain();
+    grain.buffer=strip;
+    grain.playbackRate.value=source.playbackRate.value*(k%3===0?2:k%3===1?.5:1);
+    const offset=Math.min(Math.max(0,(k*.37)%6.5),strip.duration-duration-.03);
+    shape.gain.setValueAtTime(.0001,at);
+    shape.gain.linearRampToValueAtTime(.022*density*(.4+shimmer*.6),at+duration*.32);
+    shape.gain.exponentialRampToValueAtTime(.0001,at+duration);
+    grain.connect(shape).connect(tone);
+    grain.start(at,offset,duration);
+  }
 }
 
 function setOctave(value) {
