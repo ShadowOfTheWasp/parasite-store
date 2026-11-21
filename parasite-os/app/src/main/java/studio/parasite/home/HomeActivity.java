@@ -29,6 +29,8 @@ public class HomeActivity extends Activity {
   private boolean hubLoaded=false;
   private PermissionRequest pendingMicRequest=null;
   private static final int MIC_PERMISSION_CODE=607;
+  private static final int AUDIO_PICKER_CODE=608;
+  private ValueCallback<Uri[]> pendingFilePicker=null;
 
   private void immersive() { getWindow().getDecorView().setSystemUiVisibility(IMMERSIVE); }
   @Override public void onCreate(Bundle b) { super.onCreate(b); immersive(); home(); }
@@ -38,6 +40,7 @@ public class HomeActivity extends Activity {
     t.setGravity(Gravity.CENTER); t.setPadding(10,14,10,14);return t;
   }
   private void begin() {
+    if(pendingFilePicker!=null){pendingFilePicker.onReceiveValue(null);pendingFilePicker=null;}
     if(web!=null){ web.stopLoading();web.destroy();web=null; }
     root=new LinearLayout(this);root.setOrientation(LinearLayout.VERTICAL);
     root.setGravity(Gravity.CENTER);root.setPadding(28,20,28,20);
@@ -59,7 +62,7 @@ public class HomeActivity extends Activity {
     displayedHub=false;begin();brand();
     addButton("HUB",this::hub);
     addButton("UPDATES",this::updates);
-    root.addView(label("V6 • Tap logo five times for settings",11,Color.rgb(110,135,114)));
+    root.addView(label("V7 • Tap logo five times for settings",11,Color.rgb(110,135,114)));
   }
   private String configuredUrl(){return getPreferences(0).getString("hub_url",HUB_URL);}
   private void hub() {
@@ -72,6 +75,23 @@ public class HomeActivity extends Activity {
     web.getSettings().setMediaPlaybackRequiresUserGesture(false);
     web.getSettings().setAllowFileAccess(false);web.getSettings().setAllowContentAccess(false);
     web.setWebChromeClient(new WebChromeClient(){
+      @Override public boolean onShowFileChooser(WebView view, ValueCallback<Uri[]> callback, FileChooserParams params){
+        if(pendingFilePicker!=null)pendingFilePicker.onReceiveValue(null);
+        pendingFilePicker=callback;
+        try{
+          Intent picker=new Intent(Intent.ACTION_GET_CONTENT);
+          picker.addCategory(Intent.CATEGORY_OPENABLE);
+          picker.setType("audio/*");
+          picker.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+          startActivityForResult(Intent.createChooser(picker,"Choose a Mellowtron sample or Orbit space impulse"),AUDIO_PICKER_CODE);
+          return true;
+        }catch(Exception ex){
+          pendingFilePicker=null;
+          callback.onReceiveValue(null);
+          Toast.makeText(HomeActivity.this,"Audio file picker unavailable",Toast.LENGTH_LONG).show();
+          return true;
+        }
+      }
       @Override public void onPermissionRequest(final PermissionRequest request){
         runOnUiThread(()->{
           try{
@@ -127,6 +147,16 @@ public class HomeActivity extends Activity {
     });
     holder.addView(web,new FrameLayout.LayoutParams(-1,-1));
     immersive();web.loadUrl(configuredUrl());
+  }
+  @Override protected void onActivityResult(int requestCode,int resultCode,Intent data){
+    super.onActivityResult(requestCode,resultCode,data);
+    if(requestCode!=AUDIO_PICKER_CODE)return;
+    ValueCallback<Uri[]> callback=pendingFilePicker;
+    pendingFilePicker=null;
+    if(callback!=null){
+      Uri[] value=WebChromeClient.FileChooserParams.parseResult(resultCode,data);
+      callback.onReceiveValue(value);
+    }
   }
   @Override public void onRequestPermissionsResult(int code,String[] permissions,int[] results){
     super.onRequestPermissionsResult(code,permissions,results);
