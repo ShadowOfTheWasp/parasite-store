@@ -27,6 +27,8 @@ public class HomeActivity extends Activity {
   private boolean webError=false;
   private boolean displayedHub=false;
   private boolean hubLoaded=false;
+  private PermissionRequest pendingMicRequest=null;
+  private static final int MIC_PERMISSION_CODE=607;
 
   private void immersive() { getWindow().getDecorView().setSystemUiVisibility(IMMERSIVE); }
   @Override public void onCreate(Bundle b) { super.onCreate(b); immersive(); home(); }
@@ -57,7 +59,7 @@ public class HomeActivity extends Activity {
     displayedHub=false;begin();brand();
     addButton("HUB",this::hub);
     addButton("UPDATES",this::updates);
-    root.addView(label("V5 • Tap logo five times for settings",11,Color.rgb(110,135,114)));
+    root.addView(label("V6 • Tap logo five times for settings",11,Color.rgb(110,135,114)));
   }
   private String configuredUrl(){return getPreferences(0).getString("hub_url",HUB_URL);}
   private void hub() {
@@ -69,6 +71,35 @@ public class HomeActivity extends Activity {
     web.getSettings().setJavaScriptEnabled(true);web.getSettings().setDomStorageEnabled(true);
     web.getSettings().setMediaPlaybackRequiresUserGesture(false);
     web.getSettings().setAllowFileAccess(false);web.getSettings().setAllowContentAccess(false);
+    web.setWebChromeClient(new WebChromeClient(){
+      @Override public void onPermissionRequest(final PermissionRequest request){
+        runOnUiThread(()->{
+          try{
+            String origin=request.getOrigin().toString();
+            String host=Uri.parse(origin).getHost();
+            if(!"https".equals(Uri.parse(origin).getScheme()) ||
+               !("parasite-kindle.vercel.app".equals(host) ||
+                 "parasite-kindle-simmo3.vercel.app".equals(host))){
+              request.deny();return;
+            }
+            boolean mic=false;
+            for(String resource:request.getResources()){
+              if(PermissionRequest.RESOURCE_AUDIO_CAPTURE.equals(resource)) mic=true;
+            }
+            if(!mic){request.deny();return;}
+            if(android.os.Build.VERSION.SDK_INT>=23 &&
+               checkSelfPermission(android.Manifest.permission.RECORD_AUDIO)!=android.content.pm.PackageManager.PERMISSION_GRANTED){
+              if(pendingMicRequest!=null)pendingMicRequest.deny();
+              pendingMicRequest=request;
+              requestPermissions(new String[]{android.Manifest.permission.RECORD_AUDIO},MIC_PERMISSION_CODE);
+            }else request.grant(new String[]{PermissionRequest.RESOURCE_AUDIO_CAPTURE});
+          }catch(Exception ex){request.deny();}
+        });
+      }
+      @Override public void onPermissionRequestCanceled(PermissionRequest request){
+        if(pendingMicRequest==request)pendingMicRequest=null;
+      }
+    });
     web.setDownloadListener((url,userAgent,contentDisposition,mimeType,contentLength)->openDownload(url));
     web.setWebViewClient(new WebViewClient(){
       @Override public boolean shouldOverrideUrlLoading(WebView view,WebResourceRequest request){
@@ -96,6 +127,19 @@ public class HomeActivity extends Activity {
     });
     holder.addView(web,new FrameLayout.LayoutParams(-1,-1));
     immersive();web.loadUrl(configuredUrl());
+  }
+  @Override public void onRequestPermissionsResult(int code,String[] permissions,int[] results){
+    super.onRequestPermissionsResult(code,permissions,results);
+    if(code!=MIC_PERMISSION_CODE)return;
+    PermissionRequest pending=pendingMicRequest;
+    pendingMicRequest=null;
+    if(pending==null)return;
+    if(results.length>0 && results[0]==android.content.pm.PackageManager.PERMISSION_GRANTED){
+      pending.grant(new String[]{PermissionRequest.RESOURCE_AUDIO_CAPTURE});
+    }else{
+      pending.deny();
+      Toast.makeText(this,"Microphone access is required to record a Mellowtron tape.",Toast.LENGTH_LONG).show();
+    }
   }
   private boolean isApkUrl(String target){
     try{
