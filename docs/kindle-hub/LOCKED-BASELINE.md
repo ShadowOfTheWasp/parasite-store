@@ -5,7 +5,7 @@ Approved configuration: 2026-11-21.
 **Do not rename, simplify, replace or redesign these instruments, their sequencing concepts, or the common Hub visual language unless the owner specifically requests a change.**
 
 ## Scope
-- Kindle-first. Three instruments are launched *inside* the Parasite Home Hub rather than as separate instrument APKs.
+- **Current primary interface target: iPhone 13 (390×844 CSS pixels portrait).** All three instruments launch inside one iOS Safari/Home Screen web studio; no separate instrument APKs. Keep the existing Kindle home installation functional as a secondary route.
 - Same dark green / ivory / muted accent palette, rounded cards and compact performance layout.
 - Exactly three active units in the Hub, with a reliable ALL INSTRUMENTS return path.
 - Retain audio controls and complexity. No automatic return to the older simplified versions.
@@ -32,8 +32,9 @@ Approved configuration: 2026-11-21.
 - Eight note rows by 32 columns step matrix with tempo/swing, matrix playback, and local tape/pattern save where storage permits.
 - A controllable **H910-inspired** digital pitch-weirdness effect, with two detuned pitch taps, delayed fragments, grain effects and reverb. It is an original *inspired* algorithm, not a bit-perfect Eventide H910 emulation; do not claim proprietary algorithms have been cloned.
 
-## Android runtime
-- The Parasite Home wrapper needs RECORD_AUDIO for microphone access and WebChromeClient file chooser support for importing audio or impulse responses.
+## iPhone 13 and Android runtime
+- On iPhone, microphone recording is requested through Safari over HTTPS and needs user approval. The keyboard and 32-step matrix must be touch-friendly at narrow portrait widths. iPhone Web Audio starts on a user gesture; do not claim iPhone audio tested until run on physical hardware.
+- The Parasite Home Android wrapper needs RECORD_AUDIO for microphone access and WebChromeClient file chooser support for importing audio or impulse responses.
 - The wrapper requires explicit user-controlled Android installation; it cannot remotely replace an APK.
 - Keep the two Home buttons, HUB and UPDATES, unchanged.
 - Run a static JavaScript parse check, build/release check, deployed-file check before claiming site deploy success. Only call the whole experience hardware-tested after actual Kindle playback, recording, file import, and sequence checks.
