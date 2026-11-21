@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#080d0b"><title>MELT / 2.0 — PARASITE</title>
+<style>
+:root{color-scheme:dark;--bg:#080d0b;--panel:#111b17;--line:#2b4437;--ink:#e2f2dd;--muted:#98aea0;--lime:#b8f796;--pink:#efb4d1;--cyan:#9de4de;--gold:#e5cf9d;--violet:#c9b6fd}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+body{overflow-x:hidden}button,select,input{font:inherit;touch-action:manipulation}button{cursor:pointer}main{width:min(1160px,100%);margin:auto;padding:12px 15px 75px}
+header{display:flex;align-items:center;justify-content:space-between;padding:14px 4px;border-bottom:1px solid var(--line);gap:8px}
+.brand{font-size:30px;font-weight:820;letter-spacing:-1.8px;color:var(--lime);line-height:1}.eyebrow{color:#9cbea7;font-size:10px;font-weight:800;letter-spacing:2.6px}
+.title{display:flex;align-items:flex-end;justify-content:space-between;gap:15px;flex-wrap:wrap;margin:20px 0 12px}
+h1{font-size:clamp(54px,11vw,110px);line-height:.88;letter-spacing:-7px;margin:0;font-weight:810;color:#eebbd3;text-shadow:0 0 45px #9c587250}
+.title p{max-width:290px;font-size:12px;color:var(--muted);line-height:1.65;margin:0}
+.stage{background:radial-gradient(ellipse at 50% 60%,#14251d 0%,#090f0d 76%);border:1px solid #345343;border-radius:17px;overflow:hidden;position:relative;box-shadow:inset 0 0 90px #040805,0 12px 50px #0008}
+.stage:before{content:"";pointer-events:none;position:absolute;inset:0;background:linear-gradient(0deg,#0004,transparent 38%,#fff1);z-index:1}
+canvas{display:block;width:100%;height:clamp(255px,45vw,480px);touch-action:none}
+.stage-label{position:absolute;left:15px;top:12px;color:#b5c8b8;font-size:10px;letter-spacing:2px;z-index:2;pointer-events:none}
+.stage-hint{position:absolute;bottom:10px;right:13px;color:#7c9d87;font-size:10px;z-index:2;pointer-events:none}
+.transport{display:flex;gap:10px;margin:13px 0;align-items:stretch;flex-wrap:wrap}
+.play{flex:1;min-width:150px;background:var(--lime);color:#0d1a0e;border:0;border-radius:9px;padding:17px 13px;font-weight:900;letter-spacing:1px}
+.play.on{background:#e7d5a2}.secondary{border:1px solid #54705c;background:#152219;color:#e0f7d9;border-radius:9px;padding:13px 15px;font-weight:700}
+.transport .status{display:flex;align-items:center;color:var(--muted);font-size:11px;padding:8px;letter-spacing:1px}
+.pulse{width:7px;height:7px;border-radius:50%;background:#758978;margin-right:10px}.pulse.on{background:var(--lime);box-shadow:0 0 12px var(--lime)}
+.bar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:29px 0 12px}
+.bar h2{margin:0;font-size:14px;letter-spacing:2px;font-weight:850}.bar small{color:var(--muted);font-size:11px}
+.controls{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
+.knob{background:linear-gradient(140deg,#142019,#101914);border:1px solid var(--line);padding:14px 12px;border-radius:12px;min-width:0}
+.knob .meta{display:flex;justify-content:space-between;align-items:center;gap:5px;font-size:10px;letter-spacing:1.2px;font-weight:850;color:#a2b8a6}
+.knob output{color:var(--lime);font-size:11px;font-variant-numeric:tabular-nums}
+input[type=range]{appearance:none;width:100%;height:24px;background:transparent;display:block;margin:9px 0 0;accent-color:var(--lime)}
+input[type=range]::-webkit-slider-runnable-track{height:4px;background:linear-gradient(90deg,#81bd88,#42574b);border-radius:3px}
+input[type=range]::-webkit-slider-thumb{appearance:none;width:20px;height:20px;margin-top:-8px;background:#c3f5ad;border:4px solid #15221a;border-radius:50%;box-shadow:0 0 0 1px #87a58a}
+.choir{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.voice{padding:14px;background:#131e19;border:1px solid var(--line);border-radius:13px;position:relative;overflow:hidden}
+.voice:before{position:absolute;content:"";height:3px;left:0;right:0;top:0;background:var(--vc);box-shadow:0 0 15px var(--vc)}
+.voice .head{display:flex;align-items:center;justify-content:space-between;gap:5px;font-weight:800;margin-bottom:12px;color:var(--vc);letter-spacing:1px}
+.voice select{background:#080e0b;border:1px solid #355040;color:var(--ink);padding:9px 5px;border-radius:7px;width:100%;font-size:13px}
+.voice label{display:block;font-size:10px;color:#adc1b0;margin-top:12px;letter-spacing:1.2px}
+.voice output{float:right;color:var(--vc)}
+.presets{display:flex;flex-wrap:wrap;gap:9px;margin:10px 0}
+.preset{background:#15231b;border:1px solid #4b6a53;border-radius:30px;color:#d4e9d0;padding:10px 15px;font-size:12px;font-weight:750}
+.preset.active{background:var(--lime);color:#142414;border-color:var(--lime)}
+footer{padding-top:35px;color:#82988a;font-size:11px;line-height:1.7}
+@media(max-width:750px){.controls{grid-template-columns:repeat(3,minmax(0,1fr))}.choir{grid-template-columns:repeat(2,minmax(0,1fr))}main{padding:9px 10px 50px}h1{letter-spacing:-4px}.stage-hint{font-size:9px}.title p{max-width:230px}}
+@media(max-width:400px){.controls{grid-template-columns:repeat(2,minmax(0,1fr))}.knob{padding:10px}.voice{padding:9px}}
+</style></head><body><main>
+<header><span class="brand">parasite</span><span class="eyebrow">INSTRUMENT 003 / MELT 2.0</span></header>
+<section class="title"><h1>MELT<span style="color:#a8e1b1">.</span></h1><p>FOUR VOICES / FOUR WALLS<br>HARMONIC BLOOM • TAPE MEMORY<br>Each collision becomes an evolving cloud of sound.</p></section>
+<div class="stage"><div class="stage-label">THE CHAMBER / TOUCH & DRAG THE WALLS</div><canvas id="scene" aria-label="Four bouncing musical balls with draggable walls"></canvas><div class="stage-hint">WALL POSITION = ECHO RHYTHM</div></div>
+<div class="transport"><button class="play" id="play">▶ WAKE THE CHAMBER</button><button class="secondary" id="regen">✧ RESEED</button><button class="secondary" id="quiet">CLEAR TAILS</button><span class="status"><i class="pulse" id="pulse"></i><span id="state">AUDIO ASLEEP</span></span></div>
+<div class="bar"><h2>ATMOSPHERE</h2><small>THE SPACE BETWEEN COLLISIONS</small></div>
+<div class="controls" id="global"></div>
+<div class="bar"><h2>FOUR VOICES</h2><small>INDIVIDUAL PITCH • SPEED • TONE</small></div>
+<div class="choir" id="voices"></div>
+<div class="bar"><h2>CHOOSE A WORLD</h2><small>LIVE PRESETS</small></div><div class="presets" id="presets"></div>
+<footer>PLAY TO ENABLE AUDIO ON YOUR KINDLE. HEADPHONES RECOMMENDED; START QUIETLY. MELT USES ORIGINAL SYNTHESIZED HARMONIC VOICES AND MODULATED DELAY/REVERB — IT DOES NOT CONTAIN OR EMULATE ANY PROPRIETARY PEDAL CODE OR SAMPLES. TOUCH THE WALLS TO ALTER THE RHYTHM. HOME / INSTRUMENTS IS AVAILABLE VIA YOUR PARASITE HUB.</footer>
+</main><script>
+'use strict';
+const colors=['#f0b3d5','#9cddd8','#e8d09b','#cbb6ff'];
+const pitches=[-12,-9,-7,-5,-4,-2,0,2,3,5,7,9,10,12,14,15,17,19,22,24];
+const names=['C3','D♯3','F3','G3','G♯3','B♭3','C4','D4','E♭4','F4','G4','A4','B♭4','C5','D5','E♭5','F5','G5','B♭5','C6'];
+const voices=[
+ {name:'HALO',color:colors[0],note:6,speed:.75,tone:.68,level:.64,wall:.82,x:.15,dir:1,last:0,flash:0},
+ {name:'TIDE',color:colors[1],note:9,speed:.53,tone:.48,level:.62,wall:.75,x:.3,dir:-1,last:0,flash:0},
+ {name:'EMBER',color:colors[2],note:11,speed:.93,tone:.36,level:.57,wall:.9,x:.12,dir:1,last:0,flash:0},
+ {name:'AURA',color:colors[3],note:14,speed:.41,tone:.76,level:.57,wall:.67,x:.4,dir:1,last:0,flash:0}
+];
+const params={bloom:.7,space:.75,echo:.6,flutter:.24,warmth:.64,drift:.42};
+const meta=[['bloom','HARMONICS'],['space','CATHEDRAL'],['echo','TAPE ECHO'],['flutter','WOW / FLUTTER'],['warmth','WARMTH'],['drift','DRIFT']];
+const $=id=>document.getElementById(id);
+let running=false,audio=null,lastFrame=0,drag=-1,frameId=0,particles=[],presetName='AFTERGLOW';
+let ctx,mix,master,compressor,dry,delayL,delayR,feedbackL,feedbackR,delayToneL,delayToneR,delayWet,verb,verbWet,masterTone,lfo,lfoGain;
+const clamp=(n,a,b)=>Math.min(b,Math.max(a,n));
+const rand=(a,b)=>a+Math.random()*(b-a);
+const canvas=$('scene'),g=canvas.getContext('2d');
+function format(k,v){return Math.round(v*100)+'%'}
+function buildControls(){
+ $('global').innerHTML='';
+ meta.forEach(([k,name])=>{
+  const el=document.createElement('div');el.className='knob';
+  el.innerHTML='<div class="meta"><span>'+name+'</span><output id="out-'+k+'">'+format(k,params[k])+'</output></div><input aria-label="'+name+'" type="range" id="g-'+k+'" min="0" max="1" step="0.01" value="'+params[k]+'">';
+  $('global').appendChild(el);
+  el.querySelector('input').oninput=e=>{params[k]=+e.target.value;$('out-'+k).textContent=format(k,params[k]);updateEffects()};
+ });
+ $('voices').innerHTML='';
+ voices.forEach((v,i)=>{
+  const el=document.createElement('div');el.className='voice';el.style.setProperty('--vc',v.color);
+  let options=names.map((n,j)=>'<option value="'+j+'"'+(v.note===j?' selected':'')+'>'+n+'</option>').join('');
+  el.innerHTML='<div class="head"><span>0'+(i+1)+' / '+v.name+'</span><span>●</span></div><select aria-label="'+v.name+' pitch">'+options+'</select>'+
+  ['speed','tone','level'].map(k=>'<label>'+({speed:'VELOCITY',tone:'BRILLIANCE',level:'LEVEL'}[k])+' <output id="v-'+i+'-'+k+'">'+Math.round(v[k]*100)+'%</output></label><input aria-label="'+v.name+' '+k+'" type="range" min="0.04" max="1" step="0.01" value="'+v[k]+'" data-k="'+k+'">').join('');
+  $('voices').appendChild(el);
+  el.querySelector('select').onchange=e=>v.note=+e.target.value;
+  el.querySelectorAll('input').forEach(input=>input.oninput=e=>{const k=e.target.dataset.k;v[k]=+e.target.value;$('v-'+i+'-'+k).textContent=Math.round(v[k]*100)+'%'});
+ });
+}
+const presets={
+ 'AFTERGLOW':{values:[.7,.75,.6,.24,.64,.42],notes:[6,9,11,14],speeds:[.75,.53,.93,.41],walls:[.82,.75,.9,.67]},
+ 'GLASS GARDEN':{values:[.94,.82,.43,.11,.44,.74],notes:[9,14,16,19],speeds:[.38,.52,.76,.31],walls:[.7,.84,.65,.91]},
+ 'DUSK CHOIR':{values:[.57,.93,.78,.37,.88,.25],notes:[2,6,9,11],speeds:[.47,.63,.37,.84],walls:[.88,.73,.69,.93]},
+ 'LOST CASSETTE':{values:[.33,.59,.87,.85,.95,.55],notes:[0,4,6,9],speeds:[.54,.81,.46,.67],walls:[.83,.78,.92,.61]}
+};
+function applyPreset(name){
+ const p=presets[name];presetName=name;
+ Object.keys(params).forEach((k,i)=>params[k]=p.values[i]);
+ voices.forEach((v,i)=>{v.note=p.notes[i];v.speed=p.speeds[i];v.wall=p.walls[i]});
+ buildControls();updateEffects();
+ $('presets').querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.textContent===name));
+}
+function makePresets(){
+ Object.keys(presets).forEach(name=>{const b=document.createElement('button');b.className='preset';b.textContent=name;b.onclick=()=>applyPreset(name);$('presets').appendChild(b)});
+ applyPreset('AFTERGLOW');
+}
+function makeImpulse(seconds){
+ const len=Math.round(ctx.sampleRate*seconds),buffer=ctx.createBuffer(2,len,ctx.sampleRate);
+ for(let ch=0;ch<2;ch++){
+  const a=buffer.getChannelData(ch);
+  for(let i=0;i<len;i++){
+   const t=i/len;
+   const pre=Math.sin(t*23.5+ch*.27)*.1;
+   a[i]=(Math.random()*2-1)*Math.pow(1-t,2.7)*(0.65+pre);
+  }
+ }
+ return buffer;
+}
+function initAudio(){
+ ctx=new (window.AudioContext||window.webkitAudioContext)();
+ mix=ctx.createGain();masterTone=ctx.createBiquadFilter();masterTone.type='lowpass';masterTone.frequency.value=4800;
+ compressor=ctx.createDynamicsCompressor();compressor.threshold.value=-18;compressor.knee.value=18;compressor.ratio.value=3;compressor.attack.value=.01;compressor.release.value=.25;
+ master=ctx.createGain();master.gain.value=.45;
+ mix.connect(masterTone);masterTone.connect(compressor);compressor.connect(master);master.connect(ctx.destination);
+ dry=ctx.createGain();dry.gain.value=.82;dry.connect(mix);
+ delayL=ctx.createDelay(3);delayR=ctx.createDelay(3);feedbackL=ctx.createGain();feedbackR=ctx.createGain();
+ delayToneL=ctx.createBiquadFilter();delayToneR=ctx.createBiquadFilter();delayToneL.type=delayToneR.type='lowpass';
+ delayWet=ctx.createGain();delayL.connect(delayToneL);delayToneL.connect(feedbackL);feedbackL.connect(delayR);
+ delayR.connect(delayToneR);delayToneR.connect(feedbackR);feedbackR.connect(delayL);
+ const panL=ctx.createStereoPanner?ctx.createStereoPanner():ctx.createGain(),panR=ctx.createStereoPanner?ctx.createStereoPanner():ctx.createGain();
+ if(panL.pan){panL.pan.value=-.7;panR.pan.value=.7}
+ delayL.connect(panL);delayR.connect(panR);panL.connect(delayWet);panR.connect(delayWet);delayWet.connect(mix);
+ verb=ctx.createConvolver();verb.buffer=makeImpulse(4.3);verbWet=ctx.createGain();
+ verb.connect(verbWet);verbWet.connect(mix);delayWet.connect(verb);
+ updateEffects();
+}
+function updateEffects(){
+ if(!ctx)return;
+ const t=ctx.currentTime;
+ masterTone.frequency.setTargetAtTime(1800+params.warmth*7200,t,.11);
+ delayL.delayTime.setTargetAtTime(.14+params.echo*.41,t,.2);
+ delayR.delayTime.setTargetAtTime(.2+params.echo*.53,t,.2);
+ feedbackL.gain.setTargetAtTime(.21+params.echo*.43,t,.1);
+ feedbackR.gain.setTargetAtTime(.21+params.echo*.43,t,.1);
+ delayToneL.frequency.setTargetAtTime(1450+params.warmth*4200,t,.14);
+ delayToneR.frequency.setTargetAtTime(1450+params.warmth*4200,t,.14);
+ delayWet.gain.setTargetAtTime(.12+params.echo*.29,t,.1);
+ verbWet.gain.setTargetAtTime(.12+params.space*.40,t,.1);
+}
+function noteFreq(index){return 130.8128*Math.pow(2,pitches[index]/12)}
+function trigger(v,i,edge){
+ if(!running||!ctx)return;
+ const now=ctx.currentTime;if(now-v.last<.09)return;v.last=now;
+ // A bounce creates a harmonic cloud, not a hard percussive beep.
+ const duration=1.6+params.bloom*2.9;const base=noteFreq(v.note);
+ const output=ctx.createGain();output.gain.value=0;
+ const panner=ctx.createStereoPanner?ctx.createStereoPanner():null;
+ if(panner){panner.pan.value=clamp((i-1.5)*.43+(edge?.14:-.14),-.9,.9);output.connect(panner);panner.connect(dry);panner.connect(delayL);panner.connect(verb)}
+ else{output.connect(dry);output.connect(delayL);output.connect(verb)}
+ const volume=.07+v.level*.13;
+ output.gain.setValueAtTime(.0001,now);
+ output.gain.exponentialRampToValueAtTime(Math.max(.0002,volume),now+.16);
+ output.gain.setTargetAtTime(.0001,now+.32,duration/4.2);
+ const tone=ctx.createBiquadFilter();tone.type='lowpass';tone.frequency.value=900+v.tone*4700+params.warmth*700;tone.Q.value=.6+params.bloom*1.6;tone.connect(output);
+ const partials=[1,2,3,4,5,7,8];
+ partials.forEach((ratio,n)=>{
+  const osc=ctx.createOscillator();osc.type=n===0?'sine':'triangle';
+  osc.frequency.value=base*ratio;
+  osc.detune.value=rand(-3,3)+Math.sin(now*.17+i)*params.drift*10;
+  const gain=ctx.createGain();
+  gain.gain.value=(n===0?.66:(params.bloom*.26+v.tone*.12)/(1+n*.8));
+  osc.connect(gain);gain.connect(tone);
+  if(n===1||n===3){
+   const l=ctx.createOscillator(),lg=ctx.createGain();l.frequency.value=.1+params.flutter*6+rand(0,.5);
+   lg.gain.value=.4+params.flutter*11;l.connect(lg);lg.connect(osc.detune);
+   l.start(now);l.stop(now+duration+1);
+  }
+  osc.start(now);osc.stop(now+duration+1);
+ });
+ // Octave and perfect-fifth halo, a musically tuned shimmer, independently faded.
+ if(params.bloom>.07){
+  const halo=ctx.createGain();halo.gain.setValueAtTime(.0001,now);
+  halo.gain.exponentialRampToValueAtTime(params.bloom*.035,now+.22);
+  halo.gain.exponentialRampToValueAtTime(.0001,now+duration);
+  const ho=ctx.createOscillator();ho.type='sine';ho.frequency.value=base*(i%2===0?2:3);
+  ho.connect(halo);halo.connect(verb);halo.connect(delayL);
+  ho.start(now);ho.stop(now+duration+.05);
+ }
+ setTimeout(()=>{try{output.disconnect();tone.disconnect()}catch(e){}},Math.ceil((duration+2)*1000));
+ v.flash=1;
+ for(let j=0;j<15;j++)particles.push({voice:i,phase:rand(0,Math.PI*2),r:rand(4,32),life:1,drift:rand(.5,1.8)});
+}
+async function toggle(){
+ try{
+  if(!ctx)initAudio();
+  if(ctx.state==='suspended')await ctx.resume();
+  running=!running;
+  $('play').textContent=running?'■ SUSPEND CHAMBER':'▶ WAKE THE CHAMBER';
+  $('play').classList.toggle('on',running);$('pulse').classList.toggle('on',running);
+  $('state').textContent=running?'GENERATING / LIVE':'PAUSED';
+  if(!running)clearTails();
+ }catch(e){$('state').textContent='AUDIO BLOCKED — TAP AGAIN';running=false}
+}
+function clearTails(){
+ if(!ctx)return;
+ // Quick fade at the master avoids an abrupt hard stop when resetting tails.
+ const t=ctx.currentTime;master.gain.cancelScheduledValues(t);master.gain.setTargetAtTime(.0001,t,.05);
+ setTimeout(()=>{if(!ctx)return;const n=ctx.currentTime;master.gain.setTargetAtTime(.45,n,.2)},350);
+}
+function reseed(){
+ voices.forEach(v=>{v.x=rand(.18,.45);v.dir=Math.random()>.5?1:-1;v.flash=0});
+ particles=[];if(running)voices.forEach((v,i)=>trigger(v,i,0));
+}
+function resize(){
+ const dpr=Math.min(devicePixelRatio||1,2),r=canvas.getBoundingClientRect();
+ canvas.width=Math.round(r.width*dpr);canvas.height=Math.round(r.height*dpr);
+ g.setTransform(dpr,0,0,dpr,0,0);
+}
+function roundRect(x,y,w,h,r){
+ g.beginPath();g.moveTo(x+r,y);g.arcTo(x+w,y,x+w,y+h,r);g.arcTo(x+w,y+h,x,y+h,r);g.arcTo(x,y+h,x+w,y,r);g.closePath();
+}
+function draw(time){
+ const rect=canvas.getBoundingClientRect(),w=rect.width,h=rect.height;
+ const dt=Math.min((time-lastFrame)/1000||0,.06);lastFrame=time;
+ g.clearRect(0,0,w,h);
+ const pad=Math.max(25,w*.06),left=pad,right=w-pad,track=right-left;
+ g.lineWidth=1;
+ for(let i=0;i<4;i++){
+  const v=voices[i],y=h*(.19+i*.205);
+  const leftWall=left,rightWall=left+track*v.wall;
+  const minX=.05,maxX=v.wall-.025;
+  if(running&&drag!==i){
+   const rate=(.032+v.speed*.17)*(1+params.drift*.2*Math.sin(time*.00028+i));
+   v.x+=v.dir*dt*rate;
+   if(v.x>=maxX){v.x=maxX;v.dir=-1;trigger(v,i,1)}
+   if(v.x<=minX){v.x=minX;v.dir=1;trigger(v,i,0)}
+  }
+  v.x=clamp(v.x,minX,maxX);
+  const bx=left+track*v.x;
+  g.strokeStyle='#53715c';g.globalAlpha=.48;g.beginPath();g.moveTo(left,y);g.lineTo(rightWall,y);g.stroke();g.globalAlpha=1;
+  for(let tick=0;tick<=12;tick++){
+   const xx=left+track*(tick/12);g.globalAlpha=.12;g.beginPath();g.moveTo(xx,y-7);g.lineTo(xx,y+7);g.strokeStyle='#c3e8c8';g.stroke();
+  }g.globalAlpha=1;
+  g.shadowColor=v.color;g.shadowBlur=18+v.flash*35;g.fillStyle=v.color;
+  roundRect(rightWall-4,y-21,8,42,4);g.fill();g.shadowBlur=0;
+  g.globalAlpha=.22;g.fillStyle=v.color;g.beginPath();g.arc(bx,y,27+v.flash*10,0,Math.PI*2);g.fill();g.globalAlpha=1;
+  g.shadowColor=v.color;g.shadowBlur=14+v.flash*26;g.fillStyle=v.color;g.beginPath();g.arc(bx,y,10+v.flash*3,0,Math.PI*2);g.fill();
+  g.shadowBlur=0;g.fillStyle='#fff';g.globalAlpha=.85;g.beginPath();g.arc(bx-3,y-3,3,0,Math.PI*2);g.fill();g.globalAlpha=1;
+  g.fillStyle='#a3bfa9';g.font='10px system-ui';g.fillText('0'+(i+1)+' / '+v.name,left,y-28);
+  g.textAlign='right';g.fillStyle=v.color;g.fillText(names[v.note],rightWall-9,y-28);g.textAlign='left';
+  v.flash*=Math.pow(.03,dt);
+ }
+ particles=particles.filter(p=>p.life>0);
+ particles.forEach(p=>{
+  const v=voices[p.voice],y=h*(.19+p.voice*.205),x=left+track*v.x;
+  p.life-=dt*p.drift*.7;p.r+=dt*32;
+  g.globalAlpha=Math.max(0,p.life)*.33;g.strokeStyle=v.color;
+  g.beginPath();g.arc(x,y,p.r,0,Math.PI*2);g.stroke();g.globalAlpha=1;
+ });
+ frameId=requestAnimationFrame(draw);
+}
+function wallPointer(e){
+ const r=canvas.getBoundingClientRect(),w=r.width,h=r.height,px=e.clientX-r.left,py=e.clientY-r.top;
+ const left=Math.max(25,w*.06),track=w-2*left;
+ const i=clamp(Math.round((py/h-.19)/.205),0,3);
+ const wallX=left+track*voices[i].wall;
+ if(e.type==='pointerdown'){
+  if(Math.abs(px-wallX)>45)return;
+  drag=i;canvas.setPointerCapture(e.pointerId);
+ }
+ if(e.type==='pointermove'&&drag>=0){
+  voices[drag].wall=clamp((px-left)/track,.24,.94);
+  voices[drag].x=Math.min(voices[drag].x,voices[drag].wall-.03);
+ }
+ if(e.type==='pointerup'||e.type==='pointercancel')drag=-1;
+}
+canvas.addEventListener('pointerdown',wallPointer);
+canvas.addEventListener('pointermove',wallPointer);
+canvas.addEventListener('pointerup',wallPointer);
+canvas.addEventListener('pointercancel',wallPointer);
+$('play').onclick=toggle;$('regen').onclick=reseed;$('quiet').onclick=clearTails;
+buildControls();makePresets();resize();
+window.addEventListener('resize',resize);
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&ctx&&ctx.state==='running'){ctx.suspend();running=false;$('play').textContent='▶ WAKE THE CHAMBER';$('play').classList.remove('on');$('state').textContent='PAUSED';}});
+frameId=requestAnimationFrame(draw);
+</script></body></html>
