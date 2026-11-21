@@ -184,7 +184,7 @@ function trigger(v,i,edge){
  v.flash=1;
  for(let j=0;j<15;j++)particles.push({voice:i,phase:rand(0,Math.PI*2),r:rand(4,32),life:1,drift:rand(.5,1.8)});
 }
-async async function toggle(){
+async function toggle(){
  try{
   if(!ctx)initAudio();
   if(ctx.state==='suspended')await ctx.resume();
