@@ -192,6 +192,7 @@ async function toggle(){
   $('play').textContent=running?'■ SUSPEND CHAMBER':'▶ WAKE THE CHAMBER';
   $('play').classList.toggle('on',running);$('pulse').classList.toggle('on',running);
   $('state').textContent=running?'GENERATING / LIVE':'PAUSED';
+  if(running&&ctx){const v=voices[0];v.last=-10;trigger(v,0,0);}
   if(!running)clearTails();
  }catch(e){$('state').textContent='AUDIO BLOCKED — TAP AGAIN';running=false}
 }
