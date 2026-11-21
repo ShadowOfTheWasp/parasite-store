@@ -1,0 +1,19 @@
+{
+  "name": "Parasite — iPhone Studio",
+  "short_name": "Parasite",
+  "description": "Orbit strings, Bounce mallets and Mellowtron sampler inside one studio.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#090e0d",
+  "theme_color": "#090e0d",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
