@@ -27,27 +27,10 @@ button,.download{display:block;text-align:center;padding:14px 9px;border-radius:
 <h1>TAPE <span>FLUTE</span></h1>
 <p>Tape keyboard, three-head Space Echo and stereo plate reverb.</p>
 <section aria-label="Install on Fire">
-<a id="download" class="download" aria-disabled="true">Checking Android download…</a>
-<p id="status" role="status"></p>
+<a id="download" class="download" href="../parasite-tape-flute-v1.1.0.apk">DOWNLOAD TAPE FLUTE APK / V1.1.0</a>
+<p id="status" role="status">Open the APK in Silk to approve installation. No separate file check is necessary.</p>
 <p>Open the downloaded APK in Silk and confirm installation. Return to Parasite and select <strong>Open</strong>. Tape Flute plays offline after installation.</p>
 <a href="./v1.1.0/">Play in your browser</a>
 </section>
 </main>
-<script>
-'use strict';
-const path = '../parasite-tape-flute-v1.1.0.apk';
-const download = document.getElementById('download');
-const status = document.getElementById('status');
-fetch(path, {method:'HEAD', cache:'no-store'}).then(response => {
-  if (!response.ok) throw new Error('Download unavailable');
-  download.href = path;
-  download.removeAttribute('aria-disabled');
-  download.textContent = 'Download APK · V1.1.0';
-  status.textContent = 'Ready for Amazon Fire and compatible Android tablets.';
-}).catch(() => {
-  download.textContent = 'Android download unavailable';
-  status.textContent = 'Try refreshing this page. The browser instrument is available below.';
-});
-</script>
-</body>
-</html>
+</body></html>
