@@ -26,6 +26,7 @@ public class HomeActivity extends Activity {
   private long lastTap=0;
   private boolean webError=false;
   private boolean displayedHub=false;
+  private boolean hubLoaded=false;
 
   private void immersive() { getWindow().getDecorView().setSystemUiVisibility(IMMERSIVE); }
   @Override public void onCreate(Bundle b) { super.onCreate(b); immersive(); home(); }
@@ -56,11 +57,11 @@ public class HomeActivity extends Activity {
     displayedHub=false;begin();brand();
     addButton("HUB",this::hub);
     addButton("UPDATES",this::updates);
-    root.addView(label("V4 • Tap logo five times for settings",11,Color.rgb(110,135,114)));
+    root.addView(label("V5 • Tap logo five times for settings",11,Color.rgb(110,135,114)));
   }
   private String configuredUrl(){return getPreferences(0).getString("hub_url",HUB_URL);}
   private void hub() {
-    displayedHub=true;begin();
+    displayedHub=true;hubLoaded=false;begin();
     addButton("‹ PARASITE HOME",this::home);
     FrameLayout holder=new FrameLayout(this);
     root.addView(holder,new LinearLayout.LayoutParams(-1,0,1));
@@ -68,14 +69,65 @@ public class HomeActivity extends Activity {
     web.getSettings().setJavaScriptEnabled(true);web.getSettings().setDomStorageEnabled(true);
     web.getSettings().setMediaPlaybackRequiresUserGesture(false);
     web.getSettings().setAllowFileAccess(false);web.getSettings().setAllowContentAccess(false);
+    web.setDownloadListener((url,userAgent,contentDisposition,mimeType,contentLength)->openDownload(url));
     web.setWebViewClient(new WebViewClient(){
-      @Override public void onReceivedError(WebView v,WebResourceRequest r,WebResourceError error){
-        if(r.isForMainFrame())runOnUiThread(()->hubUnavailable()); }
-      @Override public void onReceivedHttpError(WebView v,WebResourceRequest r,WebResourceResponse response){
-        if(r.isForMainFrame() && response.getStatusCode()>=400)runOnUiThread(()->hubUnavailable()); }
+      @Override public boolean shouldOverrideUrlLoading(WebView view,WebResourceRequest request){
+        String target=request.getUrl().toString();
+        if(isApkUrl(target)){openDownload(target);return true;}
+        return false;
+      }
+      @Override public boolean shouldOverrideUrlLoading(WebView view,String target){
+        if(isApkUrl(target)){openDownload(target);return true;}
+        return false;
+      }
+      @Override public void onPageFinished(WebView view,String url){hubLoaded=true;}
+      @Override public void onReceivedError(WebView view,WebResourceRequest request,WebResourceError error){
+        if(request.isForMainFrame() && !hubLoaded)
+          runOnUiThread(()->hubUnavailable());
+        else if(request.isForMainFrame())
+          runOnUiThread(()->Toast.makeText(HomeActivity.this,"This page did not load. Go back to Hub and retry.",Toast.LENGTH_LONG).show());
+      }
+      @Override public void onReceivedHttpError(WebView view,WebResourceRequest request,WebResourceResponse response){
+        if(request.isForMainFrame() && response.getStatusCode()>=400){
+          if(!hubLoaded)runOnUiThread(()->hubUnavailable());
+          else runOnUiThread(()->Toast.makeText(HomeActivity.this,"Page unavailable (HTTP "+response.getStatusCode()+")",Toast.LENGTH_LONG).show());
+        }
+      }
     });
     holder.addView(web,new FrameLayout.LayoutParams(-1,-1));
     immersive();web.loadUrl(configuredUrl());
+  }
+  private boolean isApkUrl(String target){
+    try{
+      Uri uri=Uri.parse(target);
+      String host=uri.getHost();
+      String path=uri.getPath();
+      if(!"https".equalsIgnoreCase(uri.getScheme())||host==null||path==null)return false;
+      boolean trusted=host.equals("github.com")||host.equals("raw.githubusercontent.com")||
+        host.equals("shadowofthewasp.github.io")||host.equals("objects.githubusercontent.com");
+      return trusted && path.toLowerCase(java.util.Locale.US).endsWith(".apk");
+    }catch(Exception ex){return false;}
+  }
+  private void openDownload(String target){
+    try{
+      Uri uri=Uri.parse(target);
+      if(!isApkUrl(target))throw new IllegalArgumentException("Unknown APK address");
+      // Let Silk/Android handle the download and package installation consent.
+      Intent intent=new Intent(Intent.ACTION_VIEW,uri);
+      intent.addCategory(Intent.CATEGORY_BROWSABLE);
+      intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+      intent.setPackage("com.amazon.cloud9");
+      try{startActivity(intent);}
+      catch(Exception noSilk){
+        intent.setPackage(null);
+        startActivity(intent);
+      }
+      Toast.makeText(this,"Download opened in browser. Approve installation there.",Toast.LENGTH_LONG).show();
+    }catch(Exception e){
+      new AlertDialog.Builder(this).setTitle("Open APK download")
+        .setMessage("Could not open a download browser. Open the same instrument page in Silk.")
+        .setPositiveButton("OK",null).show();
+    }
   }
   private void hubUnavailable(){
     if(!displayedHub)return;
