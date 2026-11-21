@@ -33,6 +33,14 @@
       "installUrl": "https://parasite-kindle.vercel.app/relay/v1.1.0/",
       "version": "1.1.0",
       "playUrl": "https://parasite-kindle.vercel.app/relay/v1.1.0/"
+    },
+    {
+      "package": "studio.parasite.splice",
+      "title": "Splice",
+      "description": "MICROPHONE SAMPLER / EIGHT TAPE SLICES / REVERSE / STUTTER / 16-STEP LOOP",
+      "version": "1.0.0",
+      "installUrl": "https://parasite-kindle.vercel.app/splice/v1.0.0/",
+      "playUrl": "https://parasite-kindle.vercel.app/splice/v1.0.0/"
     }
   ]
 }
