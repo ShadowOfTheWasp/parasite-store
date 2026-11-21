@@ -5,23 +5,26 @@
     {
       "package": "studio.parasite.orbit4",
       "title": "Orbit",
-      "description": "SLOW BELL HARMONIES / LONG TAPE TAILS / 10–25 SECOND ORBITS",
-      "installUrl": "https://shadowofthewasp.github.io/parasite-store/orbit4/",
-      "version": "2.2.0"
+      "description": "ORCHESTRAL STRING ENSEMBLE / FOUR 8-STEP ORBITS / DUAL ADSR / AMBIENT DSP",
+      "installUrl": "https://parasite-kindle.vercel.app/",
+      "version": "3.1.0",
+      "playUrl": "https://parasite-kindle.vercel.app/orbit.html"
     },
     {
       "package": "studio.parasite.melt",
       "title": "Bounce",
-      "description": "COMPACT HARMONIC CHAMBER / SIX EFFECT DIALS / FOUR DETAILED VOICES",
-      "installUrl": "https://shadowofthewasp.github.io/parasite-store/melt/",
-      "version": "2.1.0",
-      "playUrl": "https://shadowofthewasp.github.io/parasite-store/melt/web/v2.1.0/"
+      "description": "BELLS / CHIMES / VIBRAPHONE / MARIMBA / CELESTA / HARMONIC BOUNCE",
+      "installUrl": "https://parasite-kindle.vercel.app/",
+      "version": "3.1.0",
+      "playUrl": "https://parasite-kindle.vercel.app/bounce.html"
     },
     {
       "package": "studio.parasite.tapeflute",
       "title": "Mellowtron",
-      "description": "004 / V1.1.0 / TAPE KEYS / SPACE ECHO / PLATE REVERB",
-      "installUrl": "https://shadowofthewasp.github.io/parasite-store/tape-flute/"
+      "description": "MICROPHONE SAMPLER / CHROMATIC KEYBOARD / 32-STEP MATRIX SEQUENCER",
+      "installUrl": "https://parasite-kindle.vercel.app/",
+      "version": "3.0.0",
+      "playUrl": "https://parasite-kindle.vercel.app/mellowtron.html"
     }
   ]
 }
