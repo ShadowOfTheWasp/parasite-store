@@ -1,58 +1,23 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#080d0b"><title>MELT / 2.0 — PARASITE</title>
+<meta name="theme-color" content="#080d0b"><title>MELT / 2.1 — PARASITE</title>
 <style>
-:root{color-scheme:dark;--bg:#080d0b;--panel:#111b17;--line:#2b4437;--ink:#e2f2dd;--muted:#98aea0;--lime:#b8f796;--pink:#efb4d1;--cyan:#9de4de;--gold:#e5cf9d;--violet:#c9b6fd}
-*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
-body{overflow-x:hidden}button,select,input{font:inherit;touch-action:manipulation}button{cursor:pointer}main{width:min(1160px,100%);margin:auto;padding:12px 15px 75px}
-header{display:flex;align-items:center;justify-content:space-between;padding:14px 4px;border-bottom:1px solid var(--line);gap:8px}
-.brand{font-size:30px;font-weight:820;letter-spacing:-1.8px;color:var(--lime);line-height:1}.eyebrow{color:#9cbea7;font-size:10px;font-weight:800;letter-spacing:2.6px}
-.title{display:flex;align-items:flex-end;justify-content:space-between;gap:15px;flex-wrap:wrap;margin:20px 0 12px}
-h1{font-size:clamp(54px,11vw,110px);line-height:.88;letter-spacing:-7px;margin:0;font-weight:810;color:#eebbd3;text-shadow:0 0 45px #9c587250}
-.title p{max-width:290px;font-size:12px;color:var(--muted);line-height:1.65;margin:0}
-.stage{background:radial-gradient(ellipse at 50% 60%,#14251d 0%,#090f0d 76%);border:1px solid #345343;border-radius:17px;overflow:hidden;position:relative;box-shadow:inset 0 0 90px #040805,0 12px 50px #0008}
-.stage:before{content:"";pointer-events:none;position:absolute;inset:0;background:linear-gradient(0deg,#0004,transparent 38%,#fff1);z-index:1}
-canvas{display:block;width:100%;height:clamp(255px,45vw,480px);touch-action:none}
-.stage-label{position:absolute;left:15px;top:12px;color:#b5c8b8;font-size:10px;letter-spacing:2px;z-index:2;pointer-events:none}
-.stage-hint{position:absolute;bottom:10px;right:13px;color:#7c9d87;font-size:10px;z-index:2;pointer-events:none}
-.transport{display:flex;gap:10px;margin:13px 0;align-items:stretch;flex-wrap:wrap}
-.play{flex:1;min-width:150px;background:var(--lime);color:#0d1a0e;border:0;border-radius:9px;padding:17px 13px;font-weight:900;letter-spacing:1px}
-.play.on{background:#e7d5a2}.secondary{border:1px solid #54705c;background:#152219;color:#e0f7d9;border-radius:9px;padding:13px 15px;font-weight:700}
-.transport .status{display:flex;align-items:center;color:var(--muted);font-size:11px;padding:8px;letter-spacing:1px}
-.pulse{width:7px;height:7px;border-radius:50%;background:#758978;margin-right:10px}.pulse.on{background:var(--lime);box-shadow:0 0 12px var(--lime)}
-.bar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:29px 0 12px}
-.bar h2{margin:0;font-size:14px;letter-spacing:2px;font-weight:850}.bar small{color:var(--muted);font-size:11px}
-.controls{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
-.knob{background:linear-gradient(140deg,#142019,#101914);border:1px solid var(--line);padding:14px 12px;border-radius:12px;min-width:0}
-.knob .meta{display:flex;justify-content:space-between;align-items:center;gap:5px;font-size:10px;letter-spacing:1.2px;font-weight:850;color:#a2b8a6}
-.knob output{color:var(--lime);font-size:11px;font-variant-numeric:tabular-nums}
-input[type=range]{appearance:none;width:100%;height:24px;background:transparent;display:block;margin:9px 0 0;accent-color:var(--lime)}
-input[type=range]::-webkit-slider-runnable-track{height:4px;background:linear-gradient(90deg,#81bd88,#42574b);border-radius:3px}
-input[type=range]::-webkit-slider-thumb{appearance:none;width:20px;height:20px;margin-top:-8px;background:#c3f5ad;border:4px solid #15221a;border-radius:50%;box-shadow:0 0 0 1px #87a58a}
-.choir{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
-.voice{padding:14px;background:#131e19;border:1px solid var(--line);border-radius:13px;position:relative;overflow:hidden}
-.voice:before{position:absolute;content:"";height:3px;left:0;right:0;top:0;background:var(--vc);box-shadow:0 0 15px var(--vc)}
-.voice .head{display:flex;align-items:center;justify-content:space-between;gap:5px;font-weight:800;margin-bottom:12px;color:var(--vc);letter-spacing:1px}
-.voice select{background:#080e0b;border:1px solid #355040;color:var(--ink);padding:9px 5px;border-radius:7px;width:100%;font-size:13px}
-.voice label{display:block;font-size:10px;color:#adc1b0;margin-top:12px;letter-spacing:1.2px}
-.voice output{float:right;color:var(--vc)}
-.presets{display:flex;flex-wrap:wrap;gap:9px;margin:10px 0}
-.preset{background:#15231b;border:1px solid #4b6a53;border-radius:30px;color:#d4e9d0;padding:10px 15px;font-size:12px;font-weight:750}
-.preset.active{background:var(--lime);color:#142414;border-color:var(--lime)}
-footer{padding-top:35px;color:#82988a;font-size:11px;line-height:1.7}
-@media(max-width:750px){.controls{grid-template-columns:repeat(3,minmax(0,1fr))}.choir{grid-template-columns:repeat(2,minmax(0,1fr))}main{padding:9px 10px 50px}h1{letter-spacing:-4px}.stage-hint{font-size:9px}.title p{max-width:230px}}
-@media(max-width:400px){.controls{grid-template-columns:repeat(2,minmax(0,1fr))}.knob{padding:10px}.voice{padding:9px}}
+:root{color-scheme:dark;--bg:#090e0d;--panel:#13201c;--line:#365047;--ink:#edf1df;--muted:#a2b4a6;--lime:#c5df9e;--pink:#edb9cc;--cyan:#a7d9ce;--gold:#dfcfa5;--violet:#c3b8df}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",sans-serif}body{overflow-x:hidden}button,select,input{font:inherit;touch-action:manipulation}button{cursor:pointer}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+main{width:min(1180px,100%);margin:auto;padding:12px 18px 22px;background:radial-gradient(ellipse at 30% 0,#25372c55,transparent 65%)}header{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 0 13px;border-bottom:1px solid var(--line)}.brand{font-size:20px;font-weight:850;letter-spacing:-1px;color:var(--lime)}.eyebrow{color:var(--muted);font:10px ui-monospace,monospace;letter-spacing:2px}.title{display:flex;align-items:center;gap:20px;margin:14px 0}.title h1{font-size:48px;letter-spacing:-3px;margin:0;color:var(--ink);line-height:1}.title h1 span{color:var(--pink)}.title p{font:10px/1.7 ui-monospace,monospace;color:var(--muted);margin:0;letter-spacing:1px}.transport{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:0 0 14px}.play,.secondary{min-height:44px;border:1px solid var(--line);border-radius:5px;font:700 11px ui-monospace,monospace;letter-spacing:.5px;padding:10px 15px}.play{background:var(--lime);color:#17211a;min-width:190px}.play.on{background:var(--gold)}.secondary{background:#1c2b24;color:var(--ink)}.status{display:flex;align-items:center;margin-left:auto;color:var(--muted);font:10px ui-monospace,monospace}.pulse{width:6px;height:6px;border-radius:50%;background:#657367;margin-right:8px}.pulse.on{background:var(--lime);box-shadow:0 0 10px var(--lime)}
+.workbench{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(300px,1fr);gap:12px}.chamber-panel,.effects-panel,.voice-panel{min-width:0;border:1px solid var(--line);border-radius:9px;background:linear-gradient(135deg,#16241e,#101a17);padding:12px;box-shadow:0 5px 20px #0003}.bar{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:0 0 10px}.bar h2{margin:0;font:700 10px ui-monospace,monospace;letter-spacing:1.8px;color:var(--ink)}.bar small{font:9px ui-monospace,monospace;color:var(--muted)}.stage{background:radial-gradient(ellipse at center,#1b3028,#09110f 80%);border:1px solid #324a40;border-radius:5px;overflow:hidden;position:relative;box-shadow:inset 0 0 35px #0006}.stage:before{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,transparent,transparent 3px,#0000000a 4px);z-index:1}canvas{display:block;width:100%;height:244px;touch-action:none}.stage-hint{position:absolute;bottom:8px;right:10px;color:#a0b4a4;font:8px ui-monospace,monospace;letter-spacing:1px;pointer-events:none}.presets{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;margin-top:10px}.preset{min-height:44px;padding:7px 3px;border:1px solid #425c4c;border-radius:4px;background:#101c16;color:#c9d5c7;font:700 9px ui-monospace,monospace;letter-spacing:.3px}.preset.active{color:#142015;background:var(--lime);border-color:var(--lime)}
+.controls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px 8px}.knob{min-width:0;text-align:center;padding:9px 5px 5px;border:1px solid #354b3d;border-radius:6px;background:radial-gradient(ellipse at top,#25372b,#142019)}.knob .meta{display:flex;flex-direction:column;gap:5px;align-items:center;font:700 8px ui-monospace,monospace;letter-spacing:.8px;color:var(--muted)}.knob output{font:11px ui-monospace,monospace;color:var(--gold);font-variant-numeric:tabular-nums}.dial{display:block;position:relative;width:39px;height:39px;border-radius:50%;margin:8px auto 2px;background:radial-gradient(circle at 38% 25%,#4d5b4a,#222d23 65%);border:2px solid #829075;box-shadow:0 3px 6px #0008,0 0 0 3px #0d1710;transform:rotate(var(--turn,-135deg))}.dial:after{content:"";position:absolute;width:3px;height:12px;top:3px;left:16px;background:var(--gold);border-radius:1px}.knob input{margin-top:4px}input[type=range]{appearance:none;-webkit-appearance:none;width:100%;height:30px;display:block;background:transparent;accent-color:var(--lime)}input[type=range]::-webkit-slider-runnable-track{height:3px;background:#536d57;border-radius:3px}input[type=range]::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;width:17px;height:17px;margin-top:-7px;border-radius:50%;border:3px solid #1c2c21;background:var(--lime);box-shadow:0 0 0 1px #8a9d7e}input[type=range]::-moz-range-track{height:3px;background:#536d57}input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;background:var(--lime);border:2px solid #1c2c21}.effect-note{font:9px/1.6 ui-monospace,monospace;color:var(--muted);margin:10px 0 0}
+.voice-panel{grid-column:1/-1}.choir{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.voice{padding:10px 12px 5px;background:#0e1914;border:1px solid #334c3e;border-top:2px solid var(--vc);border-radius:5px;min-width:0}.voice .head{display:flex;justify-content:space-between;gap:5px;color:var(--vc);font:700 10px ui-monospace,monospace;letter-spacing:1px;margin-bottom:8px}.voice select{width:100%;min-height:36px;color:var(--ink);background:#1d2c21;border:1px solid #465b47;border-radius:3px;padding:5px;font:11px ui-monospace,monospace}.voice label{display:block;font:8px ui-monospace,monospace;color:var(--muted);letter-spacing:1px;margin-top:7px}.voice output{float:right;color:var(--vc);font-variant-numeric:tabular-nums}.voice input{height:25px;margin:0}footer{color:var(--muted);font:10px/1.7 ui-monospace,monospace;margin-top:14px}summary{cursor:pointer;color:var(--lime);min-height:30px}footer p{max-width:760px}
+@media(min-width:1000px) and (max-height:760px){main{padding-top:7px}.title{margin:10px 0}.title h1{font-size:38px}canvas{height:218px}.knob{padding-top:7px}.dial{width:32px;height:32px;margin-top:6px}.dial:after{left:13px;height:10px}.workbench{gap:9px}.voice{padding-top:7px}.voice label{margin-top:5px}}
+@media(max-width:760px){main{padding:10px}.workbench{grid-template-columns:1fr}.voice-panel{grid-column:auto}.controls{grid-template-columns:repeat(3,minmax(0,1fr))}.knob{padding:9px}.choir{grid-template-columns:repeat(2,minmax(0,1fr))}.status{margin-left:0}.title p{font-size:9px}canvas{height:240px}}@media(max-width:380px){.title h1{font-size:40px}.title{gap:12px}.presets{grid-template-columns:repeat(2,minmax(0,1fr))}.bar small{font-size:8px}.transport{gap:5px}.play{min-width:170px}.secondary{padding:10px}.voice{padding:8px}.eyebrow{font-size:8px;letter-spacing:1px}}
 </style></head><body><main>
-<header><span class="brand">parasite</span><span class="eyebrow">INSTRUMENT 003 / MELT 2.0</span></header>
-<section class="title"><h1>MELT<span style="color:#a8e1b1">.</span></h1><p>FOUR VOICES / FOUR WALLS<br>HARMONIC BLOOM • TAPE MEMORY<br>Each collision becomes an evolving cloud of sound.</p></section>
-<div class="stage"><div class="stage-label">THE CHAMBER / TOUCH & DRAG THE WALLS</div><canvas id="scene" aria-label="Four bouncing musical balls with draggable walls"></canvas><div class="stage-hint">WALL POSITION = ECHO RHYTHM</div></div>
-<div class="transport"><button class="play" id="play">▶ WAKE THE CHAMBER</button><button class="secondary" id="regen">✧ RESEED</button><button class="secondary" id="quiet">CLEAR TAILS</button><span class="status"><i class="pulse" id="pulse"></i><span id="state">AUDIO ASLEEP</span></span></div>
-<div class="bar"><h2>ATMOSPHERE</h2><small>THE SPACE BETWEEN COLLISIONS</small></div>
-<div class="controls" id="global"></div>
-<div class="bar"><h2>FOUR VOICES</h2><small>INDIVIDUAL PITCH • SPEED • TONE</small></div>
-<div class="choir" id="voices"></div>
-<div class="bar"><h2>CHOOSE A WORLD</h2><small>LIVE PRESETS</small></div><div class="presets" id="presets"></div>
-<footer>PLAY TO ENABLE AUDIO ON YOUR KINDLE. HEADPHONES RECOMMENDED; START QUIETLY. MELT USES ORIGINAL SYNTHESIZED HARMONIC VOICES AND MODULATED DELAY/REVERB — IT DOES NOT CONTAIN OR EMULATE ANY PROPRIETARY PEDAL CODE OR SAMPLES. TOUCH THE WALLS TO ALTER THE RHYTHM. HOME / INSTRUMENTS IS AVAILABLE VIA YOUR PARASITE HUB.</footer>
+<header><span class="brand">parasite_</span><span class="eyebrow">003 / HARMONIC CHAMBER / V2.1</span></header>
+<section class="title"><h1>MELT<span>.</span></h1><p>FOUR VOICES IN CONTINUOUS MOTION<br>HARMONIC BLOOM / MAGNETIC MEMORY</p></section>
+<div class="transport"><button class="play" id="play">▶ WAKE THE CHAMBER</button><button class="secondary" id="regen">✧ RESEED</button><button class="secondary" id="quiet">CLEAR TAILS</button><span class="status" role="status"><i class="pulse" id="pulse"></i><span id="state">AUDIO ASLEEP</span></span></div>
+<div class="workbench"><section class="chamber-panel"><div class="bar"><h2>01 / THE CHAMBER</h2><small>DRAG THE FOUR WALLS</small></div><div class="stage"><canvas id="scene" aria-label="Four bouncing musical balls. Drag walls or use each voice wall slider below."></canvas><div class="stage-hint">COLLISION → HARMONY → ECHO</div></div><div class="presets" id="presets" aria-label="Sound worlds"></div></section>
+<section class="effects-panel"><div class="bar"><h2>02 / ATMOSPHERE</h2><small>SIX INTERCONNECTED COLOURS</small></div><div class="controls" id="global"></div><p class="effect-note">BLOOM / TUNED PARTIALS · SPACE / DIFFUSE TAIL<br>ECHO / TAPE MEMORY · DRIFT / SLOW DETUNING</p></section>
+<section class="voice-panel"><div class="bar"><h2>03 / FOUR VOICES</h2><small>PITCH · MOTION · COLOUR · DISTANCE</small></div><div class="choir" id="voices"></div></section></div>
+<footer><details><summary>HOW TO PLAY / ABOUT MELT</summary><p>Wake the chamber to enable audio. Each ball triggers its voice when it reaches a wall. Drag the glowing walls, or use WALL POSITION, to change the distance and rhythm. Choose a world to recall an atmosphere. Start quietly with headphones.</p><p>Original synthesized harmonic voices, modulated tape echo and reverb. This instrument contains no proprietary pedal code or samples. Use Back to return to your Parasite hub.</p></details></footer>
 </main><script>
 'use strict';
 const colors=['#f0b3d5','#9cddd8','#e8d09b','#cbb6ff'];
@@ -77,16 +42,16 @@ function buildControls(){
  $('global').innerHTML='';
  meta.forEach(([k,name])=>{
   const el=document.createElement('div');el.className='knob';
-  el.innerHTML='<div class="meta"><span>'+name+'</span><output id="out-'+k+'">'+format(k,params[k])+'</output></div><input aria-label="'+name+'" type="range" id="g-'+k+'" min="0" max="1" step="0.01" value="'+params[k]+'">';
+  el.innerHTML='<div class="meta"><span>'+name+'</span><output id="out-'+k+'">'+format(k,params[k])+'</output></div><span class="dial" aria-hidden="true" style="--turn:'+(params[k]*270-135)+'deg"></span><input aria-label="'+name+'" type="range" id="g-'+k+'" min="0" max="1" step="0.01" value="'+params[k]+'">';
   $('global').appendChild(el);
-  el.querySelector('input').oninput=e=>{params[k]=+e.target.value;$('out-'+k).textContent=format(k,params[k]);updateEffects()};
+  el.querySelector('input').oninput=e=>{params[k]=+e.target.value;$('out-'+k).textContent=format(k,params[k]);el.querySelector('.dial').style.setProperty('--turn',(params[k]*270-135)+'deg');updateEffects()};
  });
  $('voices').innerHTML='';
  voices.forEach((v,i)=>{
   const el=document.createElement('div');el.className='voice';el.style.setProperty('--vc',v.color);
   let options=names.map((n,j)=>'<option value="'+j+'"'+(v.note===j?' selected':'')+'>'+n+'</option>').join('');
   el.innerHTML='<div class="head"><span>0'+(i+1)+' / '+v.name+'</span><span>●</span></div><select aria-label="'+v.name+' pitch">'+options+'</select>'+
-  ['speed','tone','level'].map(k=>'<label>'+({speed:'VELOCITY',tone:'BRILLIANCE',level:'LEVEL'}[k])+' <output id="v-'+i+'-'+k+'">'+Math.round(v[k]*100)+'%</output></label><input aria-label="'+v.name+' '+k+'" type="range" min="0.04" max="1" step="0.01" value="'+v[k]+'" data-k="'+k+'">').join('');
+  ['speed','tone','level','wall'].map(k=>'<label>'+({speed:'VELOCITY',tone:'BRILLIANCE',level:'LEVEL',wall:'WALL POSITION'}[k])+' <output id="v-'+i+'-'+k+'">'+Math.round(v[k]*100)+'%</output></label><input aria-label="'+v.name+' '+k+'" type="range" min="'+(k==='wall'?.24:.04)+'" max="'+(k==='wall'?.94:1)+'" step="0.01" value="'+v[k]+'" data-k="'+k+'">').join('');
   $('voices').appendChild(el);
   el.querySelector('select').onchange=e=>v.note=+e.target.value;
   el.querySelectorAll('input').forEach(input=>input.oninput=e=>{const k=e.target.dataset.k;v[k]=+e.target.value;$('v-'+i+'-'+k).textContent=Math.round(v[k]*100)+'%'});
@@ -276,6 +241,7 @@ function wallPointer(e){
  if(e.type==='pointermove'&&drag>=0){
   voices[drag].wall=clamp((px-left)/track,.24,.94);
   voices[drag].x=Math.min(voices[drag].x,voices[drag].wall-.03);
+  const wallInput=$('voices').children[drag].querySelector('[data-k="wall"]');wallInput.value=voices[drag].wall;$('v-'+drag+'-wall').textContent=Math.round(voices[drag].wall*100)+'%';
  }
  if(e.type==='pointerup'||e.type==='pointercancel')drag=-1;
 }

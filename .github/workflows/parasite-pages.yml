@@ -70,6 +70,8 @@ jobs:
           cp microverse/app/build/outputs/apk/debug/app-debug.apk docs/parasite-microverse.apk
           test -s melt/app/build/outputs/apk/debug/app-debug.apk
           cp melt/app/build/outputs/apk/debug/app-debug.apk docs/parasite-melt.apk
+          cp melt/app/build/outputs/apk/debug/app-debug.apk docs/parasite-melt-v2.1.0.apk
+          unzip -p docs/parasite-melt-v2.1.0.apk assets/index.html | cmp - docs/melt/web/v2.1.0/index.html
           printf '{"version":8,"state":"ready","apk":"parasite-launcher.apk"}\n' > docs/release.json
           test -s tapeflute/app/build/outputs/apk/debug/app-debug.apk
           cp tapeflute/app/build/outputs/apk/debug/app-debug.apk docs/parasite-tape-flute-v1.1.0.apk

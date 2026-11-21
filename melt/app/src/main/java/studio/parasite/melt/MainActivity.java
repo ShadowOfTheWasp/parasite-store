@@ -8,7 +8,7 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-/** MELT 2.0 / self-contained WebAudio instrument bundled inside the Android APK. */
+/** MELT 2.1 / self-contained WebAudio instrument bundled inside the Android APK. */
 public final class MainActivity extends Activity {
     private WebView instrument;
     private static final int IMMERSIVE=View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY |
