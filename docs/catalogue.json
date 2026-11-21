@@ -29,10 +29,10 @@
     {
       "package": "studio.parasite.relay",
       "title": "Relay",
-      "description": "LIVE TALKBACK TRANSCRIPT / MIX REQUESTS / KEYWORD ALERTS",
-      "installUrl": "https://parasite-kindle.vercel.app/relay/v1.0.0/",
-      "version": "1.0.0",
-      "playUrl": "https://parasite-kindle.vercel.app/relay/v1.0.0/"
+      "description": "HARDWARE INPUT ROUTING / LIVE TEXT TRANSLATION / AI MIX REQUESTS",
+      "installUrl": "https://parasite-kindle.vercel.app/relay/v1.1.0/",
+      "version": "1.1.0",
+      "playUrl": "https://parasite-kindle.vercel.app/relay/v1.1.0/"
     }
   ]
 }
