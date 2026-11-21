@@ -4,14 +4,14 @@
   "units": [
     {
       "package": "studio.parasite.orbit4",
-      "title": "ORBIT-4 / PSYCHEDELIC BELLS",
+      "title": "Orbit",
       "description": "SLOW BELL HARMONIES / LONG TAPE TAILS / 10–25 SECOND ORBITS",
       "installUrl": "https://shadowofthewasp.github.io/parasite-store/orbit4/",
       "version": "2.2.0"
     },
     {
       "package": "studio.parasite.melt",
-      "title": "MELT 2.1",
+      "title": "Bounce",
       "description": "COMPACT HARMONIC CHAMBER / SIX EFFECT DIALS / FOUR DETAILED VOICES",
       "installUrl": "https://shadowofthewasp.github.io/parasite-store/melt/",
       "version": "2.1.0",
@@ -19,7 +19,7 @@
     },
     {
       "package": "studio.parasite.tapeflute",
-      "title": "TAPE FLUTE",
+      "title": "Mellowtron",
       "description": "004 / V1.1.0 / TAPE KEYS / SPACE ECHO / PLATE REVERB",
       "installUrl": "https://shadowofthewasp.github.io/parasite-store/tape-flute/"
     }
