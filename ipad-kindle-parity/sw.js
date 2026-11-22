@@ -1,5 +1,5 @@
 'use strict';
-const VERSION='parasite-kindle-originals-20261122-b2',FILES=["/index.html","/manifest.webmanifest","/orbit/v4.1.0/index.html","/orbit/v4.1.0/samples.js","/orbit/v4.1.0/space-echo.js","/tron/v4.0.0/index.html","/tron/v4.0.0/samples.js","/slice/v1.0.0/index.html","/slice/v1.0.0/h910.js","/slice/v1.0.0/splice.css","/slice/v1.0.0/splice.js"];
+const VERSION='parasite-orbit-four-osc-20261122-v1',FILES=["/index.html","/manifest.webmanifest","/tron/v4.0.0/index.html","/tron/v4.0.0/samples.js","/slice/v1.0.0/index.html","/slice/v1.0.0/h910.js","/slice/v1.0.0/splice.css","/slice/v1.0.0/splice.js","/orbit-synth/index.html","/orbit-synth/orbit.css","/orbit-synth/echo.js","/orbit-synth/orbit.js"];
 const RESPONSE_CACHE=VERSION,offlineFallback='/index.html';
 async function status(){const cache=await caches.open(RESPONSE_CACHE);const hits=await Promise.all(FILES.map(u=>cache.match(u)));return {type:'CACHE_PROGRESS',saved:hits.filter(Boolean).length,total:FILES.length,ready:hits.every(Boolean)}}
 async function sync(sender){
@@ -12,7 +12,7 @@ async function sync(sender){
  return status()
 }
 self.addEventListener('install',e=>e.waitUntil((async()=>{await sync(null);await self.skipWaiting()})()));
-self.addEventListener('activate',e=>e.waitUntil((async()=>{const keys=await caches.keys();await Promise.all(keys.filter(k=>k.startsWith('parasite-kindle-originals-')&&k!==VERSION).map(k=>caches.delete(k)));await self.clients.claim()})()));
+self.addEventListener('activate',e=>e.waitUntil((async()=>{const keys=await caches.keys();await Promise.all(keys.filter(k=>(k.startsWith('parasite-kindle-originals-')||k.startsWith('parasite-orbit-four-osc-'))&&k!==VERSION).map(k=>caches.delete(k)));await self.clients.claim()})()));
 self.addEventListener('message',e=>{
  const client=e.source;
  if(e.data?.type==='CHECK_OFFLINE'){e.waitUntil(status().then(s=>client?.postMessage(s)))}
