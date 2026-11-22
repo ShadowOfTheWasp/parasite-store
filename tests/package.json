@@ -2,9 +2,11 @@
   "private": true,
   "scripts": {
     "test": "node hub-status.test.cjs",
-    "test:engines": "node three-engines.test.cjs"
+    "test:engines": "node three-engines.test.cjs",
+    "test:chaz": "node chaz.test.cjs"
   },
   "devDependencies": {
-    "jsdom": "31.0.1"
+    "jsdom": "31.0.1",
+    "web-audio-engine": "0.13.4"
   }
 }

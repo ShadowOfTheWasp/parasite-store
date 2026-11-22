@@ -1,0 +1,14 @@
+(function(root){'use strict';
+const modes=[[1],[2],[3],[2,3],[1],[2],[3],[1,2],[2,3],[1,3],[1,2,3],[]];
+class SpaceEcho{
+ constructor(c){this.c=c;this.nodes=[];this.lfos=[];const n=(type,...args)=>{const x=c[type](...args);this.nodes.push(x);return x;};
+ this.input=n('createGain');this.output=n('createGain');this.gate=n('createGain');this.feed=n('createGain');this.bass=n('createBiquadFilter');this.bass.type='lowshelf';this.bass.frequency.value=250;this.treble=n('createBiquadFilter');this.treble.type='highshelf';this.treble.frequency.value=2200;this.sat=n('createWaveShaper');const a=new Float32Array(2048);for(let i=0;i<a.length;i++)a[i]=Math.tanh((i/(a.length-1)*2-1)*2.5)/2.5;this.sat.curve=a;
+ this.input.connect(this.output);this.input.connect(this.gate);this.gate.connect(this.feed);this.feed.connect(this.bass);this.bass.connect(this.treble);this.treble.connect(this.sat);this.sum=n('createGain');this.feedback=n('createGain');this.wet=n('createGain');this.sum.connect(this.feedback);this.feedback.connect(this.feed);this.sum.connect(this.wet);this.wet.connect(this.output);this.taps=[];
+ for(let i=0;i<3;i++){const d=n('createDelay',1.6),gain=n('createGain'),lfo=n('createOscillator'),depth=n('createGain');lfo.frequency.value=.43+i*.19;lfo.connect(depth);depth.connect(d.delayTime);lfo.start();this.lfos.push(lfo);this.sat.connect(d);d.connect(gain);gain.connect(this.sum);this.taps.push({d,gain,depth});}
+ this.spring=n('createConvolver');const b=c.createBuffer(2,Math.round(c.sampleRate*2.6),c.sampleRate);for(let ch=0;ch<2;ch++){const a=b.getChannelData(ch);let z=0;for(let i=0;i<a.length;i++){const t=i/c.sampleRate;z=.65*z+.35*(Math.random()*2-1);a[i]=(z*.4+Math.sin(2*Math.PI*(170*t+130*t*t))*Math.exp(-t*1.8)*.12)*Math.exp(-t*3.2)*(1-Math.exp(-t*100));}}this.spring.buffer=b;this.springWet=n('createGain');this.input.connect(this.spring);this.spring.connect(this.springWet);this.springWet.connect(this.output);this.update({});
+ }
+ update(v){const c=this.c,t=c.currentTime,mode=Math.max(1,Math.min(12,Math.round(v.mode||5))),heads=modes[mode-1],on=v.on!==false,base=.177-(v.repeatRate??.5)*.108;this.gate.gain.setTargetAtTime(on&&!v.cancel?1:0,t,.02);this.bass.gain.setTargetAtTime(((v.bass??.5)-.5)*24,t,.05);this.treble.gain.setTargetAtTime(((v.treble??.5)-.5)*24,t,.05);this.taps.forEach((x,i)=>{x.d.delayTime.setTargetAtTime(base*[1,1.9,2.77][i],t,.18);x.depth.gain.setTargetAtTime(.00005+(v.wow??.15)*.0015,t,.1);x.gain.gain.setTargetAtTime(heads.includes(i+1)?1:0,t,.02);});this.feedback.gain.setTargetAtTime(on?(v.intensity??.35)*1.1/Math.max(1,heads.length):0,t,.04);this.wet.gain.setTargetAtTime(on?(v.echoLevel??.35)/Math.sqrt(Math.max(1,heads.length)):0,t,.04);this.springWet.gain.setTargetAtTime(on&&mode>=5?(v.springLevel??.12)*.7:0,t,.04);}
+ dispose(){this.lfos.forEach(x=>{try{x.stop()}catch{}});this.nodes.forEach(x=>x.disconnect());}
+}
+root.ParasiteSpaceEcho=SpaceEcho;
+})(typeof window!=='undefined'?window:globalThis);

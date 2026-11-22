@@ -25,6 +25,14 @@
       "description": "LOADABLE SAMPLES / EIGHT SLICES / 16-STEP SEQUENCER / H910-INSPIRED PITCH DELAY",
       "installUrl": "https://shadowofthewasp.github.io/parasite-store/slice/",
       "playUrl": "https://parasite-kindle.vercel.app/slice/v1.0.0/"
+    },
+    {
+      "package": "studio.parasite.chaz",
+      "title": "Chaz",
+      "version": "1.0.0",
+      "description": "FM ACID / RAVE BASS / 16 STEPS / ACCENT & SLIDE / EIGHT USER PRESETS",
+      "installUrl": "https://shadowofthewasp.github.io/parasite-store/chaz/",
+      "playUrl": "https://parasite-kindle.vercel.app/chaz/v1.0.0/"
     }
   ]
 }

@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - 'launcher/**'
+      - 'chaz/**'
       - 'parasite-os/**'
       - 'microverse/**'
       - 'melt/**'
@@ -42,6 +43,9 @@ jobs:
           ANDROID_HOME: /usr/local/lib/android/sdk
         run: |
           "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "platforms;android-35" "build-tools;35.0.0"
+      - name: Build Chaz v1.0.0
+        working-directory: chaz
+        run: gradle --no-daemon assembleDebug
       - name: Build Parasite Home
         working-directory: parasite-os
         run: gradle --no-daemon assembleDebug
@@ -113,6 +117,10 @@ jobs:
           cp jasper/app/build/outputs/apk/debug/app-debug.apk docs/parasite-jasper-v1.0.0.apk
           for file in index.html jasper.js; do
             unzip -p docs/parasite-jasper-v1.0.0.apk "assets/$file" | cmp - "docs/jasper/v1.0.0/$file"
+          done
+          cp chaz/app/build/outputs/apk/debug/app-debug.apk docs/parasite-chaz-v1.0.0.apk
+          for file in index.html style.css app.js engine.js h910.js space-echo.js; do
+            unzip -p docs/parasite-chaz-v1.0.0.apk "assets/$file" | cmp - "docs/chaz/v1.0.0/$file"
           done
           touch docs/.nojekyll
           sha256sum docs/*.apk
