@@ -17,7 +17,7 @@ const inline=p=>[...fs.readFileSync(p,'utf8').matchAll(/<script[^>]*>([\s\S]*?)<
  w.document.getElementById('panic').click();assert.equal(w.inspectOrbit().voices.length,0);assert.equal(w.inspectOrbit().playing,false);o.window.close();
  const bpath='docs/kindle-hub/bounce/v3.6.0/index.html',b=dom(bpath),bw=b.window;
  bw.eval(inline(bpath)+'\nwindow.inspectBounce=()=>({v,balls,audio,playing});');assert.equal(bw.inspectBounce().v.decay,8);assert.equal(bw.document.getElementById('reverbType').value,'plate');
- bw.document.getElementById('play').click();await tick();const bs=bw.inspectBounce();assert(bs.playing);assert(bs.balls.every(x=>x.material==='marimba'));
+ bw.document.getElementById('play').click();await tick();const bs=bw.inspectBounce();assert(bs.playing);assert(bs.balls.every(x=>x.material==='marimba'));assert.equal(bw.document.getElementById('material0').value,'marimba');
  bw.document.getElementById('mute0').click();bw.intervals.find(x=>x.ms===25).fn();const notes=bs.audio.nodes.filter(x=>x.kind==='oscillator').map(x=>x.frequency.value);assert(notes.length>0);assert(notes.every(Number.isFinite));assert.equal(bs.balls[0].enabled,false);assert(bs.balls[0].lastHit<0);b.window.close();
  const spath='docs/kindle-hub/slice/v1.0.0/index.html',d=dom(spath),sw=d.window;sw.eval(fs.readFileSync('docs/kindle-hub/slice/v1.0.0/h910.js','utf8'));sw.eval(fs.readFileSync('docs/kindle-hub/slice/v1.0.0/splice.js','utf8')+'\nwindow.inspectSlice=()=>({sample,playing,harmonizer,audio,pattern});');
  assert.equal(sw.inspectSlice().sample,undefined);sw.document.getElementById('demo').click();await tick();let ss=sw.inspectSlice();assert(ss.sample&&ss.harmonizer);assert.equal(sw.document.querySelectorAll('#steps button').length,16);
