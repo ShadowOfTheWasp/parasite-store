@@ -15,7 +15,8 @@ import java.io.*;
 
 public class HomeActivity extends Activity {
   private static final String HUB_URL = "https://parasite-kindle.vercel.app";
-  private static final String RELEASE_API = "https://api.github.com/repos/ShadowOfTheWasp/parasite-store/releases/tags/parasite-home-v4";
+  private static final String INVENT_URL = "https://parasite-creator.vercel.app";
+  private static final String RELEASE_API = "https://api.github.com/repos/ShadowOfTheWasp/parasite-store/releases/tags/parasite-home-v8";
   private static final int IMMERSIVE = View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY |
     View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN |
     View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
@@ -26,6 +27,7 @@ public class HomeActivity extends Activity {
   private long lastTap=0;
   private boolean webError=false;
   private boolean displayedHub=false;
+  private String screenName="HUB";
   private boolean hubLoaded=false;
   private PermissionRequest pendingMicRequest=null;
   private static final int MIC_PERMISSION_CODE=607;
@@ -47,8 +49,12 @@ public class HomeActivity extends Activity {
     root.setBackgroundColor(Color.rgb(8,13,9));setContentView(root);immersive();
   }
   private void addButton(String title,Runnable click) {
-    Button b=new Button(this); b.setAllCaps(false);b.setText(title); b.setTextSize(20);
-    root.addView(b,new LinearLayout.LayoutParams(-1,-2)); b.setOnClickListener(v->click.run());
+    Button b=new Button(this); b.setAllCaps(false);b.setText(title); b.setTextSize(23);
+    b.setTypeface(Typeface.DEFAULT,Typeface.BOLD);b.setTextColor(Color.rgb(14,29,17));
+    b.setBackgroundTintList(android.content.res.ColorStateList.valueOf(Color.rgb(183,231,162)));
+    b.setMinHeight((int)(getResources().getDisplayMetrics().density*84));
+    LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
+    lp.setMargins(0,10,0,10);root.addView(b,lp);b.setOnClickListener(v->click.run());
   }
   private void brand(){
     TextView t=label("parasite",56,Color.rgb(167,235,134));t.setTypeface(Typeface.DEFAULT,Typeface.BOLD);
@@ -60,17 +66,21 @@ public class HomeActivity extends Activity {
   }
   private void home() {
     displayedHub=false;begin();brand();
+    root.addView(label("PLAY / CREATE",13,Color.rgb(138,161,140)));
     addButton("HUB",this::hub);
-    addButton("UPDATES",this::updates);
-    root.addView(label("V7 • Tap logo five times for settings",11,Color.rgb(110,135,114)));
+    addButton("INVENT",this::invent);
+    root.addView(label("V8 / KINDLE STUDIO",11,Color.rgb(110,135,114)));
   }
   private String configuredUrl(){return getPreferences(0).getString("hub_url",HUB_URL);}
-  private void hub() {
-    displayedHub=true;hubLoaded=false;begin();
+  private void hub(){openScreen(configuredUrl(),"HUB");}
+  private void invent(){openScreen(INVENT_URL,"INVENT");}
+  private void openScreen(String url,String title) {
+    screenName=title;displayedHub=true;hubLoaded=false;begin();
     addButton("‹ PARASITE HOME",this::home);
     FrameLayout holder=new FrameLayout(this);
     root.addView(holder,new LinearLayout.LayoutParams(-1,0,1));
     web=new WebView(this);web.setBackgroundColor(Color.rgb(8,13,9));web.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
+    android.webkit.CookieManager.getInstance().setAcceptCookie(true);
     web.getSettings().setJavaScriptEnabled(true);web.getSettings().setDomStorageEnabled(true);
     web.getSettings().setMediaPlaybackRequiresUserGesture(false);
     web.getSettings().setAllowFileAccess(false);web.getSettings().setAllowContentAccess(false);
@@ -132,6 +142,9 @@ public class HomeActivity extends Activity {
         return false;
       }
       @Override public void onPageFinished(WebView view,String url){hubLoaded=true;}
+      @Override public void onReceivedSslError(WebView view,android.webkit.SslErrorHandler handler,android.net.http.SslError error){
+        handler.cancel();Toast.makeText(HomeActivity.this,"Secure connection unavailable",Toast.LENGTH_LONG).show();
+      }
       @Override public void onReceivedError(WebView view,WebResourceRequest request,WebResourceError error){
         if(request.isForMainFrame() && !hubLoaded)
           runOnUiThread(()->hubUnavailable());
@@ -146,7 +159,7 @@ public class HomeActivity extends Activity {
       }
     });
     holder.addView(web,new FrameLayout.LayoutParams(-1,-1));
-    immersive();web.loadUrl(configuredUrl());
+    immersive();web.loadUrl(url);
   }
   @Override protected void onActivityResult(int requestCode,int resultCode,Intent data){
     super.onActivityResult(requestCode,resultCode,data);
@@ -206,10 +219,10 @@ public class HomeActivity extends Activity {
   private void hubUnavailable(){
     if(!displayedHub)return;
     displayedHub=false;begin();brand();
-    root.addView(label("HUB UNAVAILABLE",21,Color.WHITE));
-    root.addView(label("The online instrument Hub is not responding. No settings or apps have been changed.",14,Color.rgb(173,195,177)));
+    root.addView(label(screenName+" UNAVAILABLE",21,Color.WHITE));
+    root.addView(label("The online service is not responding. Your settings and instruments are unchanged.",14,Color.rgb(173,195,177)));
     addButton("BACK TO HOME",this::home);
-    addButton("HUB ADDRESS / SETTINGS",this::settings);
+    addButton("SETTINGS",this::settings);
   }
   private void updates(){
     displayedHub=false;begin();brand();
@@ -285,5 +298,5 @@ public class HomeActivity extends Activity {
         }catch(Exception e){startActivity(new Intent(Settings.ACTION_SETTINGS));}
       }).setNegativeButton("Cancel",null).show();
   }
-  @Override public void onBackPressed(){home();}
+  @Override public void onBackPressed(){if(web!=null&&web.canGoBack())web.goBack();else home();}
 }
