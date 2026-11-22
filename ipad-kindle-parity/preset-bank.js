@@ -30,11 +30,14 @@
  #parasite-preset-bank .foot{display:flex;gap:8px;align-items:center;justify-content:space-between;margin-top:11px;flex-wrap:wrap}
  #parasite-preset-bank .foot button{padding:9px 12px;background:#2c4931;border:1px solid #63845c;border-radius:9px;color:#efffe2;font-weight:750}
  #parasite-preset-bank .msg{font-size:11px;color:#afc6ae;flex:1;min-width:140px;line-height:1.45}
- @media(max-width:600px){#parasite-preset-bank{top:auto;bottom:max(8px,env(safe-area-inset-bottom))}#parasite-preset-bank .slots{gap:3px}#parasite-preset-bank .slot{padding:10px 2px}}
+ #parasite-preset-bank.inline{position:static;inset:auto;pointer-events:auto;min-width:0;flex:none;display:flex;align-items:center}#parasite-preset-bank.inline .toggle{display:none}#parasite-preset-bank.inline .panel{display:flex;margin:0;padding:3px 4px;border-radius:9px;align-items:center;gap:5px;box-shadow:none;background:#14271b;border-color:#527352;max-width:none}#parasite-preset-bank.inline .title,#parasite-preset-bank.inline .msg{display:none}#parasite-preset-bank.inline .slots{grid-template-columns:repeat(8,minmax(21px,1fr));gap:3px}#parasite-preset-bank.inline .slot{padding:8px 3px;font-size:12px;min-width:21px}#parasite-preset-bank.inline .foot{margin:0;flex:none}#parasite-preset-bank.inline .foot button{padding:7px;font-size:9px;white-space:nowrap} @media(max-width:600px){#parasite-preset-bank{top:auto;bottom:max(8px,env(safe-area-inset-bottom))}#parasite-preset-bank.inline .slots{gap:2px;grid-template-columns:repeat(8,minmax(17px,1fr))}#parasite-preset-bank.inline .slot{min-width:17px;padding:5px 2px}#parasite-preset-bank.inline .panel{gap:2px}#parasite-preset-bank.inline .foot button{padding:6px 3px;font-size:8px}#parasite-preset-bank .slots{gap:3px}#parasite-preset-bank .slot{padding:10px 2px}}
  `;doc.head.append(css);
  const root=doc.createElement('div');root.id='parasite-preset-bank';
  root.innerHTML='<button class="toggle" type="button" aria-expanded="false">PRESETS · 1–8</button><div class="panel"><div class="title">PARASITE · EIGHT USER PRESETS</div><div class="slots" role="group" aria-label="Eight instrument presets"></div><div class="foot"><span class="msg" role="status">1 · Factory patch</span><button type="button" class="save">SAVE TO SLOT</button></div></div>';
- doc.body.append(root);
+ const host=doc.querySelector('main.app > header');
+ if(host){root.classList.add('inline');host.append(root);}
+ else doc.body.append(root);
+ root.classList.add('open');
  const buttons=[],msg=root.querySelector('.msg'),toggle=root.querySelector('.toggle');
  function refresh(){buttons.forEach((b,i)=>{const slot=i+1;b.classList.toggle('selected',slot===selected);b.classList.toggle('empty',!slots[slot]);b.setAttribute('aria-pressed',String(slot===selected));b.title=slots[slot]?(slots[slot].label||'Saved preset'):'Empty preset'})}
  async function apply(form){
