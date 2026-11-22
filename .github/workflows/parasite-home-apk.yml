@@ -33,9 +33,9 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          cp parasite-os/app/build/outputs/apk/debug/app-debug.apk parasite-home-v9.apk
-          if gh release view parasite-home-v9 >/dev/null 2>&1; then
-            gh release upload parasite-home-v9 parasite-home-v9.apk --clobber
+          cp parasite-os/app/build/outputs/apk/debug/app-debug.apk parasite-home-v9.1.0.apk
+          if gh release view parasite-home-v9.1.0 >/dev/null 2>&1; then
+            gh release upload parasite-home-v9.1.0 parasite-home-v9.1.0.apk --clobber
           else
-            gh release create parasite-home-v9 parasite-home-v9.apk --title "Parasite Home V9" --notes "Experimental reversible Fire OS home application. Amazon firmware remains installed."
+            gh release create parasite-home-v9.1.0 parasite-home-v9.1.0.apk --title "Parasite Home 9.1.0" --notes "Orbit, Bounce and Slice play offline from inside Hub. Invent connects to Hub Remote online."
           fi

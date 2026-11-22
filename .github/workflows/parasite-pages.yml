@@ -42,7 +42,7 @@ jobs:
           ANDROID_HOME: /usr/local/lib/android/sdk
         run: |
           "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "platforms;android-35" "build-tools;35.0.0"
-      - name: Build Parasite Home v9
+      - name: Build Parasite Home
         working-directory: parasite-os
         run: gradle --no-daemon assembleDebug
       - name: Build Parasite Launcher
@@ -80,12 +80,15 @@ jobs:
           cp melt/app/build/outputs/apk/debug/app-debug.apk docs/parasite-melt.apk
           cp melt/app/build/outputs/apk/debug/app-debug.apk docs/parasite-melt-v3.6.0.apk
           unzip -p docs/parasite-melt-v3.6.0.apk assets/index.html | cmp - docs/melt/web/v3.6.0/index.html
-          cp parasite-os/app/build/outputs/apk/debug/app-debug.apk docs/parasite-home-v9.0.0.apk
+          cp parasite-os/app/build/outputs/apk/debug/app-debug.apk docs/parasite-home-v9.1.0.apk
+          for file in index.html icon.svg manifest.webmanifest orbit/v4.1.0/{index.html,samples.js,space-echo.js,SOURCES.md,LICENSE-SAMPLES.txt} bounce/v3.6.0/index.html slice/v1.0.0/{index.html,splice.css,splice.js,h910.js}; do
+            unzip -p docs/parasite-home-v9.1.0.apk "assets/hub/$file" | cmp - "docs/kindle-hub/$file"
+          done
           python3 - <<'PYMETA'
           import json, os
           from datetime import datetime, timezone
           with open('docs/release.json','w') as f:
-              json.dump({'version':9,'versionName':'9.0.0','state':'ready','apk':'parasite-home-v9.0.0.apk','commit':os.environ['GITHUB_SHA'],'builtAt':datetime.now(timezone.utc).isoformat()},f)
+              json.dump({'version':10,'versionName':'9.1.0','state':'ready','apk':'parasite-home-v9.1.0.apk','commit':os.environ['GITHUB_SHA'],'builtAt':datetime.now(timezone.utc).isoformat()},f)
           PYMETA
           test -s orbit/app/build/outputs/apk/debug/app-debug.apk
           cp orbit/app/build/outputs/apk/debug/app-debug.apk docs/parasite-orbit-v4.1.0.apk

@@ -1,4 +1,14 @@
 plugins { id 'com.android.application' }
 android { namespace 'studio.parasite.home'; compileSdk 35
- defaultConfig { applicationId 'studio.parasite.home'; minSdk 26; targetSdk 28; versionCode 9; versionName '9.0.0' }
+ defaultConfig { applicationId 'studio.parasite.home'; minSdk 26; targetSdk 28; versionCode 10; versionName '9.1.0' }
 }
+
+def bundledHub = tasks.register('bundleOfflineHub', Sync) {
+ from('../../docs/kindle-hub') {
+  include 'index.html', 'icon.svg', 'manifest.webmanifest'
+  include 'orbit/v4.1.0/**', 'bounce/v3.6.0/**', 'slice/v1.0.0/**'
+ }
+ into layout.buildDirectory.dir('generated/offline-assets/hub')
+}
+android.sourceSets.main.assets.srcDir(layout.buildDirectory.dir('generated/offline-assets'))
+tasks.named('preBuild').configure { dependsOn bundledHub }

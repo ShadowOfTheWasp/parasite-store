@@ -15,8 +15,8 @@ import java.io.*;
 
 public class HomeActivity extends Activity {
   private static final String HUB_URL = "https://parasite-kindle.vercel.app";
+  private static final String OFFLINE_HUB_PATH = "/offline/";
   private static final String INVENT_URL = "https://parasite-creator.vercel.app";
-  private static final String RELEASE_API = "https://api.github.com/repos/ShadowOfTheWasp/parasite-store/releases/tags/parasite-home-v9";
   private static final int IMMERSIVE = View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY |
     View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN |
     View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
@@ -31,7 +31,6 @@ public class HomeActivity extends Activity {
   private LinearLayout root;
   private int taps=0;
   private long lastTap=0;
-  private boolean webError=false;
   private boolean displayedHub=false;
   private String screenName="HUB";
   private boolean hubLoaded=false;
@@ -81,12 +80,12 @@ public class HomeActivity extends Activity {
     addButton("INVENT",this::invent);
     buildState=label(lastBuildState,14,Color.rgb(173,195,177));root.addView(buildState);
     buildState.setOnClickListener(v->checkBuildState());
-    root.addView(label("HOME 9.0.0 / CHECKS EVERY 5 MIN WHILE OPEN / TAP STATUS TO CHECK",11,Color.rgb(110,135,114)));
+    root.addView(label("HOME 9.1.0 / OFFLINE INSTRUMENTS / TAP STATUS TO CHECK",11,Color.rgb(110,135,114)));
   }
   private String configuredUrl(){return getPreferences(0).getString("hub_url",HUB_URL);}
-  private void hub(){openScreen(configuredUrl(),"HUB");}
-  private void invent(){openScreen(INVENT_URL,"INVENT");}
-  private void openScreen(String destination,String title) {
+  private void hub(){openScreen(HUB_URL+OFFLINE_HUB_PATH,"HUB",true);}
+  private void invent(){openScreen(INVENT_URL,"INVENT",false);}
+  private void openScreen(String destination,String title,boolean bundled) {
     screenName=title;displayedHub=true;hubLoaded=false;begin();
     addButton("‹ PARASITE HOME",this::home);
     FrameLayout holder=new FrameLayout(this);
@@ -105,7 +104,7 @@ public class HomeActivity extends Activity {
           picker.addCategory(Intent.CATEGORY_OPENABLE);
           picker.setType("audio/*");
           picker.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-          startActivityForResult(Intent.createChooser(picker,"Choose a Mellowtron sample or Orbit space impulse"),AUDIO_PICKER_CODE);
+          startActivityForResult(Intent.createChooser(picker,"Choose an audio file"),AUDIO_PICKER_CODE);
           return true;
         }catch(Exception ex){
           pendingFilePicker=null;
@@ -144,6 +143,9 @@ public class HomeActivity extends Activity {
     });
     web.setDownloadListener((url,userAgent,contentDisposition,mimeType,contentLength)->openDownload(url));
     web.setWebViewClient(new WebViewClient(){
+      @Override public WebResourceResponse shouldInterceptRequest(WebView view,WebResourceRequest request){
+        return bundled ? bundledHubResponse(request.getUrl()) : null;
+      }
       @Override public boolean shouldOverrideUrlLoading(WebView view,WebResourceRequest request){
         String target=request.getUrl().toString();
         if(isApkUrl(target)){openDownload(target);return true;}
@@ -173,6 +175,30 @@ public class HomeActivity extends Activity {
     holder.addView(web,new FrameLayout.LayoutParams(-1,-1));
     immersive();web.loadUrl(destination);
   }
+  private WebResourceResponse bundledHubResponse(Uri url) {
+    if (!"https".equals(url.getScheme()) || !"parasite-kindle.vercel.app".equals(url.getHost())) return null;
+    String path=url.getPath();
+    // Serve bundled pages on the existing origin so instrument presets keep their storage namespace.
+    if (path!=null && path.startsWith(OFFLINE_HUB_PATH)) {
+      String asset=path.substring(OFFLINE_HUB_PATH.length());
+      if (asset.isEmpty() || asset.endsWith("/")) asset+="index.html";
+      if (asset.matches("[a-zA-Z0-9._/-]+") && !asset.contains("..")) {
+        String mime=URLConnection.guessContentTypeFromName(asset);
+        if (asset.endsWith(".js")) mime="application/javascript";
+        if (asset.endsWith(".css")) mime="text/css";
+        if (asset.endsWith(".svg")) mime="image/svg+xml";
+        if (asset.endsWith(".webmanifest")) mime="application/manifest+json";
+        try {
+          return new WebResourceResponse(mime==null ? "application/octet-stream" : mime,
+            "UTF-8",getAssets().open("hub/"+asset));
+        } catch (IOException missing) {
+          // A missing bundled resource must never fall back to the live website.
+        }
+      }
+    }
+    return new WebResourceResponse("text/plain","UTF-8",404,"Not Found",java.util.Collections.emptyMap(),
+      new ByteArrayInputStream(new byte[0]));
+  }
   @Override protected void onActivityResult(int requestCode,int resultCode,Intent data){
     super.onActivityResult(requestCode,resultCode,data);
     if(requestCode!=AUDIO_PICKER_CODE)return;
@@ -193,7 +219,7 @@ public class HomeActivity extends Activity {
       pending.grant(new String[]{PermissionRequest.RESOURCE_AUDIO_CAPTURE});
     }else{
       pending.deny();
-      Toast.makeText(this,"Microphone access is required to record a Mellowtron tape.",Toast.LENGTH_LONG).show();
+      Toast.makeText(this,"Allow microphone access to record samples.",Toast.LENGTH_LONG).show();
     }
   }
   private boolean isApkUrl(String target){
@@ -232,7 +258,10 @@ public class HomeActivity extends Activity {
     if(!displayedHub)return;
     displayedHub=false;begin();brand();
     root.addView(label(screenName+" UNAVAILABLE",21,Color.WHITE));
-    root.addView(label("The online service is not responding. Your settings and instruments are unchanged.",14,Color.rgb(173,195,177)));
+    String message="INVENT".equals(screenName)
+      ? "Invent needs Wi-Fi. The instruments in Hub are available offline."
+      : "This Hub page could not open. Return to Parasite Home and try again.";
+    root.addView(label(message,14,Color.rgb(173,195,177)));
     addButton("BACK TO HOME",this::home);
     addButton("SETTINGS",this::settings);
   }
@@ -262,7 +291,7 @@ public class HomeActivity extends Activity {
           org.json.JSONObject unit=units.getJSONObject(i);if(i>0)lines.append(" · ");
           lines.append(unit.getString("title")).append(" ").append(unit.optString("version"));
         }
-      }catch(Exception e){lines.append("Catalogue unavailable — check Wi-Fi. Published versions not verified this check.");}
+      }catch(Exception e){lines.append("HUB PLAYS OFFLINE · Connect to Wi-Fi to check published instrument versions.");}
       try{
         org.json.JSONArray runs=readJson("https://api.github.com/repos/ShadowOfTheWasp/parasite-store/actions/workflows/parasite-pages.yml/runs?branch=main&event=push&per_page=1").getJSONArray("workflow_runs");
         org.json.JSONObject run=runs.getJSONObject(0);
@@ -273,7 +302,7 @@ public class HomeActivity extends Activity {
       }catch(Exception e){lines.append("\nBuild pipeline unavailable — status unknown.");}
       try{
         org.json.JSONObject release=readJson("https://shadowofthewasp.github.io/parasite-store/release.json");
-        if(release.getInt("version")>9)lines.append("\nNEW HOME UPDATE AVAILABLE — reinstall from the download page.");
+        if(release.getInt("version")>10)lines.append("\nNEW HOME UPDATE AVAILABLE — reinstall from the download page.");
       }catch(Exception e){lines.append("\nHome update check unavailable.");}
       lines.append("\nChecked ").append(java.text.DateFormat.getTimeInstance(java.text.DateFormat.SHORT).format(new java.util.Date()));
       lines.append(" · private request progress in INVENT");
@@ -282,12 +311,13 @@ public class HomeActivity extends Activity {
     },"parasite-build-state").start();
   }
   private void settings(){
-    String[] opts={"Return to Parasite","Edit Hub address","Return to Amazon Home","Android Settings"};
+    String[] opts={"Return to Parasite","Edit online Hub address","Return to Amazon Home","Android Settings","Open online Hub"};
     new AlertDialog.Builder(this).setTitle("Parasite / Settings").setItems(opts,(d,index)->{
       if(index==0)home();
       if(index==1)editUrl();
       if(index==2)amazon();
       if(index==3)startActivity(new Intent(Settings.ACTION_SETTINGS));
+      if(index==4)openScreen(configuredUrl(),"ONLINE HUB",false);
     }).setNegativeButton("Close",null).show();
   }
   private void editUrl(){
