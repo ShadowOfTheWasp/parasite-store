@@ -11,6 +11,18 @@
     {
       "source": "/slice/:path*",
       "destination": "https://parasite-kindle.vercel.app/slice/:path*"
+    },
+    {
+      "source": "/bounce/:path*",
+      "destination": "https://parasite-kindle.vercel.app/bounce/:path*"
+    },
+    {
+      "source": "/splice/:path*",
+      "destination": "https://parasite-kindle.vercel.app/splice/:path*"
+    },
+    {
+      "source": "/relay/:path*",
+      "destination": "https://parasite-kindle.vercel.app/relay/:path*"
     }
   ]
 }
