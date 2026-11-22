@@ -24,7 +24,7 @@ Current approved configuration: 2026-11-22. Active development target: Kindle Fi
 - **Eight intelligent bouncing balls** within one clearly defined rectangular room. Eight voices explicitly requested through Creator; preserve the current room and sound engine.
 - Four room walls correspond to musical pitch/material impacts. Each ball changes course on collision, with restrained non-repeating trajectory variation.
 - Touch and flick any ball to redirect its motion on Kindle. Adjustable speed, energy, gravity and intelligence.
-- Source is tuned bell/mallet synthesis (chime, vibraphone, marimba, celesta), one voice triggered by each wall collision; simultaneous two-ball collisions trigger both voices as a chord. Velocity controls impact strength.
+- Source is tuned bell/mallet synthesis (chime, vibraphone, marimba, celesta), one voice triggered by each wall collision; simultaneous two-ball collisions trigger both voices as a chord. Each ball's pitch is fixed and identical for both wall and ball collisions; muted balls are fully excluded from physics, collisions, touch interaction and sound until re-enabled. Velocity controls impact strength.
 - Delay feeds a **post-delay reverb**, with original atmospheric DSP. Keep the established Parasite design language.
 
 ## 03 / Mellowtron
