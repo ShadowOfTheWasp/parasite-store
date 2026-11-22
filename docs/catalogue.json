@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updated": "2026-11-21",
+  "updated": "2026-11-22",
   "units": [
     {
       "package": "studio.parasite.orbit4",
@@ -13,9 +13,9 @@
     {
       "package": "studio.parasite.melt",
       "title": "Bounce / Eight Voices",
-      "description": "EIGHT INTELLIGENT BALLS / FOUR TUNED WALLS / BELLS & MALLETS / TAPE DELAY + REVERB",
+      "description": "EIGHT BALLS / TWO-BALL CHORD COLLISIONS / TUNED WALLS / DELAY + POST REVERB",
       "installUrl": "https://shadowofthewasp.github.io/parasite-store/melt/",
-      "version": "3.2.0",
+      "version": "3.3.0",
       "playUrl": "https://parasite-kindle.vercel.app/bounce/v3.2.0/"
     },
     {
@@ -25,14 +25,6 @@
       "installUrl": "https://parasite-kindle.vercel.app/",
       "version": "3.0.0",
       "playUrl": "https://parasite-kindle.vercel.app/mellowtron.html"
-    },
-    {
-      "package": "studio.parasite.relay",
-      "title": "Relay",
-      "description": "HARDWARE INPUT ROUTING / LIVE TEXT TRANSLATION / AI MIX REQUESTS",
-      "installUrl": "https://parasite-kindle.vercel.app/relay/v1.1.0/",
-      "version": "1.1.0",
-      "playUrl": "https://parasite-kindle.vercel.app/relay/v1.1.0/"
     },
     {
       "package": "studio.parasite.splice",
