@@ -1,5 +1,5 @@
 'use strict';
-const VERSION='parasite-hub-deploy-ui-20261122-v1',FILES=["/index.html","/manifest.webmanifest","/orbit/v4.1.0/index.html","/orbit/v4.1.0/samples.js","/orbit/v4.1.0/space-echo.js","/slice-dual/index.html","/orbit-synth/echo.js","/orbit-clock/orbit-clock.js","/slice-dual/slice-single.js","/preset-bank.js","/bounce/v3.6.0/index.html","/relay/v1.1.0/index.html","/relay/v1.1.0/relay.js","/relay/v1.1.0/hardware.js","/relay/v1.1.0/capture.js"];
+const VERSION='parasite-hub-deploy-ui-20261122-v2',FILES=["/index.html","/manifest.webmanifest","/orbit/v4.1.0/index.html","/orbit/v4.1.0/samples.js","/orbit/v4.1.0/space-echo.js","/slice-dual/index.html","/orbit-synth/echo.js","/orbit-clock/orbit-clock.js","/slice-dual/slice-single.js","/preset-bank.js","/bounce/v3.6.0/index.html","/relay/v1.1.0/index.html","/relay/v1.1.0/relay.js","/relay/v1.1.0/hardware.js","/relay/v1.1.0/capture.js"];
 const RESPONSE_CACHE=VERSION,offlineFallback='/index.html';
 async function status(){const cache=await caches.open(RESPONSE_CACHE);const hits=await Promise.all(FILES.map(u=>cache.match(u)));return {type:'CACHE_PROGRESS',saved:hits.filter(Boolean).length,total:FILES.length,ready:hits.every(Boolean)}}
 async function sync(sender){
