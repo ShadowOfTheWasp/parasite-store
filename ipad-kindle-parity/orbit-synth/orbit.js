@@ -77,12 +77,12 @@ class OrbitSynth{
   this.ctx=c;this.voices=[];this.noiseBuffer=this.makeNoise();
   this.preEffects=c.createGain();this.preEffects.gain.value=.67;
   this.chorusDry=c.createGain(),this.chorusWet=c.createGain(),this.chorusMerge=c.createChannelMerger(2);
-  this.preEffects.connect(this.chorusDry);this.preEffects.connect(this.chorusWet);
-  this.chorusD=[0,1].map((i)=>{const d=c.createDelay(.05),l=c.createOscillator(),g=c.createGain(),pan=c.createStereoPanner();
+  this.preEffects.connect(this.chorusDry);
+  this.chorusD=[0,1].map((i)=>{const d=c.createDelay(.05),l=c.createOscillator(),g=c.createGain(),pan=c.createStereoPanner(),wet= c.createGain();wet.gain.value=.2;
    d.delayTime.value=.018+i*.004;l.frequency.value=i?.93:.71;g.gain.value=.0025;l.connect(g).connect(d.delayTime);
-   this.preEffects.connect(d);pan.pan.value=i?.82:-.82;d.connect(pan);l.start();return{d,l,g,pan}});
+   this.preEffects.connect(d);pan.pan.value=i?.82:-.82;d.connect(pan).connect(wet);l.start();return{d,l,g,pan,wet}});
   this.master=c.createGain();this.master.gain.value=.66;
-  this.chorusDry.connect(this.master);this.chorusD.forEach(x=>x.pan.connect(this.master));
+  this.chorusDry.connect(this.master);this.chorusD.forEach(x=>x.wet.connect(this.master));
   this.limiter=c.createDynamicsCompressor();this.limiter.threshold.value=-11;this.limiter.ratio.value=10;this.limiter.attack.value=.004;this.limiter.release.value=.18;
   this.effects=new window.OrbitEffects(c,this.limiter);this.master.connect(this.effects.input);this.limiter.connect(c.destination);
   this.updateMaster();
@@ -90,7 +90,7 @@ class OrbitSynth{
  makeNoise(){const c=this.ctx,buffer=c.createBuffer(1,c.sampleRate*3,c.sampleRate);let seed=90154,a=buffer.getChannelData(0);for(let i=0;i<a.length;i++){seed=(Math.imul(seed,1664525)+1013904223)>>>0;a[i]=seed/2147483648-1}return buffer}
  updateMaster(){const t=this.ctx.currentTime,chor=clamp(num('chorus'),0,1);
   this.chorusDry.gain.setTargetAtTime(1-chor*.3,t,.03);
-  this.chorusD.forEach(x=>{x.pan.pan.setTargetAtTime(x.pan.pan.value,t,.05);x.g.gain.setTargetAtTime(.0002+chor*.0035,t,.05)});
+  this.chorusD.forEach(x=>{x.wet.gain.setTargetAtTime(chor*.3,t,.035);x.g.gain.setTargetAtTime(.0002+chor*.0035,t,.05)});
   this.master.gain.setTargetAtTime(clamp(num('master'),0,1)*.7,t,.03);
  }
  noteOn(n){if(this.voices.length>=4){this.voices[0].release(true)}let v=new OrbitVoice(this,n);this.voices.push(v);meter();return v}
