@@ -5,10 +5,10 @@
     {
       "package": "studio.parasite.orbit4",
       "title": "Orbit",
-      "description": "ORCHESTRAL STRING ENSEMBLE / FOUR 8-STEP ORBITS / DUAL ADSR / AMBIENT DSP",
-      "installUrl": "https://parasite-kindle.vercel.app/",
-      "version": "3.1.0",
-      "playUrl": "https://parasite-kindle.vercel.app/orbit.html"
+      "description": "SAMPLED VIOLINS / VIOLAS / CELLOS / DOUBLE BASS / FOUR ORBITS / CONVOLUTION REVERB",
+      "installUrl": "https://shadowofthewasp.github.io/parasite-store/orbit/",
+      "version": "4.0.0",
+      "playUrl": "https://parasite-kindle.vercel.app/orbit/v4.0.0/"
     },
     {
       "package": "studio.parasite.melt",

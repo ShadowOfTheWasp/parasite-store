@@ -6,6 +6,7 @@ on:
       - 'launcher/**'
       - 'microverse/**'
       - 'melt/**'
+      - 'orbit/**'
       - 'tapeflute/**'
       - 'twig/**'
       - 'jasper/**'
@@ -49,6 +50,9 @@ jobs:
       - name: Build MELT 003
         working-directory: melt
         run: gradle --no-daemon assembleDebug
+      - name: Build Orbit v4.0.0
+        working-directory: orbit
+        run: gradle --no-daemon assembleDebug
       - name: Build Tron v4.0.0
         working-directory: tapeflute
         run: gradle --no-daemon assembleDebug
@@ -73,6 +77,11 @@ jobs:
           cp melt/app/build/outputs/apk/debug/app-debug.apk docs/parasite-melt-v3.5.0.apk
           unzip -p docs/parasite-melt-v3.5.0.apk assets/index.html | cmp - docs/melt/web/v3.5.0/index.html
           printf '{"version":8,"state":"ready","apk":"parasite-launcher.apk"}\n' > docs/release.json
+          test -s orbit/app/build/outputs/apk/debug/app-debug.apk
+          cp orbit/app/build/outputs/apk/debug/app-debug.apk docs/parasite-orbit-v4.0.0.apk
+          for file in index.html samples.js SOURCES.md LICENSE-SAMPLES.txt; do
+            unzip -p docs/parasite-orbit-v4.0.0.apk "assets/$file" | cmp - "docs/orbit/v4.0.0/$file"
+          done
           test -s tapeflute/app/build/outputs/apk/debug/app-debug.apk
           cp tapeflute/app/build/outputs/apk/debug/app-debug.apk docs/parasite-tron-v4.0.0.apk
           for file in index.html samples.js SOURCES.md; do
