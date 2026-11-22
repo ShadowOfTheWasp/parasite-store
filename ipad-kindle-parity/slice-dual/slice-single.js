@@ -110,7 +110,12 @@ for(let i=0;i<16;i++){
 selectPad(0);
 const steps=$('steps');for(let i=0;i<16;i++){
  const b=document.createElement('button');b.className='step'+(enabled[i]?' on':'');b.type='button';b.textContent=String(i+1).padStart(2,'0');b.setAttribute('aria-label','Step '+(i+1)+' assigned to pad '+(pattern[i]+1));b.setAttribute('aria-pressed',String(enabled[i]));
- b.onclick=()=>{pattern[i]=selectedPad;enabled[i]=!enabled[i];b.classList.toggle('on',enabled[i]);b.setAttribute('aria-pressed',String(enabled[i]));b.title='PAD '+(selectedPad+1)};steps.append(b);
+ let longPressed=false,touchTimer=null;
+ const assign=()=>{pattern[i]=selectedPad;enabled[i]=true;longPressed=true;b.classList.add('on');b.setAttribute('aria-pressed','true');b.title='PAD '+(selectedPad+1);b.textContent=(i+1)+':'+String(selectedPad+1).padStart(2,'0')};
+ b.addEventListener('pointerdown',()=>{longPressed=false;touchTimer=setTimeout(assign,500)});
+ for(const type of ['pointerup','pointercancel','pointerleave'])b.addEventListener(type,()=>clearTimeout(touchTimer));
+ b.onclick=()=>{if(longPressed)return;enabled[i]=!enabled[i];b.classList.toggle('on',enabled[i]);b.setAttribute('aria-pressed',String(enabled[i]))};
+ b.oncontextmenu=e=>{e.preventDefault();assign()};b.title='PAD '+(pattern[i]+1);b.textContent=(i+1)+':'+String(pattern[i]+1).padStart(2,'0');steps.append(b);
 }
 async function advance(){
  const pos=step;step=(step+1)%16;[...steps.children].forEach((b,i)=>b.classList.toggle('playing',i===pos));
@@ -170,7 +175,7 @@ window.ParasitePresetBridge={
   else if(form._sampleKind==='user')throw Error('Saved audio unavailable on this device');
   else{await startAudio();setSample(createFactorySample(context),'Mellotron-style tape flute · preset 1',null)}
   if(Array.isArray(form._sequence))form._sequence.forEach((v,i)=>{enabled[i]=!!v;steps.children[i]?.classList.toggle('on',!!v)});
-  if(Array.isArray(form._pattern))form._pattern.forEach((v,i)=>{pattern[i]=clamp(v,0,15)});
+  if(Array.isArray(form._pattern))form._pattern.forEach((v,i)=>{pattern[i]=clamp(v,0,15);if(steps.children[i]){steps.children[i].textContent=(i+1)+':'+String(pattern[i]+1).padStart(2,'0');steps.children[i].title='PAD '+(pattern[i]+1)}});
  },
  afterLoad:async()=>{if(fx)fx.setAll(settings())}
 };
