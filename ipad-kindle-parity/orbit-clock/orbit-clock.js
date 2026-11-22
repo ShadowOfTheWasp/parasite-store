@@ -38,6 +38,30 @@ const styles=doc.createElement('style');styles.textContent=`
 #parasite-clock .tiny-btn.selected{background:#baff87;color:#173016}
 #parasite-clock .clock-bpm{font-weight:750;color:#eaffd6}
 @media(max-width:800px){#parasite-clock .clock-panel{padding:9px;max-height:72dvh}#parasite-clock .lanehead{grid-template-columns:47px 1fr 1fr 1fr;gap:5px}#parasite-clock .lanehead>.control:nth-last-child(-n+2){grid-column:auto}#parasite-clock .stepgrid{gap:2px}#parasite-clock .step{font-size:8px;min-height:34px}#parasite-clock .step small{font-size:8px}#parasite-clock .clock-bar{max-width:none}}
+
+#parasite-clock.expanded{inset:0;display:flex;flex-direction:column;pointer-events:auto;background:#08110bf5;padding:max(5px,env(safe-area-inset-top)) 8px max(6px,env(safe-area-inset-bottom));backdrop-filter:blur(12px)}
+#parasite-clock.expanded .clock-bar{flex:none;width:100%;max-width:none;margin:0;min-height:34px}
+#parasite-clock.expanded .clock-panel{display:flex;flex-direction:column;width:100%;max-height:none;min-height:0;overflow:hidden;flex:1;margin-top:5px;padding:7px 9px;border-radius:12px}
+#parasite-clock.expanded #clockLanes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(3,minmax(0,1fr));gap:5px;flex:1;min-height:0;overflow:hidden}
+#parasite-clock.expanded .lane{margin:0;min-height:0;overflow:hidden;padding:5px 7px;display:flex;flex-direction:column;gap:4px}
+#parasite-clock.expanded .lanehead{display:grid;grid-template-columns:40px .65fr .9fr .8fr .85fr 34px;gap:3px;flex:none;margin:0}
+#parasite-clock.expanded .lanehead .control{font-size:8px}
+#parasite-clock.expanded .lanehead select{padding:4px 2px;font-size:9px}
+#parasite-clock.expanded .lane-title{font-size:10px}
+#parasite-clock.expanded .stepgrid{flex:1;align-content:center;gap:2px;min-height:0}
+#parasite-clock.expanded .step{min-height:19px;max-height:31px;padding:3px 0 2px;font-size:8px}
+#parasite-clock.expanded .step small{font-size:7px}
+#parasite-clock.expanded .lanefoot{margin:0;gap:3px;flex:none}
+#parasite-clock.expanded .lanefoot .control{min-width:75px;max-width:44%;font-size:8px}
+#parasite-clock.expanded .lanefoot .control select{padding:4px 2px}
+#parasite-clock.expanded .tiny{display:none}
+#parasite-clock.expanded .tiny-btn{padding:5px;font-size:9px}
+#parasite-clock.expanded .global{margin:0 0 6px;gap:5px;flex:none}
+#parasite-clock.expanded .global .clock-button{padding:7px 9px}
+#parasite-clock.expanded .clock-head{margin-bottom:5px}
+#parasite-clock.expanded .clock-head h2{font-size:16px}
+#parasite-clock.expanded .clock-panel>.hint:last-child{font-size:9px;padding-top:4px!important;flex:none}
+@media(max-width:690px){#parasite-clock.expanded .lanehead{grid-template-columns:32px .7fr .8fr .65fr .75fr 24px}#parasite-clock.expanded .lanehead .control{font-size:7px}#parasite-clock.expanded .lanehead select{font-size:8px}#parasite-clock.expanded .step{font-size:7px}#parasite-clock.expanded .step small{display:none}}
 `;doc.head.append(styles);
 root.innerHTML=`
 <div class="clock-bar"><span class="hint" id="clockMini">ORBIT CLOCK · STOPPED</span><button id="clockToggle" class="clock-button">◎ CLOCK / 16 STEPS</button></div>
