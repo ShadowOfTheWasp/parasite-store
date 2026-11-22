@@ -1,13 +1,13 @@
-# PARASITE / KINDLE STUDIO — LOCKED THREE-UNIT BASELINE
+# PARASITE / KINDLE STUDIO — LOCKED CURRENT BASELINE
 
-Approved configuration: 2026-11-21.
+Current approved configuration: 2026-11-22. Active development target: Kindle Fire.
 
 **Do not rename, simplify, replace or redesign these instruments, their sequencing concepts, or the common Hub visual language unless the owner specifically requests a change.**
 
 ## Scope
-- **Current primary interface target: iPhone 13 (390×844 CSS pixels portrait).** All three instruments launch inside one iOS Safari/Home Screen web studio; no separate instrument APKs. Keep the existing Kindle home installation functional as a secondary route.
+- **Primary and sole development target: Kindle Fire.** Parasite Home V8 is one Android APK containing two front-page buttons, HUB and INVENT. HUB opens all active instruments inside the app. INVENT opens the existing authenticated Parasite Creator Hub Remote inside the same APK. Preserve the private access-code sign-in and the pre-existing iPhone remote; do not modify the private remote's UI or credentials.
 - Same dark green / ivory / muted accent palette, rounded cards and compact performance layout.
-- Exactly three active units in the Hub, with a reliable ALL INSTRUMENTS return path.
+- Active instruments: Orbit, Bounce (eight balls with chord collisions), Mellowtron and Splice. Relay is archived with the older modules and is not visible as an active Hub item. Keep the reliable ALL INSTRUMENTS return path.
 - Retain audio controls and complexity. No automatic return to the older simplified versions.
 - Maintain the URL https://parasite-kindle.vercel.app.
 
@@ -23,8 +23,8 @@ Approved configuration: 2026-11-21.
 ## 02 / Bounce (former MELT)
 - **Eight intelligent bouncing balls** within one clearly defined rectangular room. Eight voices explicitly requested through Creator; preserve the current room and sound engine.
 - Four room walls correspond to musical pitch/material impacts. Each ball changes course on collision, with restrained non-repeating trajectory variation.
-- Touch and flick any ball to redirect its motion on iPhone. Adjustable speed, energy, gravity and intelligence.
-- Source is tuned bell/mallet synthesis (chime, vibraphone, marimba, celesta), one voice triggered per collision. Velocity controls impact strength.
+- Touch and flick any ball to redirect its motion on Kindle. Adjustable speed, energy, gravity and intelligence.
+- Source is tuned bell/mallet synthesis (chime, vibraphone, marimba, celesta), one voice triggered by each wall collision; simultaneous two-ball collisions trigger both voices as a chord. Velocity controls impact strength.
 - Delay feeds a **post-delay reverb**, with original atmospheric DSP. Keep the established Parasite design language.
 
 ## 03 / Mellowtron
@@ -33,14 +33,16 @@ Approved configuration: 2026-11-21.
 - Eight note rows by 32 columns step matrix with tempo/swing, matrix playback, and local tape/pattern save where storage permits.
 - A controllable **H910-inspired** digital pitch-weirdness effect, with two detuned pitch taps, delayed fragments, grain effects and reverb. It is an original *inspired* algorithm, not a bit-perfect Eventide H910 emulation; do not claim proprietary algorithms have been cloned.
 
-## iPhone 13 and Android runtime
-- On iPhone, microphone recording is requested through Safari over HTTPS and needs user approval. The keyboard and 32-step matrix must be touch-friendly at narrow portrait widths. iPhone Web Audio starts on a user gesture; do not claim iPhone audio tested until run on physical hardware.
-- The Parasite Home Android wrapper needs RECORD_AUDIO for microphone access and WebChromeClient file chooser support for importing audio or impulse responses.
-- The wrapper requires explicit user-controlled Android installation; it cannot remotely replace an APK.
-- Keep the two Home buttons, HUB and UPDATES, unchanged.
-- Run a static JavaScript parse check, build/release check, deployed-file check before claiming site deploy success. Only call the whole experience hardware-tested after actual Kindle playback, recording, file import, and sequence checks.
+## Kindle APK / operations
+- Home V8 shows exactly **HUB** and **INVENT**, not UPDATES. Back navigates within the embedded web screen or returns to Parasite Home. Keep the product visually aligned with the existing Parasite design language.
+- HUB uses the active production URL https://parasite-kindle.vercel.app, including versioned Bounce V3.3.0 and archived Relay source retained outside active navigation.
+- INVENT uses https://parasite-creator.vercel.app with the **existing access-code sign-in, authenticated queue and request history**; no hard-coded access code in the APK. The private iPhone version is unchanged.
+- Web instrument updates are delivered by web deployment. A new Android Home APK requires a normal Silk download and Android installation approval. No automatic APK update is claimed.
+- The Android wrapper requires RECORD_AUDIO and a WebChromeClient audio chooser for Mellowtron samples and Orbit space IR import. Build must succeed on GitHub and the release asset must exist before publishing any download instruction.
+- Keep GitHub Pages install page and https://parasite-kindle.vercel.app/install.html pointing to latest verified APK release.
+- Run JavaScript static parsing, Android build checks, production deployment checks and HTTP route checks. Do not claim Kindle physical/audio verification without direct device testing.
 
 ## Required final audio QA
 - No output before consent; avoid clicks, excessive clipping or runaway feedback.
-- Check: Orbit 4 independent lanes, envelopes and IR switching; Bounce bell material selection, four collisions, delay into reverb; Mellowtron sample recording/import, keyboard pitch, reverse/trim, 32-step clock and H910-style wet controls.
+- Check: Orbit 4 independent lanes, envelopes and IR switching; Bounce eight-ball movement, two-note collision chords, material selection, delay into reverb; Mellowtron sample recording/import, keyboard pitch, reverse/trim, 32-step clock and H910-style wet controls.
 - Tune on Fire OS hardware for glitch-free audio and acceptable latency; code and deploy checks alone are not listening tests.
