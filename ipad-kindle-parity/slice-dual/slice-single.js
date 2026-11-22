@@ -7,7 +7,7 @@
 const $=id=>document.getElementById(id),clamp=(n,a,b)=>Math.min(b,Math.max(a,Number(n)||0));
 const pitch=n=>Math.pow(2,(n-60)/12);
 let context=null,masterGain=null,fx=null,sample=null,rawBlob=null,sourceName='Factory Mellotron-style flute',recorder=null,micStream=null,recordTimer=null,seqTimer=null,step=0;
-const voices=new Set(),pattern=[60,62,64,67,69,67,64,62,60,55,57,59,62,59,57,55],enabled=Array.from({length:16},(_,i)=>i%2===0);
+const voices=new Set(),pattern=Array.from({length:16},(_,i)=>i),enabled=Array.from({length:16},(_,i)=>i%2===0);let selectedPad=0;
 const state=text=>{$('state').textContent=text};
 const noteNames=['C','C♯','D','E♭','E','F','F♯','G','A♭','A','B♭','B'];
 function createFactorySample(c){
@@ -61,49 +61,61 @@ function stopVoice(voice,quick=false){
  voice.gain.gain.setTargetAtTime(.00001,now,Math.max(.008,d/5));
  try{voice.source.stop(now+d+.06)}catch(e){}
 }
-async function playSample(midi,duration=null){
+async function playSample(padIndex,duration=null){
  const buffer=await ensureSample(),c=context,when=c.currentTime+.007,source=c.createBufferSource();
- const rate=pitch(midi);source.buffer=buffer;source.playbackRate.value=rate;
- const start=Math.min(Math.max(0,buffer.duration-.045),buffer.duration*Number($('sliceStart').value));
- const sliceDuration=clamp(buffer.duration*Number($('sliceLength').value),.05,buffer.duration-start);
- const usable=Math.max(.05,Math.min(sliceDuration,buffer.duration-start)/rate);
- const noteLen=Math.max(.05,Math.min(usable,duration===null?usable:duration));
+ const rate=1;source.buffer=buffer;source.playbackRate.value=rate;
+ // Sixteen equal chops from the selected region of the ONE imported/recorded sample.
+ const regionStart=clamp(buffer.duration*Number($('sliceStart').value),0,Math.max(0,buffer.duration-.05));
+ const regionLength=Math.max(.05,Math.min(buffer.duration-regionStart,buffer.duration*Number($('sliceLength').value)));
+ const segment=regionLength/16;
+ const slice=clamp(Math.round(padIndex),0,15);
+ const start=Math.min(Math.max(0,buffer.duration-.005),regionStart+slice*segment);
+ const usable=Math.max(.004,Math.min(segment,buffer.duration-start));
+ const noteLen=Math.max(.004,Math.min(usable,duration===null?usable:duration));
  const gain=c.createGain(),filter=c.createBiquadFilter(),hiss=c.createBiquadFilter();
  filter.type='lowpass';filter.frequency.value=clamp(6700-Number($('warmth').value)*4200-Number($('tapeWear').value)*1250,850,7500);
  hiss.type='highpass';hiss.frequency.value=70;
  const level=Number($('sampleLevel').value);
  gain.gain.setValueAtTime(.00001,when);
- gain.gain.linearRampToValueAtTime(Math.max(.0001,level*.63),when+Math.min(.3,Number($('attack').value)));
- gain.gain.setTargetAtTime(.00001,when+Math.max(.07,noteLen-.09),.03);
+ gain.gain.linearRampToValueAtTime(Math.max(.0001,level*.63),when+Math.min(noteLen*.35,Number($('attack').value)));
+ gain.gain.setTargetAtTime(.00001,when+Math.max(.003,noteLen-.008),.004);
  source.connect(hiss).connect(filter).connect(gain).connect(masterGain);
  const vibrato=c.createOscillator(),depth=c.createGain();
  vibrato.type='sine';vibrato.frequency.value=5.3;depth.gain.value=.00045+.0034*Number($('flange').value);
  vibrato.connect(depth).connect(source.playbackRate);
  vibrato.start(when);
- source.start(when,start,Math.max(.045,Math.min(buffer.duration-start,usable*rate)));
- source.stop(when+noteLen+.08);vibrato.stop(when+noteLen+.08);
+ source.start(when,start,Math.max(.004,Math.min(buffer.duration-start,usable*rate)));
+ source.stop(when+noteLen+.02);vibrato.stop(when+noteLen+.02);
  const voice={source,gain,done:false,stop(force=false){stopVoice(voice,force)}};voices.add(voice);
  source.onended=()=>{voices.delete(voice);for(const node of [source,hiss,filter,gain,vibrato,depth])try{node.disconnect()}catch(e){}};
- state('PLAYING ONE SAMPLE · '+noteNames[midi%12]+(Math.floor(midi/12)-1));
+ state('PAD '+(slice+1)+' · SAMPLE CHOP '+(slice+1)+'/16');
  return voice;
 }
 function stopAll(){for(const v of [...voices])v.stop(true)}
-const keys=$('keys');for(let i=0;i<24;i++){
- const note=48+i,b=document.createElement('button');b.type='button';b.className='key'+([1,3,6,8,10].includes(i%12)?' sharp':'');
- b.textContent=noteNames[i%12]+(3+Math.floor(i/12));b.setAttribute('aria-label','Play '+b.textContent);
- let held=false,v=null;
- b.addEventListener('pointerdown',async e=>{e.preventDefault();held=true;b.setPointerCapture(e.pointerId);try{const next=await playSample(note);if(!held){next.stop(true);return}v=next;b.classList.add('down')}catch(e){state(e.message)}});
- const off=()=>{held=false;v?.stop();v=null;b.classList.remove('down')};
- b.addEventListener('pointerup',off);b.addEventListener('pointercancel',off);b.addEventListener('lostpointercapture',off);keys.append(b);
+const pads=$('pads');const padButtons=[];
+function selectPad(i){selectedPad=i;padButtons.forEach((b,j)=>b.classList.toggle('selected',j===i));}
+for(let i=0;i<16;i++){
+ const b=document.createElement('button');b.type='button';b.className='pad';
+ b.innerHTML='<span>'+String(i+1).padStart(2,'0')+'</span><small>CHOP</small>';
+ b.setAttribute('aria-label','Play sample slice '+(i+1));b.setAttribute('aria-pressed','false');
+ let held=false,voice=null;
+ b.addEventListener('pointerdown',async e=>{e.preventDefault();held=true;selectPad(i);b.setPointerCapture(e.pointerId);
+  b.classList.add('down');b.setAttribute('aria-pressed','true');
+  try{const v=await playSample(i);if(!held){v.stop(true);return}voice=v}catch(error){state(error.message)}
+ });
+ function up(){held=false;voice?.stop();voice=null;b.classList.remove('down');b.setAttribute('aria-pressed','false')}
+ b.addEventListener('pointerup',up);b.addEventListener('pointercancel',up);b.addEventListener('lostpointercapture',up);
+ pads.append(b);padButtons.push(b);
 }
+selectPad(0);
 const steps=$('steps');for(let i=0;i<16;i++){
- const b=document.createElement('button');b.className='step'+(enabled[i]?' on':'');b.type='button';b.textContent=i+1;b.setAttribute('aria-label','Step '+(i+1));b.setAttribute('aria-pressed',String(enabled[i]));
- b.onclick=()=>{enabled[i]=!enabled[i];b.classList.toggle('on',enabled[i]);b.setAttribute('aria-pressed',String(enabled[i]))};steps.append(b);
+ const b=document.createElement('button');b.className='step'+(enabled[i]?' on':'');b.type='button';b.textContent=String(i+1).padStart(2,'0');b.setAttribute('aria-label','Step '+(i+1)+' assigned to pad '+(pattern[i]+1));b.setAttribute('aria-pressed',String(enabled[i]));
+ b.onclick=()=>{pattern[i]=selectedPad;enabled[i]=!enabled[i];b.classList.toggle('on',enabled[i]);b.setAttribute('aria-pressed',String(enabled[i]));b.title='PAD '+(selectedPad+1)};steps.append(b);
 }
 async function advance(){
  const pos=step;step=(step+1)%16;[...steps.children].forEach((b,i)=>b.classList.toggle('playing',i===pos));
  if(!enabled[pos])return;
- try{await playSample(pattern[pos],Math.max(.08,60_000/Number($('bpm').value)/4/1000*.86))}catch(e){state(e.message)}
+ try{await playSample(pattern[pos],Math.max(.02,60000/Number($('bpm').value)/4000*.86))}catch(e){state(e.message)}
 }
 function stopSequence(){if(seqTimer){clearInterval(seqTimer);seqTimer=null}step=0;[...steps.children].forEach(b=>b.classList.remove('playing'));$('playSeq').textContent='PLAY SEQUENCE'}
 $('playSeq').onclick=async()=>{if(seqTimer){stopSequence();return}try{await ensureSample();await advance();seqTimer=setInterval(advance,60000/Number($('bpm').value)/4);$('playSeq').textContent='PAUSE SEQUENCE'}catch(e){state(e.message)}};
@@ -118,7 +130,7 @@ for(const el of document.querySelectorAll('input[type=range]')){
 for(const id of ['hEnable','echoOn','echoMode'])$(id).addEventListener('change',()=>{if(fx)fx.setAll(settings())});
 function setSample(buf,name,blob){
  stopAll();sample=buf;sourceName=name;rawBlob=blob||null;$('sampleState').textContent='SINGLE SAMPLE · '+name+' · '+buf.duration.toFixed(1)+' sec';$('sampleTitle').textContent=name.toUpperCase();
- $('sourceInfo').textContent='One source sample for keyboard and sequencer. Edit its start and length to slice it.'
+ $('sourceInfo').textContent='One source sample → sixteen equal chops across the pads and sequencer.'
 }
 async function importBlob(blob,displayName='My sample'){
  if(blob.size>20*1024*1024)throw Error('Maximum file size: 20 MB');
@@ -145,7 +157,7 @@ function db(){
 async function saveBlob(slot,blob){const d=await db();return new Promise((res,rej)=>{const tx=d.transaction('samples','readwrite');tx.objectStore('samples').put(blob,slot);tx.oncomplete=()=>{d.close();res()};tx.onerror=()=>{d.close();rej(tx.error)}})}
 async function loadBlob(slot){const d=await db();return new Promise((res,rej)=>{const tx=d.transaction('samples','readonly'),r=tx.objectStore('samples').get(slot);r.onsuccess=()=>{d.close();res(r.result||null)};r.onerror=()=>{d.close();rej(r.error)}})}
 window.ParasitePresetBridge={
- id:'slice-single-sample',factoryName:'Tape flute · Mellotron-inspired',
+ id:'slice-mpc-16-pad',factoryName:'MPC-style chop kit · tape flute',
  beforeSave:async(form,slot)=>{
   form._sampleKind=rawBlob?'user':'factory';form._sourceName=sourceName;
   if(rawBlob)await saveBlob(slot,rawBlob);else await saveBlob(slot,null);
@@ -158,7 +170,7 @@ window.ParasitePresetBridge={
   else if(form._sampleKind==='user')throw Error('Saved audio unavailable on this device');
   else{await startAudio();setSample(createFactorySample(context),'Mellotron-style tape flute · preset 1',null)}
   if(Array.isArray(form._sequence))form._sequence.forEach((v,i)=>{enabled[i]=!!v;steps.children[i]?.classList.toggle('on',!!v)});
-  if(Array.isArray(form._pattern))form._pattern.forEach((v,i)=>{pattern[i]=clamp(v,36,90)});
+  if(Array.isArray(form._pattern))form._pattern.forEach((v,i)=>{pattern[i]=clamp(v,0,15)});
  },
  afterLoad:async()=>{if(fx)fx.setAll(settings())}
 };
