@@ -1,6 +1,30 @@
 {
   "rewrites": [
     {
+      "source": "/icon-192.png",
+      "destination": "https://parasite-creator.vercel.app/icon-192.png"
+    },
+    {
+      "source": "/icon-180.png",
+      "destination": "https://parasite-creator.vercel.app/icon-180.png"
+    },
+    {
+      "source": "/style.css",
+      "destination": "https://parasite-creator.vercel.app/style.css"
+    },
+    {
+      "source": "/app.js",
+      "destination": "https://parasite-creator.vercel.app/app.js"
+    },
+    {
+      "source": "/creator/:path*",
+      "destination": "https://parasite-creator.vercel.app/:path*"
+    },
+    {
+      "source": "/creator",
+      "destination": "https://parasite-creator.vercel.app/"
+    },
+    {
       "source": "/orbit/:path*",
       "destination": "https://parasite-kindle.vercel.app/orbit/:path*"
     },
