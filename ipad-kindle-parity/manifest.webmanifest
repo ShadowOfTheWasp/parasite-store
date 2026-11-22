@@ -1,0 +1,9 @@
+{
+  "name": "Parasite",
+  "short_name": "Parasite",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "theme_color": "#09110b",
+  "background_color": "#09110b"
+}
