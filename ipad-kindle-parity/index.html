@@ -63,6 +63,7 @@ frame.addEventListener('load',()=>{
  if(!src.includes('/slice-dual/')){
    const preset=doc.createElement('script');preset.src='/preset-bank.js';doc.body.append(preset)
  }
+ if(src.includes('/tron/v4.0.0/')){const tron=doc.createElement('script');tron.src='/tron-touch/tron-keys.js';doc.body.append(tron)}
  // Legacy Kindle modules can be taller than an iPad. Scale the original panel
  // to the available viewport as a stop-gap; purpose-built layouts are preferred.
  if(!src.includes('/slice-dual/')){
