@@ -5,6 +5,9 @@ on:
   workflow_dispatch:
 permissions:
   contents: write
+concurrency:
+  group: parasite-home-release
+  cancel-in-progress: true
 jobs:
   build:
     runs-on: ubuntu-latest
