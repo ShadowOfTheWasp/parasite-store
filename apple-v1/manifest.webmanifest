@@ -1,0 +1,19 @@
+{
+  "name": "Parasite — Instrument Laboratory",
+  "short_name": "Parasite",
+  "id": "./",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#080e0c",
+  "theme_color": "#080e0c",
+  "description": "Offline-capable experimental music instruments for iPhone and iPad",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
