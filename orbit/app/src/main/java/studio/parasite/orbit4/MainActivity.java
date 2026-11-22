@@ -11,6 +11,8 @@ import android.webkit.WebViewClient;
 public final class MainActivity extends Activity {
     private static final String HUB = "https://shadowofthewasp.github.io/parasite-store/";
     private WebView instrument;
+    private android.webkit.ValueCallback<android.net.Uri[]> pendingPicker;
+    private static final int PICK_AUDIO=610;
 
     @Override
     public void onCreate(Bundle state) {
@@ -20,7 +22,8 @@ public final class MainActivity extends Activity {
         WebSettings settings = instrument.getSettings();
         settings.setJavaScriptEnabled(true);
         settings.setAllowFileAccess(false);
-        settings.setAllowContentAccess(false);
+        settings.setAllowContentAccess(true);
+        settings.setDomStorageEnabled(true);
         settings.setBlockNetworkLoads(true);
         settings.setMediaPlaybackRequiresUserGesture(true);
         instrument.setWebViewClient(new WebViewClient() {
@@ -30,10 +33,25 @@ public final class MainActivity extends Activity {
                 return true;
             }
         });
+        instrument.setWebChromeClient(new android.webkit.WebChromeClient(){
+            @Override public boolean onShowFileChooser(WebView view,android.webkit.ValueCallback<android.net.Uri[]> callback,FileChooserParams params){
+                if(pendingPicker!=null)pendingPicker.onReceiveValue(null);
+                pendingPicker=callback;
+                android.content.Intent picker=new android.content.Intent(android.content.Intent.ACTION_GET_CONTENT);
+                picker.setType("audio/*");picker.addCategory(android.content.Intent.CATEGORY_OPENABLE);
+                picker.addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                try{startActivityForResult(picker,PICK_AUDIO);}catch(Exception e){pendingPicker=null;callback.onReceiveValue(null);}
+                return true;
+            }
+        });
         setContentView(instrument);
         instrument.loadUrl("file:///android_asset/index.html#kindle");
     }
 
+    @Override protected void onActivityResult(int code,int result,android.content.Intent data){
+        super.onActivityResult(code,result,data);
+        if(code==PICK_AUDIO&&pendingPicker!=null){android.webkit.ValueCallback<android.net.Uri[]> callback=pendingPicker;pendingPicker=null;callback.onReceiveValue(android.webkit.WebChromeClient.FileChooserParams.parseResult(result,data));}
+    }
     @Override
     public void onWindowFocusChanged(boolean focused) {
         super.onWindowFocusChanged(focused);
@@ -62,6 +80,7 @@ public final class MainActivity extends Activity {
 
     @Override
     protected void onDestroy() {
+        if(pendingPicker!=null){pendingPicker.onReceiveValue(null);pendingPicker=null;}
         setContentView(new View(this));
         instrument.destroy();
         super.onDestroy();

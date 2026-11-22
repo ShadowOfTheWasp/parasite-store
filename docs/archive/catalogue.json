@@ -32,6 +32,22 @@
       "description": "ARCHIVED / HARDWARE INPUTS / LIVE TRANSLATION / AI MIX REQUESTS",
       "version": "1.1.0",
       "installUrl": "https://parasite-kindle.vercel.app/relay/v1.1.0/"
+    },
+    {
+      "package": "studio.parasite.tapeflute",
+      "title": "Tron",
+      "description": "MK II FLUTE TAPES / KEYBOARD & 32-STEP MATRIX / THREE-HEAD SPACE ECHO + SPRING",
+      "installUrl": "https://shadowofthewasp.github.io/parasite-store/tron/",
+      "version": "4.0.0",
+      "playUrl": "https://parasite-kindle.vercel.app/tron/v4.0.0/"
+    },
+    {
+      "package": "studio.parasite.splice",
+      "title": "Splice",
+      "description": "MICROPHONE SAMPLER / EIGHT TAPE SLICES / REVERSE / STUTTER / 16-STEP LOOP",
+      "version": "1.0.0",
+      "installUrl": "https://parasite-kindle.vercel.app/splice/v1.0.0/",
+      "playUrl": "https://parasite-kindle.vercel.app/splice/v1.0.0/"
     }
   ]
 }

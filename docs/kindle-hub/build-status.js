@@ -20,6 +20,7 @@ async function refresh(){
  var release=document.getElementById('release-state'),pipeline=document.getElementById('pipeline-state');
  if(catalogue.status==='fulfilled'&&Array.isArray(catalogue.value.units)){
   window.parasiteCatalogue=catalogue.value.units;
+  if(window.updateParasiteLibrary)window.updateParasiteLibrary(catalogue.value.units);
   release.textContent='Published instruments: '+catalogue.value.units.map(function(u){return u.title+' '+u.version;}).join(' · ');
   lastSuccess=new Date();
  }else release.textContent='Catalogue check unavailable.'+(lastSuccess?' Last successful check '+lastSuccess.toLocaleTimeString()+'.':' Check Wi-Fi and retry.');

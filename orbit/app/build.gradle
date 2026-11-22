@@ -7,10 +7,10 @@ android {
   applicationId 'studio.parasite.orbit4'
   minSdk 23
   targetSdk 28
-  versionCode 400
-  versionName '4.0.0'
+  versionCode 410
+  versionName '4.1.0'
  }
  sourceSets {
-  main.assets.srcDirs = ['../../docs/orbit/v4.0.0']
+  main.assets.srcDirs = ['../../docs/orbit/v4.1.0']
  }
 }

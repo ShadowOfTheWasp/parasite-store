@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111611">
+<title>Slice · Parasite</title>
+<link rel="stylesheet" href="./splice.css">
+</head>
+<body>
+<main>
+<header><a href="../../../">‹ parasite</a><span>TAPE CUTTER / V1.0</span></header>
+<section class="intro"><div><h1>Slice<span>.</span></h1><p>Cut sound. Make rhythm.</p></div><div class="tape-mark" aria-hidden="true"><i></i><i></i></div></section>
+<section class="panel source">
+<div class="bar"><h2>Source tape</h2><span id="duration">EMPTY</span></div>
+<div class="wave"><canvas id="wave" aria-label="Sample waveform. Drag slice markers to adjust cuts."></canvas><p id="empty">Record a sound or import audio</p></div>
+<div class="controls"><button id="record">● Record</button><label class="file-button">Import audio<input id="file" type="file" accept="audio/*"></label><button id="demo">Try demo</button></div>
+<p id="status" role="status">Record up to 12 seconds. Imports use the first 30 seconds. This session resets when you leave.</p>
+</section>
+<section class="panel">
+<div class="bar"><h2>Cut & play</h2><button id="reset-cuts" class="small" disabled>Even cuts</button></div>
+<div id="slices" class="slices" role="group" aria-label="Sample slices"></div>
+<p class="hint">Tap a slice to hear it. Drag waveform markers to change the cuts.</p>
+</section>
+<section class="panel pattern">
+<div class="bar"><h2>Tape loop</h2><span id="step-label">SELECT A STEP</span></div>
+<div id="steps" class="steps" role="group" aria-label="Sixteen step sequence"></div>
+<div class="edit"><span id="selection">Step 1</span><button id="reverse" aria-pressed="false" disabled>Reverse</button><label>Repeats <select id="repeat" disabled><option value="1">1×</option><option value="2">2×</option><option value="4">4×</option></select></label><button id="rest" disabled>Rest</button></div>
+<p class="hint">Drag a slice onto a step, or select a step and tap a slice. Reverse or repeat each step.</p>
+<div class="controls arrange"><button id="fill" disabled>Fill 1–8</button><button id="shuffle" disabled>Shuffle</button><button id="clear">Clear</button></div>
+</section>
+<section class="panel transport">
+<div class="parameters"><label>Tempo <output id="tempo-value">100 BPM</output><input id="tempo" type="range" min="40" max="200" value="100"></label><label>Tune <output id="tune-value">0 st</output><input id="tune" type="range" min="-12" max="12" value="0"></label><label>Level <output id="level-value">75%</output><input id="level" type="range" min="0" max="100" value="75"></label></div>
+<button id="play" class="play" disabled>▶ PLAY LOOP</button>
+</section>
+<section class="panel"><h2>H910-INSPIRED PITCH / DELAY</h2><div id="h910-controls" class="parameters"></div><button id="h910-clear" class="small">Clear effect tails</button><p class="hint">One post-sampler pitch shifter with fine detune, short delay, feedback, tone and wet/dry mix. Original 200 ms dual-window DSP inspired by early digital harmonizers; not a bit-perfect Eventide emulation.</p></section><footer>PARASITE / SLICE · AUDIO STAYS ON YOUR DEVICE</footer>
+</main>
+<script src="./h910.js" defer></script>
+<script src="./splice.js" defer></script>
+</body>
+</html>

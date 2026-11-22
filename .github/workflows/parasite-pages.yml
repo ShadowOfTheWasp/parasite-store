@@ -54,7 +54,7 @@ jobs:
       - name: Build MELT 003
         working-directory: melt
         run: gradle --no-daemon assembleDebug
-      - name: Build Orbit v4.0.0
+      - name: Build Orbit v4.1.0
         working-directory: orbit
         run: gradle --no-daemon assembleDebug
       - name: Build Tron v4.0.0
@@ -78,8 +78,8 @@ jobs:
           cp microverse/app/build/outputs/apk/debug/app-debug.apk docs/parasite-microverse.apk
           test -s melt/app/build/outputs/apk/debug/app-debug.apk
           cp melt/app/build/outputs/apk/debug/app-debug.apk docs/parasite-melt.apk
-          cp melt/app/build/outputs/apk/debug/app-debug.apk docs/parasite-melt-v3.5.0.apk
-          unzip -p docs/parasite-melt-v3.5.0.apk assets/index.html | cmp - docs/melt/web/v3.5.0/index.html
+          cp melt/app/build/outputs/apk/debug/app-debug.apk docs/parasite-melt-v3.6.0.apk
+          unzip -p docs/parasite-melt-v3.6.0.apk assets/index.html | cmp - docs/melt/web/v3.6.0/index.html
           cp parasite-os/app/build/outputs/apk/debug/app-debug.apk docs/parasite-home-v9.0.0.apk
           python3 - <<'PYMETA'
           import json, os
@@ -88,9 +88,9 @@ jobs:
               json.dump({'version':9,'versionName':'9.0.0','state':'ready','apk':'parasite-home-v9.0.0.apk','commit':os.environ['GITHUB_SHA'],'builtAt':datetime.now(timezone.utc).isoformat()},f)
           PYMETA
           test -s orbit/app/build/outputs/apk/debug/app-debug.apk
-          cp orbit/app/build/outputs/apk/debug/app-debug.apk docs/parasite-orbit-v4.0.0.apk
-          for file in index.html samples.js SOURCES.md LICENSE-SAMPLES.txt; do
-            unzip -p docs/parasite-orbit-v4.0.0.apk "assets/$file" | cmp - "docs/orbit/v4.0.0/$file"
+          cp orbit/app/build/outputs/apk/debug/app-debug.apk docs/parasite-orbit-v4.1.0.apk
+          for file in index.html samples.js space-echo.js SOURCES.md LICENSE-SAMPLES.txt; do
+            unzip -p docs/parasite-orbit-v4.1.0.apk "assets/$file" | cmp - "docs/orbit/v4.1.0/$file"
           done
           test -s tapeflute/app/build/outputs/apk/debug/app-debug.apk
           cp tapeflute/app/build/outputs/apk/debug/app-debug.apk docs/parasite-tron-v4.0.0.apk

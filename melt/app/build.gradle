@@ -6,7 +6,7 @@ android {
   applicationId 'studio.parasite.melt'
   minSdk 28
   targetSdk 28
-  versionCode 7
-  versionName '3.5.0'
+  versionCode 8
+  versionName '3.6.0'
  }
 }
