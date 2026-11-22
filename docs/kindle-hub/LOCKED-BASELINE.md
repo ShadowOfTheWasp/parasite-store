@@ -1,3 +1,5 @@
+Owner update 2026-11-22: Home 9 and Hub Remote operational changes are specified in ../../HUB-OPERATIONS.md. The owner explicitly requested five-minute status refresh, phone and Kindle Invent requests, and removal of typed access-code entry. Preserve instrument implementations.
+
 # PARASITE / KINDLE STUDIO — LOCKED CURRENT BASELINE
 
 Current approved configuration: 2026-11-22. Active development target: Kindle Fire.

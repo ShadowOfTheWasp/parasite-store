@@ -1,6 +1,7 @@
 name: Build Parasite Home APK
 on:
   push:
+    branches: [main]
     paths: ['parasite-os/**', '.github/workflows/parasite-home-apk.yml']
   workflow_dispatch:
 permissions:
@@ -32,9 +33,9 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          cp parasite-os/app/build/outputs/apk/debug/app-debug.apk parasite-home-v8.apk
-          if gh release view parasite-home-v8 >/dev/null 2>&1; then
-            gh release upload parasite-home-v8 parasite-home-v8.apk --clobber
+          cp parasite-os/app/build/outputs/apk/debug/app-debug.apk parasite-home-v9.apk
+          if gh release view parasite-home-v9 >/dev/null 2>&1; then
+            gh release upload parasite-home-v9 parasite-home-v9.apk --clobber
           else
-            gh release create parasite-home-v8 parasite-home-v8.apk --title "Parasite Home V8" --notes "Experimental reversible Fire OS home application. Amazon firmware remains installed."
+            gh release create parasite-home-v9 parasite-home-v9.apk --title "Parasite Home V9" --notes "Experimental reversible Fire OS home application. Amazon firmware remains installed."
           fi

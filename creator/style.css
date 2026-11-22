@@ -1,0 +1,47 @@
+:root{color-scheme:dark;--bg:#0c100d;--surface:#141d17;--line:#344438;--green:#b9ef8d;--ink:#eef4eb;--muted:#a6b5a8;--warn:#edcd9c}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,sans-serif}
+main{max-width:700px;min-height:100svh;margin:auto;padding:env(safe-area-inset-top) max(16px,env(safe-area-inset-right)) max(16px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}
+header,.toolbar,.composer-bottom,footer,#followup{display:flex;justify-content:space-between;align-items:center;gap:8px}
+header{min-height:76px;border-bottom:1px solid var(--line)}
+header>div{display:flex;flex-direction:column}
+.brand{font:800 19px ui-monospace,monospace;letter-spacing:.12em;text-decoration:none;color:var(--ink)}
+.product{font-size:12px;color:var(--muted);letter-spacing:.025em}
+h1{margin:36px 0 18px;font-size:clamp(41px,10vw,63px);line-height:1.02;letter-spacing:-.065em}
+h1 span,.brand span{color:var(--green)}h2{font-size:16px;margin:8px 0}
+.intro{color:var(--muted);margin-bottom:28px}
+a{color:var(--green)}
+label{display:block;font-weight:650;margin-bottom:8px}
+input,textarea,button{font:inherit}
+input,textarea{width:100%;font-size:16px;border:1px solid var(--line);border-radius:10px;padding:12px;background:var(--surface);color:var(--ink)}
+textarea{display:block;min-height:89px;max-height:40vh;resize:vertical;border:0;outline-offset:-2px}
+button{min-height:44px;border:1px solid var(--line);background:#18271c;color:var(--ink);border-radius:8px;cursor:pointer;font-size:13px;font-weight:650;padding:7px 12px}
+button:disabled{opacity:.5;cursor:default}
+:focus-visible{outline:2px solid var(--green);outline-offset:3px}
+.primary{padding:9px 14px;background:var(--green);border-color:var(--green);color:#111b10}
+#unlock .primary{width:100%;margin-top:12px}
+.quiet{background:transparent;border-color:transparent;color:var(--green)}
+.toolbar{justify-content:start;padding:14px 0;flex-wrap:wrap}.toolbar #refresh{margin-left:auto}
+#history-panel{padding:10px 0 15px;border-bottom:1px solid var(--line)}
+#history button{display:block;width:100%;text-align:left;margin-bottom:7px;overflow-wrap:anywhere}
+#history small{display:block;font-size:11px;color:var(--muted)}
+#conversation{min-height:220px;padding:15px 0 26px}
+.message{white-space:pre-wrap;overflow-wrap:anywhere;padding:15px 17px;border-radius:14px;margin:0 0 15px;font-size:15px}
+.message.owner{background:#223126;border:1px solid #466049;margin-left:20px}
+.message.remote{background:var(--surface);border:1px solid var(--line);margin-right:20px}
+.message .byline{display:block;color:var(--muted);font-size:11px;letter-spacing:.03em;margin-bottom:7px}
+.message p{margin:6px 0}.message a{display:inline-block;margin:10px 0 0;font-weight:700}
+.welcome{padding:17px 5px 10px}.welcome h2{font-size:27px;letter-spacing:-.045em;margin:0 0 12px}
+.welcome p{color:var(--muted);font-size:15px;max-width:45ch}
+.suggestions{display:flex;gap:8px;flex-wrap:wrap}.suggestions button{font-weight:500;text-align:left}
+.composer{background:var(--surface);border:1px solid #547345;border-radius:13px;padding:6px}
+.composer-bottom{padding:5px 6px}#count{font-size:11px;color:var(--muted)}
+#cadence{margin:7px 7px 4px;font-size:11px;color:var(--muted)}
+#followup{padding:5px 8px;border-bottom:1px solid var(--line);color:var(--green);font-size:12px}
+#status{color:var(--warn);font-size:13px;margin:12px 0}#status:empty{display:none}
+footer{margin:12px 0;font-size:12px}footer button{font-size:12px}
+#install-note{font-size:13px;color:var(--muted);line-height:1.65}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media(max-width:380px){.toolbar{gap:3px}.toolbar button{padding:5px 7px}footer{flex-wrap:wrap}}
+
+.build-overview{padding:16px;border:1px solid var(--line,#365047);border-radius:14px;margin:16px 0}.build-overview h2{font-size:16px;margin:0 0 8px}.build-overview p{font-size:14px;line-height:1.6;margin:5px 0}

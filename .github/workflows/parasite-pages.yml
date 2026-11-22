@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - 'launcher/**'
+      - 'parasite-os/**'
       - 'microverse/**'
       - 'melt/**'
       - 'orbit/**'
@@ -41,6 +42,9 @@ jobs:
           ANDROID_HOME: /usr/local/lib/android/sdk
         run: |
           "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "platforms;android-35" "build-tools;35.0.0"
+      - name: Build Parasite Home v9
+        working-directory: parasite-os
+        run: gradle --no-daemon assembleDebug
       - name: Build Parasite Launcher
         working-directory: launcher
         run: gradle --no-daemon assembleDebug
@@ -76,7 +80,13 @@ jobs:
           cp melt/app/build/outputs/apk/debug/app-debug.apk docs/parasite-melt.apk
           cp melt/app/build/outputs/apk/debug/app-debug.apk docs/parasite-melt-v3.5.0.apk
           unzip -p docs/parasite-melt-v3.5.0.apk assets/index.html | cmp - docs/melt/web/v3.5.0/index.html
-          printf '{"version":8,"state":"ready","apk":"parasite-launcher.apk"}\n' > docs/release.json
+          cp parasite-os/app/build/outputs/apk/debug/app-debug.apk docs/parasite-home-v9.0.0.apk
+          python3 - <<'PYMETA'
+          import json, os
+          from datetime import datetime, timezone
+          with open('docs/release.json','w') as f:
+              json.dump({'version':9,'versionName':'9.0.0','state':'ready','apk':'parasite-home-v9.0.0.apk','commit':os.environ['GITHUB_SHA'],'builtAt':datetime.now(timezone.utc).isoformat()},f)
+          PYMETA
           test -s orbit/app/build/outputs/apk/debug/app-debug.apk
           cp orbit/app/build/outputs/apk/debug/app-debug.apk docs/parasite-orbit-v4.0.0.apk
           for file in index.html samples.js SOURCES.md LICENSE-SAMPLES.txt; do

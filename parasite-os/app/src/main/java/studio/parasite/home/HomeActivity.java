@@ -16,11 +16,17 @@ import java.io.*;
 public class HomeActivity extends Activity {
   private static final String HUB_URL = "https://parasite-kindle.vercel.app";
   private static final String INVENT_URL = "https://parasite-creator.vercel.app";
-  private static final String RELEASE_API = "https://api.github.com/repos/ShadowOfTheWasp/parasite-store/releases/tags/parasite-home-v8";
+  private static final String RELEASE_API = "https://api.github.com/repos/ShadowOfTheWasp/parasite-store/releases/tags/parasite-home-v9";
   private static final int IMMERSIVE = View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY |
     View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN |
     View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
     View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+  private final Handler updateHandler=new Handler(Looper.getMainLooper());
+  private static final long CHECK_INTERVAL=300000L;
+  private boolean checkingUpdates=false,active=false;
+  private TextView buildState;
+  private String lastBuildState="Checking published instruments and build state…";
+  private final Runnable autoCheck=new Runnable(){public void run(){if(active){checkBuildState();updateHandler.postDelayed(this,CHECK_INTERVAL);}}};
   private WebView web;
   private LinearLayout root;
   private int taps=0;
@@ -36,6 +42,9 @@ public class HomeActivity extends Activity {
 
   private void immersive() { getWindow().getDecorView().setSystemUiVisibility(IMMERSIVE); }
   @Override public void onCreate(Bundle b) { super.onCreate(b); immersive(); home(); }
+  @Override protected void onResume(){super.onResume();active=true;updateHandler.removeCallbacks(autoCheck);updateHandler.post(autoCheck);if(web!=null)web.onResume();}
+  @Override protected void onPause(){active=false;updateHandler.removeCallbacks(autoCheck);if(web!=null)web.onPause();super.onPause();}
+  @Override protected void onDestroy(){active=false;updateHandler.removeCallbacks(autoCheck);if(web!=null){web.destroy();web=null;}super.onDestroy();}
   @Override public void onWindowFocusChanged(boolean focus) { super.onWindowFocusChanged(focus); if(focus)immersive(); }
   private TextView label(String s,int size,int color) {
     TextView t=new TextView(this); t.setText(s);t.setTextSize(size);t.setTextColor(color);
@@ -43,6 +52,7 @@ public class HomeActivity extends Activity {
   }
   private void begin() {
     if(pendingFilePicker!=null){pendingFilePicker.onReceiveValue(null);pendingFilePicker=null;}
+    buildState=null;
     if(web!=null){ web.stopLoading();web.destroy();web=null; }
     root=new LinearLayout(this);root.setOrientation(LinearLayout.VERTICAL);
     root.setGravity(Gravity.CENTER);root.setPadding(28,20,28,20);
@@ -69,7 +79,9 @@ public class HomeActivity extends Activity {
     root.addView(label("PLAY / CREATE",13,Color.rgb(138,161,140)));
     addButton("HUB",this::hub);
     addButton("INVENT",this::invent);
-    root.addView(label("V8 / KINDLE STUDIO",11,Color.rgb(110,135,114)));
+    buildState=label(lastBuildState,14,Color.rgb(173,195,177));root.addView(buildState);
+    buildState.setOnClickListener(v->checkBuildState());
+    root.addView(label("HOME 9.0.0 / CHECKS EVERY 5 MIN WHILE OPEN / TAP STATUS TO CHECK",11,Color.rgb(110,135,114)));
   }
   private String configuredUrl(){return getPreferences(0).getString("hub_url",HUB_URL);}
   private void hub(){openScreen(configuredUrl(),"HUB");}
@@ -224,51 +236,50 @@ public class HomeActivity extends Activity {
     addButton("BACK TO HOME",this::home);
     addButton("SETTINGS",this::settings);
   }
-  private void updates(){
-    displayedHub=false;begin();brand();
-    TextView state=label("CHECKING LIVE INSTRUMENT CATALOGUE…",15,Color.WHITE);
-    root.addView(state);
-    addButton("OPEN HUB",this::hub);
-    addButton("BACK TO HOME",this::home);
+  private org.json.JSONObject readJson(String address) throws Exception {
+    HttpURLConnection connection=(HttpURLConnection)new URL(address+(address.contains("?")?"&":"?")+"t="+System.currentTimeMillis()).openConnection();
+    connection.setConnectTimeout(7000);connection.setReadTimeout(7000);connection.setUseCaches(false);
+    connection.setRequestProperty("User-Agent","ParasiteHome/9");
+    connection.setRequestProperty("Accept","application/json");
+    try{
+      if(connection.getResponseCode()!=200)throw new IOException("HTTP "+connection.getResponseCode());
+      ByteArrayOutputStream bytes=new ByteArrayOutputStream();
+      try(InputStream in=connection.getInputStream()){
+        byte[] block=new byte[4096];int n;while((n=in.read(block))!=-1){bytes.write(block,0,n);if(bytes.size()>131072)throw new IOException("Response too large");}
+      }
+      return new org.json.JSONObject(bytes.toString("UTF-8"));
+    }finally{connection.disconnect();}
+  }
+  private void checkBuildState(){
+    if(checkingUpdates||!active)return;checkingUpdates=true;
     new Thread(()->{
-      String outcome;
-      HttpURLConnection connection=null;
+      StringBuilder lines=new StringBuilder();
       try{
-        URL address=new URL("https://raw.githubusercontent.com/ShadowOfTheWasp/parasite-store/main/docs/catalogue.json?t="+System.currentTimeMillis());
-        connection=(HttpURLConnection)address.openConnection();
-        connection.setConnectTimeout(9000);connection.setReadTimeout(9000);
-        connection.setRequestProperty("User-Agent","ParasiteHome/4");
-        connection.setUseCaches(false);
-        if(connection.getResponseCode()!=200)throw new IOException("Catalogue HTTP "+connection.getResponseCode());
-        java.io.ByteArrayOutputStream bytes=new java.io.ByteArrayOutputStream();
-        try(java.io.InputStream in=connection.getInputStream()){
-          byte[] block=new byte[4096];int n;
-          while((n=in.read(block))!=-1){
-            bytes.write(block,0,n);
-            if(bytes.size()>65536)throw new IOException("Catalogue exceeds limit");
-          }
-        }
-        org.json.JSONObject cat=new org.json.JSONObject(bytes.toString("UTF-8"));
-        org.json.JSONArray units=cat.getJSONArray("units");
-        StringBuilder lines=new StringBuilder();
-        lines.append("CATALOGUE UP TO DATE\n\n");
-        lines.append(units.length()).append(" AVAILABLE INSTRUMENTS\n\n");
+        org.json.JSONArray units=readJson("https://shadowofthewasp.github.io/parasite-store/catalogue.json").getJSONArray("units");
+        if(units.length()>32)throw new IOException("Invalid catalogue");
+        lines.append("PUBLISHED: ");
         for(int i=0;i<units.length();i++){
-          org.json.JSONObject u=units.getJSONObject(i);
-          lines.append("• ").append(u.optString("title","Instrument"));
-          String version=u.optString("version","");
-          if(!version.isEmpty())lines.append("  /  ").append(version);
-          lines.append("\n");
+          org.json.JSONObject unit=units.getJSONObject(i);if(i>0)lines.append(" · ");
+          lines.append(unit.getString("title")).append(" ").append(unit.optString("version"));
         }
-        lines.append("\nCatalogue updated: ").append(cat.optString("updated","not specified"));
-        lines.append("\n\nOpen HUB to load the latest web instruments.");
-        outcome=lines.toString();
-      }catch(Exception e){
-        outcome="COULD NOT CHECK UPDATES\n\nCheck your Wi-Fi connection. Your installed instruments have not been changed.";
-      }finally{if(connection!=null)connection.disconnect();}
-      final String message=outcome;
-      runOnUiThread(()->{if(state.getParent()!=null)state.setText(message);});
-    }).start();
+      }catch(Exception e){lines.append("Catalogue unavailable — check Wi-Fi. Published versions not verified this check.");}
+      try{
+        org.json.JSONArray runs=readJson("https://api.github.com/repos/ShadowOfTheWasp/parasite-store/actions/workflows/parasite-pages.yml/runs?branch=main&event=push&per_page=1").getJSONArray("workflow_runs");
+        org.json.JSONObject run=runs.getJSONObject(0);
+        String state=run.getString("status");lines.append("\nBUILD: ");
+        if(!"completed".equals(state))lines.append(state).append(" — publication not yet verified");
+        else if("success".equals(run.optString("conclusion")))lines.append("publication succeeded");
+        else lines.append(run.optString("conclusion","unknown")).append(" — release not confirmed by this run");
+      }catch(Exception e){lines.append("\nBuild pipeline unavailable — status unknown.");}
+      try{
+        org.json.JSONObject release=readJson("https://shadowofthewasp.github.io/parasite-store/release.json");
+        if(release.getInt("version")>9)lines.append("\nNEW HOME UPDATE AVAILABLE — reinstall from the download page.");
+      }catch(Exception e){lines.append("\nHome update check unavailable.");}
+      lines.append("\nChecked ").append(java.text.DateFormat.getTimeInstance(java.text.DateFormat.SHORT).format(new java.util.Date()));
+      lines.append(" · private request progress in INVENT");
+      final String result=lines.toString();
+      runOnUiThread(()->{checkingUpdates=false;if(isFinishing()||isDestroyed())return;lastBuildState=result;if(buildState!=null)buildState.setText(result);});
+    },"parasite-build-state").start();
   }
   private void settings(){
     String[] opts={"Return to Parasite","Edit Hub address","Return to Amazon Home","Android Settings"};
