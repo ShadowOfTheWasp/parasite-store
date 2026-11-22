@@ -7,10 +7,10 @@ android {
   applicationId 'studio.parasite.tapeflute'
   minSdk 23
   targetSdk 28
-  versionCode 110
-  versionName '1.1.0'
+  versionCode 400
+  versionName '4.0.0'
  }
  sourceSets {
-  main.assets.srcDirs = ['../../docs/tape-flute/v1.1.0']
+  main.assets.srcDirs = ['../../docs/tron/v4.0.0']
  }
 }

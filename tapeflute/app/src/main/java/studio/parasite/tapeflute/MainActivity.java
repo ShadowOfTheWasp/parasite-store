@@ -49,7 +49,7 @@ public final class MainActivity extends Activity {
     protected void onPause() {
         instrument.evaluateJavascript(
             "if (typeof releaseAll === 'function') releaseAll();"
-            + "if (typeof context !== 'undefined' && context) context.suspend();", null);
+            + "if (typeof ctx !== 'undefined' && ctx) ctx.suspend();", null);
         instrument.onPause();
         super.onPause();
     }

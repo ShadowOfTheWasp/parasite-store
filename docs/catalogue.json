@@ -20,11 +20,11 @@
     },
     {
       "package": "studio.parasite.tapeflute",
-      "title": "Mellowtron",
-      "description": "MICROPHONE SAMPLER / CHROMATIC KEYBOARD / 32-STEP MATRIX SEQUENCER",
-      "installUrl": "https://parasite-kindle.vercel.app/",
-      "version": "3.0.0",
-      "playUrl": "https://parasite-kindle.vercel.app/mellowtron.html"
+      "title": "Tron",
+      "description": "MK II FLUTE TAPES / KEYBOARD & 32-STEP MATRIX / THREE-HEAD SPACE ECHO + SPRING",
+      "installUrl": "https://shadowofthewasp.github.io/parasite-store/tron/",
+      "version": "4.0.0",
+      "playUrl": "https://parasite-kindle.vercel.app/tron/v4.0.0/"
     },
     {
       "package": "studio.parasite.splice",
