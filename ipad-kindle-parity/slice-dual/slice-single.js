@@ -162,6 +162,10 @@ window.ParasitePresetBridge={
  },
  afterLoad:async()=>{if(fx)fx.setAll(settings())}
 };
+try{
+ const Offline=window.OfflineAudioContext||window.webkitOfflineAudioContext;
+ if(Offline){const renderContext=new Offline(1,44100,44100);sample=createFactorySample(renderContext);}
+}catch(e){/* fallback: sample is created on first audio unlock */}
 $('sampleState').textContent='PRESET 1 READY · Mellotron-style tape flute · one 8-second sample';
 $('sampleTitle').textContent='MELLOTRON-STYLE TAPE FLUTE · PRESET 1';
 window.addEventListener('pagehide',()=>{stopSequence();stopAll();stopRecording();micStream?.getTracks().forEach(t=>t.stop())});
