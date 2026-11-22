@@ -5,5 +5,14 @@
   "scope": "./",
   "display": "standalone",
   "theme_color": "#09110b",
-  "background_color": "#09110b"
+  "background_color": "#09110b",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "description": "Parasite immersive original-instrument iPad app"
 }
