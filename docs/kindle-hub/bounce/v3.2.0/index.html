@@ -7,12 +7,12 @@
 <div class="balls-bank" id="ballVoices" aria-label="Eight voice mute controls"></div><div class="presets" id="presets"><button data-preset="dream" class="preset active">DREAM CHAMBER</button><button data-preset="mallet" class="preset">MALLET GARDEN</button><button data-preset="space" class="preset">DEEP ECHO</button></div>
 <div class="columns"><section class="panel"><h2>01 / MOTION & INTELLIGENCE</h2><div class="controls" id="motionControls"></div><p>Eight independent trajectories share one room. Each ball has its own harmonic pitch and collision timing. Drag or flick any ball. Tap its number below to mute that voice.</p></section>
 <section class="panel"><h2>02 / TUNED IMPACT & ATMOSPHERE</h2><select id="material" aria-label="Room instrument material"><option value="bell">BELL / CHIME</option><option value="vibra">VIBRAPHONE</option><option value="marimba">WOOD MARIMBA</option><option value="celesta">CELESTA</option></select><div class="controls" id="soundControls" style="margin-top:8px"></div></section></div>
-<details><summary>ABOUT THE ROOM / SOUND ENGINE</summary><p>Each wall maps to one note of a repeating harmonic scale. Impact speed changes note velocity and brightness. The ball gradually chooses slightly different bounce angles, keeping music changing without teleporting. Audio runs through an original tuned mallet oscillator, stereo tape delay, then post-delay convolution reverb. This is not a copy of a commercial pedal.</p></details></main>
+<details><summary>ABOUT THE ROOM / SOUND ENGINE</summary><p>Each wall maps to one note of a repeating harmonic scale. Impact speed changes note velocity and brightness. The balls gradually choose slightly different bounce angles and play chords when they collide, keeping music changing without teleporting. Audio runs through an original tuned mallet oscillator, stereo tape delay, then post-delay convolution reverb. This is not a copy of a commercial pedal.</p></details></main>
 <script>
 'use strict';
 const $=id=>document.getElementById(id),AC=window.AudioContext||window.webkitAudioContext;
 const defaults={speed:.47,life:.55,gravity:.28,variation:.42,tone:.58,attack:.09,decay:.71,echo:.57,feedback:.48,space:.67,master:.48};
-let v={...defaults},playing=false,audio=null,output=null,dry=null,delayL=null,delayR=null,feedbackL=null,feedbackR=null,wet=null,verb=null,verbWet=null,ctx=null,last=0,record=[],hits=0,lastHit=-100,selectedPreset='dream',pointer=null;
+let v={...defaults},playing=false,audio=null,output=null,dry=null,delayL=null,delayR=null,feedbackL=null,feedbackR=null,wet=null,verb=null,verbWet=null,ctx=null,last=0,record=[],hits=0,lastHit=-100,selectedPreset='dream',pointer=null,contactCooldown=new Map();
 const balls=Array.from({length:8},(_,i)=>({id:i,x:.17+(i%4)*.21,y:i<4?.25:.7,vx:Math.cos(i*2.399+.3)*(.18+i*.012),vy:Math.sin(i*2.399+.3)*(.18+i*.012),r:10,flash:0,lastHit:-100,enabled:true})),transpose=[0,2,4,7,9,12,14,19],ballColors=['#edb9cc','#a7d9ce','#dfcfa5','#c3b8df','#d9a893','#a8c4e0','#b7d8a7','#d3b5b0'],canvas=$('scene'),g=canvas.getContext('2d'),colors=['#f0b3d5','#a7d9ce','#e1cd9f','#cbb6ff'],wallNotes=[261.6256,329.6276,391.9954,523.251];
 const clamp=(x,a,b)=>Math.min(b,Math.max(a,x)),rnd=(a,b)=>a+Math.random()*(b-a);
 const knobs=[['speed','SPEED',0,1,'motionControls'],['life','ENERGY',0,1,'motionControls'],['gravity','GRAVITY',0,1,'motionControls'],['variation','INTELLIGENCE',0,1,'motionControls'],['tone','MALLET TONE',0,1,'soundControls'],['attack','ATTACK',0,1,'soundControls'],['decay','DECAY',0,1,'soundControls'],['echo','TAPE DELAY',0,1,'soundControls'],['feedback','REPEATS',0,1,'soundControls'],['space','POST REVERB',0,1,'soundControls'],['master','OUTPUT',0,1,'soundControls']];
@@ -23,17 +23,17 @@ function startAudio(){audio=new AC();output=audio.createGain();output.gain.value
  verb=audio.createConvolver();verb.buffer=impulse();verbWet=audio.createGain();verb.connect(verbWet);verbWet.connect(output);
  wet.connect(verb);effectLevels();}
 function effectLevels(){if(!audio)return;let t=audio.currentTime;output.gain.setTargetAtTime(v.master*.65,t,.08);delayL.delayTime.setTargetAtTime(.13+v.echo*.46,t,.18);delayR.delayTime.setTargetAtTime(.24+v.echo*.59,t,.18);feedbackL.gain.setTargetAtTime(.13+v.feedback*.57,t,.1);feedbackR.gain.setTargetAtTime(.13+v.feedback*.57,t,.1);wet.gain.setTargetAtTime(.08+v.echo*.3,t,.1);verbWet.gain.setTargetAtTime(.08+v.space*.5,t,.12);}
-function strike(wall,intensity,ball=balls[0]){if(!playing||!audio)return;let now=audio.currentTime;if(!ball.enabled||now-ball.lastHit<.075||now-lastHit<.025)return;ball.lastHit=now;lastHit=now;let mat=$('material').value;
+function strike(wall,intensity,ball=balls[0],isChord=false){if(!playing||!audio)return;let now=audio.currentTime;if(!ball.enabled||(!isChord&&now-ball.lastHit<.075)||(!isChord&&now-lastHit<.025))return;ball.lastHit=now;lastHit=now;let mat=$('material').value;
  let ratios,levels;switch(mat){case 'vibra':ratios=[1,3.98,9.84,16.2];levels=[1,.25,.06,.02];break;case 'marimba':ratios=[1,3.92,9.75,15.7];levels=[1,.2,.025,.015];break;case 'celesta':ratios=[1,2,3,4.02,6.02];levels=[1,.28,.12,.08,.03];break;default:ratios=[1,2.02,2.97,4.15,5.4,6.9];levels=[1,.42,.22,.12,.08,.04]}
  let hit=Math.min(1,Math.max(.12,intensity));let env=audio.createGain(),tone=audio.createBiquadFilter();tone.type='lowpass';tone.frequency.value=1200+v.tone*6100+hit*1800;tone.Q.value=.8;env.connect(dry);env.connect(delayL);tone.connect(env);
  let dur=(mat==='marimba'?.75:mat==='vibra'?2.6:1.5)+v.decay*3;env.gain.setValueAtTime(.0001,now);env.gain.linearRampToValueAtTime((.06+.065*hit)/Math.sqrt(8),now+.007+v.attack*.24);env.gain.exponentialRampToValueAtTime(.0001,now+dur);
- let freq=wallNotes[wall]*Math.pow(2,transpose[ball.id]/12);
+ let freq=(wall<0?wallNotes[0]:wallNotes[wall])*Math.pow(2,transpose[ball.id]/12);
  ratios.forEach((ratio,i)=>{let osc=audio.createOscillator(),amp=audio.createGain();osc.type='sine';osc.frequency.value=freq*ratio*(1+(Math.random()-.5)*.0008);amp.gain.value=(levels[i]||.02)*(i?(.4+.6*v.tone):1);osc.connect(amp);amp.connect(tone);osc.start(now);osc.stop(now+dur+.1)});
- record.unshift({x:ball.x,y:ball.y,age:1,color:colors[wall]});if(record.length>16)record.length=16;ball.flash=1;hits++;
- $('state').textContent='BALL '+(ball.id+1)+' · '+['CEILING','RIGHT WALL','FLOOR','LEFT WALL'][wall]+' · '+mat.toUpperCase()+' / IMPACT '+(hit*100|0)+'%';
+ record.unshift({x:ball.x,y:ball.y,age:1,color:wall<0?ballColors[ball.id]:colors[wall]});if(record.length>16)record.length=16;ball.flash=1;hits++;
+ $('state').textContent=isChord?'CHORD · TWO BALLS / '+mat.toUpperCase():('BALL '+(ball.id+1)+' · '+['CEILING','RIGHT WALL','FLOOR','LEFT WALL'][wall]+' · '+mat.toUpperCase()+' / IMPACT '+(hit*100|0)+'%');
 }
 function box(w,h){let pad=Math.min(w,h)*.075+10;return {x:pad,y:pad,w:w-pad*2,h:h-pad*2}}
-function reseed(){balls.forEach((ball,i)=>{ball.x=.17+(i%4)*.21;ball.y=i<4?.25:.7;let a=rnd(-Math.PI,Math.PI);ball.vx=Math.cos(a)*(.18+i*.012);ball.vy=Math.sin(a)*(.18+i*.012);ball.flash=0;ball.lastHit=-100});hits=0;record=[];pointer=null;lastHit=-100;if(playing)strike(0,.38,balls[0])}
+function reseed(){balls.forEach((ball,i)=>{ball.x=.17+(i%4)*.21;ball.y=i<4?.25:.7;let a=rnd(-Math.PI,Math.PI);ball.vx=Math.cos(a)*(.18+i*.012);ball.vy=Math.sin(a)*(.18+i*.012);ball.flash=0;ball.lastHit=-100});hits=0;record=[];pointer=null;lastHit=-100;contactCooldown.clear();if(playing)strike(0,.38,balls[0])}
 function voiceButtons(){balls.forEach(ball=>{const b=document.createElement('button');b.className='ball-voice';b.style.setProperty('--bc',ballColors[ball.id]);b.textContent='0'+(ball.id+1);b.setAttribute('aria-label','Ball '+(ball.id+1)+' voice');b.setAttribute('aria-pressed','true');b.onclick=()=>{ball.enabled=!ball.enabled;b.setAttribute('aria-pressed',String(ball.enabled))};$('ballVoices').appendChild(b)})}
 function preset(type){selectedPreset=type;const vals=type==='mallet'?{speed:.67,life:.61,gravity:.32,variation:.51,tone:.75,attack:.06,decay:.36,echo:.42,feedback:.27,space:.41}:type==='space'?{speed:.32,life:.76,gravity:.08,variation:.68,tone:.43,attack:.16,decay:.89,echo:.74,feedback:.62,space:.87}:{...defaults};Object.assign(v,vals);for(const [key]of knobs){let el=$('kn-'+key);el.value=v[key];el.parentElement.querySelector('output').textContent=Math.round(v[key]*100)+'%'}document.querySelectorAll('.preset').forEach(b=>b.classList.toggle('active',b.dataset.preset===type));effectLevels()}
 async function toggle(){try{if(!AC)throw Error('Web Audio unavailable');if(!audio)startAudio();if(audio.state==='suspended')await audio.resume();playing=!playing;$('play').textContent=playing?'■ PAUSE ROOM':'▶ WAKE THE ROOM';$('play').classList.toggle('on',playing);$('state').textContent=playing?'ROOM LIVE / EIGHT BALLS MOVING':'ROOM PAUSED';if(playing)strike(0,.3)}catch(e){$('state').textContent='AUDIO ERROR: '+e.message}}
@@ -45,12 +45,35 @@ function draw(time){let w=canvas.clientWidth,h=canvas.clientHeight,dpr=Math.min(
  if(collisions.length){let velocity=Math.hypot(ball.vx,ball.vy);collisions.forEach(wall=>strike(wall,Math.min(1,velocity*2.6),ball)); // A small, musically bounded tangent variation prevents short repetitive paths.
  let a=(Math.random()-.5)*(.01+v.variation*.27);const vx=ball.vx,vy=ball.vy;ball.vx=vx*Math.cos(a)-vy*Math.sin(a);ball.vy=vx*Math.sin(a)+vy*Math.cos(a);let speed=clamp(Math.hypot(ball.vx,ball.vy),.13,.35+v.life*.45),angle=Math.atan2(ball.vy,ball.vx);ball.vx=Math.cos(angle)*speed;ball.vy=Math.sin(angle)*speed;
  }}}
+ // Resolve collisions in real room pixels; each pair can strike two notes as a chord.
+ if(playing){
+  for(let i=0;i<balls.length;i++)for(let j=i+1;j<balls.length;j++){
+   const a=balls[i],b=balls[j],dx=(b.x-a.x)*rect.w,dy=(b.y-a.y)*rect.h;
+   const d=Math.hypot(dx,dy);if(d>=22)continue;
+   const nx=d>.0001?dx/d:1,ny=d>.0001?dy/d:0;
+   const avx=a.vx*rect.w,avy=a.vy*rect.h,bvx=b.vx*rect.w,bvy=b.vy*rect.h;
+   const approaching=(bvx-avx)*nx+(bvy-avy)*ny;
+   const overlap=(22-d)*.5+.25;
+   a.x=clamp(a.x-nx*overlap/rect.w,0,1);a.y=clamp(a.y-ny*overlap/rect.h,0,1);
+   b.x=clamp(b.x+nx*overlap/rect.w,0,1);b.y=clamp(b.y+ny*overlap/rect.h,0,1);
+   if(approaching>=0)continue;
+   const impact=-approaching;
+   a.vx=(avx+approaching*nx)/rect.w;a.vy=(avy+approaching*ny)/rect.h;
+   b.vx=(bvx-approaching*nx)/rect.w;b.vy=(bvy-approaching*ny)/rect.h;
+   const key=i+'-'+j,now=time*.001,previous=contactCooldown.get(key)||-100;
+   if(now-previous>.15){
+    contactCooldown.set(key,now);
+    const strength=clamp(impact/100,.2,1);
+    strike(-1,strength,a,true);strike(-1,strength,b,true);
+   }
+  }
+ }
  g.lineWidth=2;g.strokeStyle='#547760';g.fillStyle='#111e17';g.beginPath();g.roundRect?g.roundRect(rect.x,rect.y,rect.w,rect.h,10):g.rect(rect.x,rect.y,rect.w,rect.h);g.fill();g.stroke();
  for(let i=0;i<4;i++){g.globalAlpha=.55;g.strokeStyle=colors[i];g.lineWidth=3;g.beginPath();if(i===0){g.moveTo(rect.x+12,rect.y);g.lineTo(rect.x+rect.w-12,rect.y)}if(i===1){g.moveTo(rect.x+rect.w,rect.y+12);g.lineTo(rect.x+rect.w,rect.y+rect.h-12)}if(i===2){g.moveTo(rect.x+12,rect.y+rect.h);g.lineTo(rect.x+rect.w-12,rect.y+rect.h)}if(i===3){g.moveTo(rect.x,rect.y+12);g.lineTo(rect.x,rect.y+rect.h-12)}g.stroke();g.globalAlpha=1}
 
  for(let i=record.length-1;i>=0;i--){const p=record[i];p.age-=delta*.6;if(p.age<=0){record.splice(i,1);continue}g.beginPath();g.arc(rect.x+p.x*rect.w,rect.y+p.y*rect.h,15+(1-p.age)*70,0,Math.PI*2);g.strokeStyle=p.color;g.globalAlpha=p.age*.35;g.stroke();g.globalAlpha=1}
  for(const ball of balls){const px=rect.x+ball.x*rect.w,py=rect.y+ball.y*rect.h;g.globalAlpha=ball.enabled?1:.35;g.beginPath();g.arc(px,py,10+ball.flash*4,0,Math.PI*2);g.fillStyle=ballColors[ball.id];g.shadowColor=ballColors[ball.id];g.shadowBlur=12+ball.flash*25;g.fill();g.shadowBlur=0;g.fillStyle='#122015';g.font='bold 9px monospace';g.textAlign='center';g.fillText(String(ball.id+1),px,py+3);g.textAlign='left';g.globalAlpha=1;ball.flash*=Math.pow(.015,delta)}
- g.font='10px monospace';g.fillStyle='#a6c2aa';g.fillText('EIGHT VOICES / FOUR WALLS',rect.x+10,rect.y+23);requestAnimationFrame(draw)}
+ g.font='10px monospace';g.fillStyle='#a6c2aa';g.fillText('EIGHT VOICES / CHORD COLLISIONS',rect.x+10,rect.y+23);requestAnimationFrame(draw)}
 function position(e){let r=canvas.getBoundingClientRect(),rect=box(r.width,r.height);return {x:clamp((e.clientX-r.left-rect.x)/rect.w,0,1),y:clamp((e.clientY-r.top-rect.y)/rect.h,0,1)}}
 canvas.addEventListener('pointerdown',e=>{let p=position(e),r=canvas.getBoundingClientRect(),room=box(r.width,r.height);let nearest=balls.reduce((a,b)=>Math.hypot((p.x-a.x)*room.w,(p.y-a.y)*room.h)<Math.hypot((p.x-b.x)*room.w,(p.y-b.y)*room.h)?a:b);if(Math.hypot((p.x-nearest.x)*room.w,(p.y-nearest.y)*room.h)>40)return;e.preventDefault();pointer={id:e.pointerId,ball:nearest.id,x:p.x,y:p.y,t:performance.now()};try{canvas.setPointerCapture(e.pointerId)}catch(err){}nearest.x=p.x;nearest.y=p.y});
 canvas.addEventListener('pointermove',e=>{if(!pointer||e.pointerId!==pointer.id)return;e.preventDefault();let ball=balls[pointer.ball],p=position(e),now=performance.now(),dt=clamp((now-pointer.t)/1000,.016,.2);ball.vx=clamp((p.x-pointer.x)/dt,-1.3,1.3);ball.vy=clamp((p.y-pointer.y)/dt,-1.3,1.3);ball.x=p.x;ball.y=p.y;pointer={...pointer,x:p.x,y:p.y,t:now};$('state').textContent='DIRECTING BALL '+(ball.id+1)+' / RELEASE TO BOUNCE'});
