@@ -74,7 +74,7 @@ public class HomeActivity extends Activity {
   private String configuredUrl(){return getPreferences(0).getString("hub_url",HUB_URL);}
   private void hub(){openScreen(configuredUrl(),"HUB");}
   private void invent(){openScreen(INVENT_URL,"INVENT");}
-  private void openScreen(String url,String title) {
+  private void openScreen(String destination,String title) {
     screenName=title;displayedHub=true;hubLoaded=false;begin();
     addButton("‹ PARASITE HOME",this::home);
     FrameLayout holder=new FrameLayout(this);
@@ -159,7 +159,7 @@ public class HomeActivity extends Activity {
       }
     });
     holder.addView(web,new FrameLayout.LayoutParams(-1,-1));
-    immersive();web.loadUrl(url);
+    immersive();web.loadUrl(destination);
   }
   @Override protected void onActivityResult(int requestCode,int resultCode,Intent data){
     super.onActivityResult(requestCode,resultCode,data);
