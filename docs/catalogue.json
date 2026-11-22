@@ -13,10 +13,10 @@
     {
       "package": "studio.parasite.melt",
       "title": "Bounce / Eight Voices",
-      "description": "EIGHT BALLS / TWO-BALL CHORD COLLISIONS / TUNED WALLS / DELAY + POST REVERB",
+      "description": "EIGHT BALLS / MUTED BALLS NON-INTERACTIVE / FIXED PITCH ON WALL OR BALL COLLISION / POST REVERB",
       "installUrl": "https://shadowofthewasp.github.io/parasite-store/melt/",
-      "version": "3.3.0",
-      "playUrl": "https://parasite-kindle.vercel.app/bounce/v3.3.0/"
+      "version": "3.4.0",
+      "playUrl": "https://parasite-kindle.vercel.app/bounce/v3.4.0/"
     },
     {
       "package": "studio.parasite.tapeflute",
