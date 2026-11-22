@@ -8,7 +8,7 @@
 <section class="play" aria-label="Parasite instruments"><iframe title="Original Parasite instrument" id="instrument" allow="autoplay; microphone"></iframe><div class="overlay"><button id="homeButton">← PARASITE</button><div class="units"><button data-unit="orbit" aria-pressed="true">ORBIT</button><button data-unit="slice" aria-pressed="false">SLICE</button></div></div><div class="embedStatus" id="embedStatus">ORBIT · ORIGINAL STRINGS</div></section>
 <script>
 'use strict';
-const UNIT={orbit:{path:'/orbit/v4.1.0/index.html',name:'ORBIT · ORIGINAL KINDLE 4.1'},tron:{path:'/tron/v4.0.0/index.html',name:'MELL0TRON · ORIGINAL KINDLE 4.0'},slice:{path:'/slice-dual/index.html',name:'SLICE · ORIGINAL KINDLE 1.0'}};
+const UNIT={orbit:{path:'/orbit/v4.1.0/index.html',name:'ORBIT · STRING ENSEMBLE'},slice:{path:'/slice-dual/index.html',name:'SLICE · MELLOTRON + SITAR'}};
 let current='orbit';const iframe=document.getElementById('instrument'),status=document.getElementById('embedStatus');
 function selectUnit(id){if(!UNIT[id])return;current=id;iframe.src=UNIT[id].path;status.textContent=UNIT[id].name;document.querySelectorAll('[data-unit]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.unit===id)))}
 function openUnits(){document.body.classList.add('playing');selectUnit(current);try{history.replaceState({instrument:true},'','#play')}catch(e){}}
