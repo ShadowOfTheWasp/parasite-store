@@ -97,7 +97,7 @@ node.querySelectorAll('[data-key]').forEach(input=>{
   else if(k==='mode'||k==='pattern'){lane[k]=input.value;if(k==='pattern')applyPattern(lane,input.value)}
   else{lane[k]=Number(input.value)}
   if(k==='freeMs')lane.freeAt=audio?.currentTime||0;
-  if(k==='phase'||k==='division')lane.nextTick=0;
+  if(k==='phase'||k==='division'){lane.nextTick=tick+lane.phase;lane.idx=0;}
   renderLane(i)
  };
  if(input.type==='range')input.oninput=input.onchange
@@ -193,7 +193,18 @@ function tickClock(){
  const lookahead=.135;
  while(nextTime<audio.currentTime+lookahead){
   const current=tick, swing=(current%2?Number(state.swing)*60/state.bpm/4:0);
-  state.lanes.forEach((lane,i)=>{if(lane.mode==='lock')scheduleLane(lane,i,nextTime+swing,current)});
+  state.lanes.forEach((lane,i)=>{
+   if(lane.mode!=='lock'||!lane.enabled)return;
+   let guard=0;
+   // Fixed, musical positions on the shared sixteenth clock, including triplet/fractional divisions.
+   while(lane.nextTick<current+1-0.000001&&guard++<12){
+    if(lane.nextTick>=current-0.000001){
+     const j=lane.idx%16,at=nextTime+(lane.nextTick-current)*(60/state.bpm/4);
+     if(lane.steps[j])playNote(lane.notes[j],at+swing,Math.min(2.3,intervalFor(lane.division)*.86));
+    }
+    lane.idx++;lane.nextTick+=lane.division;
+   }
+  });
   tick++;nextTime+=60/state.bpm/4;
  }
  for(const [i,lane] of state.lanes.entries()){
@@ -208,7 +219,7 @@ function tickClock(){
  }
  const index=Math.floor((audio.currentTime-nextTime)/(60/state.bpm/4)+tick+1)%16;
  root.querySelectorAll('.step.playhead').forEach(el=>el.classList.remove('playhead'));
- for(let i=0;i<6;i++){const lane=state.lanes[i],el=laneEls[i];if(lane.mode==='lock'){const step=Math.floor((tick-lane.phase-1)/lane.division)%16;if(step>=0)el.buttons[step]?.classList.add('playhead')}
+ for(let i=0;i<6;i++){const lane=state.lanes[i],el=laneEls[i];if(lane.mode==='lock'){const step=(lane.idx+15)%16;if(step>=0)el.buttons[step]?.classList.add('playhead')}
  else{el.buttons[(lane.idx+15)%16]?.classList.add('playhead')}}
  $('clockMini').textContent='◉ '+state.bpm+' BPM · SIX ORBITS RUNNING';
 }
@@ -221,14 +232,14 @@ function stop(){
 async function run(){
  if(state.playing){stop();return}
  try{await setupAudio();state.playing=true;tick=0;nextTime=audio.currentTime+.075;
- state.lanes.forEach(l=>{l.idx=0;l.freeAt=audio.currentTime+.08});clockTimer=setInterval(tickClock,25);tickClock();
+ state.lanes.forEach(l=>{l.idx=0;l.nextTick=l.phase;l.freeAt=audio.currentTime+.08});clockTimer=setInterval(tickClock,25);tickClock();
  $('clockStart').textContent='Ⅱ PAUSE';$('clockMessage').textContent='Master clock running. All LOCK lanes synchronized.'}
  catch(e){$('clockMessage').textContent=e.message;stop()}
 }
 $('clockToggle').onclick=()=>{root.classList.toggle('expanded');$('clockToggle').textContent=root.classList.contains('expanded')?'◎ HIDE CLOCK':'◎ CLOCK / 16 STEPS'};
 $('clockClose').onclick=()=>{root.classList.remove('expanded');$('clockToggle').textContent='◎ CLOCK / 16 STEPS'};
 $('clockStart').onclick=run;$('clockStop').onclick=stop;
-$('clockBpm').onchange=()=>{const previous=state.bpm;state.bpm=clamp($('clockBpm').value,35,240);$('clockBpm').value=String(state.bpm);if(state.playing&&audio){nextTime=audio.currentTime+60/state.bpm/4;tick=Math.round(tick/16)*16}$('clockMini').textContent='◉ '+state.bpm+' BPM'};
+$('clockBpm').onchange=()=>{const previous=state.bpm;state.bpm=clamp($('clockBpm').value,35,240);$('clockBpm').value=String(state.bpm);if(state.playing&&audio){nextTime=audio.currentTime+60/state.bpm/4;tick=Math.round(tick/16)*16;state.lanes.forEach(l=>{l.idx=0;l.nextTick=tick+l.phase})}$('clockMini').textContent='◉ '+state.bpm+' BPM'};
 $('clockSwing').onchange=()=>state.swing=Number($('clockSwing').value);
 $('clockSave').onclick=()=>{try{const pack={bpm:state.bpm,swing:state.swing,lanes:state.lanes.map(l=>({...l}))};localStorage.setItem('parasite-orbit-grid-v1',JSON.stringify(pack));$('clockMessage').textContent='Six orbit positions saved on this device.'}catch(e){$('clockMessage').textContent='Local storage is unavailable'}};
 $('clockReset').onclick=()=>{stop();try{localStorage.removeItem('parasite-orbit-grid-v1')}catch(e){}state.lanes.forEach((l,i)=>{applyPattern(l,'quarter');l.mode='lock';l.division=[1,2,4,1,2,4][i];l.phase=i%4;l.enabled=true;l.freeMs=200+i*70;l.idx=0;const el=laneEls[i].node;for(const key of ['mode','division','phase','enabled','freeMs','pattern']){const input=el.querySelector('[data-key="'+key+'"]');if(input)input.type==='checkbox'?input.checked=l[key]:input.value=String(l[key])}renderLane(i)});$('clockMessage').textContent='Reset to musical quarter-note positions.'};
