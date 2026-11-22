@@ -1,5 +1,5 @@
 'use strict';
-const VERSION='parasite-orbit-clock-16th-20261122',FILES=["/index.html","/manifest.webmanifest","/orbit/v4.1.0/index.html","/orbit/v4.1.0/samples.js","/orbit/v4.1.0/space-echo.js","/slice-dual/index.html","/slice-dual/slice.js","/orbit-synth/echo.js","/orbit-clock/orbit-clock.js"];
+const VERSION='parasite-slice-single-presets-20261122-v1',FILES=["/index.html","/manifest.webmanifest","/orbit/v4.1.0/index.html","/orbit/v4.1.0/samples.js","/orbit/v4.1.0/space-echo.js","/slice-dual/index.html","/orbit-synth/echo.js","/orbit-clock/orbit-clock.js","/slice-dual/slice-single.js","/preset-bank.js"];
 const RESPONSE_CACHE=VERSION,offlineFallback='/index.html';
 async function status(){const cache=await caches.open(RESPONSE_CACHE);const hits=await Promise.all(FILES.map(u=>cache.match(u)));return {type:'CACHE_PROGRESS',saved:hits.filter(Boolean).length,total:FILES.length,ready:hits.every(Boolean)}}
 async function sync(sender){
@@ -12,7 +12,7 @@ async function sync(sender){
  return status()
 }
 self.addEventListener('install',e=>e.waitUntil((async()=>{await sync(null);await self.skipWaiting()})()));
-self.addEventListener('activate',e=>e.waitUntil((async()=>{const keys=await caches.keys();await Promise.all(keys.filter(k=>(k.startsWith('parasite-kindle-originals-')||k.startsWith('parasite-orbit-four-osc-')||k.startsWith('parasite-orbit-strings-')||k.startsWith('parasite-hub-invent-'))&&k!==VERSION).map(k=>caches.delete(k)));await self.clients.claim()})()));
+self.addEventListener('activate',e=>e.waitUntil((async()=>{const keys=await caches.keys();await Promise.all(keys.filter(k=>(k.startsWith('parasite-kindle-originals-')||k.startsWith('parasite-orbit-four-osc-')||k.startsWith('parasite-orbit-strings-')||k.startsWith('parasite-hub-invent-')||k.startsWith('parasite-orbit-clock-16th-')||k.startsWith('parasite-slice-single-presets-'))&&k!==VERSION).map(k=>caches.delete(k)));await self.clients.claim()})()));
 self.addEventListener('message',e=>{
  const client=e.source;
  if(e.data?.type==='CHECK_OFFLINE'){e.waitUntil(status().then(s=>client?.postMessage(s)))}
