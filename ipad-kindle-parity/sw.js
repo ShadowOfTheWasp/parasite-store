@@ -1,5 +1,5 @@
 'use strict';
-const VERSION='parasite-kindle-originals-20261122-b1',FILES=["/index.html","/manifest.webmanifest","/orbit/v4.1.0/index.html","/orbit/v4.1.0/samples.js","/orbit/v4.1.0/space-echo.js","/tron/v4.0.0/index.html","/tron/v4.0.0/samples.js","/slice/v1.0.0/index.html","/slice/v1.0.0/h910.js","/slice/v1.0.0/splice.css","/slice/v1.0.0/splice.js"];
+const VERSION='parasite-kindle-originals-20261122-b2',FILES=["/index.html","/manifest.webmanifest","/orbit/v4.1.0/index.html","/orbit/v4.1.0/samples.js","/orbit/v4.1.0/space-echo.js","/tron/v4.0.0/index.html","/tron/v4.0.0/samples.js","/slice/v1.0.0/index.html","/slice/v1.0.0/h910.js","/slice/v1.0.0/splice.css","/slice/v1.0.0/splice.js"];
 const RESPONSE_CACHE=VERSION,offlineFallback='/index.html';
 async function status(){const cache=await caches.open(RESPONSE_CACHE);const hits=await Promise.all(FILES.map(u=>cache.match(u)));return {type:'CACHE_PROGRESS',saved:hits.filter(Boolean).length,total:FILES.length,ready:hits.every(Boolean)}}
 async function sync(sender){
