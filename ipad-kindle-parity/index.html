@@ -28,15 +28,33 @@ header{flex:none;display:flex;align-items:center;justify-content:space-between;g
 #notice{font-size:12px;color:#c3ebb2;min-height:18px}
 @media(max-width:800px){.workspace{grid-template-columns:minmax(215px,37%) 1fr}.invent{padding:25px}.library-header{padding:20px 15px}.modules{padding:10px}.module{padding:13px;gap:9px}.orb{width:44px;height:44px}.module h2{font-size:22px}.module p{font-size:10px}}
 @media(max-width:600px){.app{height:100dvh;min-height:0;overflow:auto}.workspace{grid-template-columns:1fr;overflow:auto;display:flex;flex-direction:column}.library{flex:none;border-right:none;border-bottom:1px solid #365638}.library-header{padding:18px 17px 10px}.library-header h1{font-size:26px}.modules{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px}.module{min-height:118px;display:flex;flex-direction:column;align-items:start;justify-content:center}.module .arrow{display:none}.module .orb{height:38px;width:38px}.module p{font-size:10px}.library-bottom{padding:10px 17px;display:flex;align-items:center;gap:8px;justify-content:space-between}.sync{width:auto;margin:0;padding:9px}.invent{flex:1;padding:22px 17px;min-height:370px;gap:13px;overflow:visible}.invent h1{font-size:38px}.prompt{min-height:190px}}
- .modules{scrollbar-width:thin;scrollbar-color:#4c7749 #102117}.module{min-height:97px}.module h2{text-transform:lowercase}.module p{font-size:11px}.module .orb{background:radial-gradient(circle at 33% 33%,#89ce74a8,#12291d 80%)}@media(max-width:800px){.module{min-height:83px}.module h2{font-size:19px}} </style></head>
+ .modules{scrollbar-width:thin;scrollbar-color:#4c7749 #102117}.module{min-height:97px}.module h2{text-transform:lowercase}.module p{font-size:11px}.module .orb{background:radial-gradient(circle at 33% 33%,#89ce74a8,#12291d 80%)}@media(max-width:800px){.module{min-height:83px}.module h2{font-size:19px}} 
+/* Deploy embeds the existing owner-authenticated Creator on the same page. */
+.invent{overflow:hidden!important;padding:clamp(11px,2.4vw,25px)!important;gap:9px!important}
+.invent-header{flex:none;max-width:none}.invent-header h1{margin:2px 0 4px!important;font-size:clamp(35px,5.3vw,59px)!important}
+.invent-header .sub{font-size:12px!important}
+.deploy-surface{border:1px solid #517a51;border-radius:16px;min-height:0;flex:1;overflow:hidden;background:#0c170f}
+#deployFrame{display:block;width:100%;height:100%;border:0;background:#0c170f;color-scheme:dark}
+.deploy-foot{font-size:10px;color:#a9c6a8;line-height:1.45;flex:none}
+.deploy-foot strong{color:#c3fb9b}
+.queue-caption{padding:12px 16px 3px;font-size:10px;color:#bbeb9f;letter-spacing:1.2px;text-transform:uppercase;font-weight:700}
+.queue-item{display:flex;flex-direction:column;gap:6px;text-align:left;padding:13px 14px;border-radius:12px;background:#192b1d;border:1px solid #496848;color:#e7f2e3;min-height:85px}
+.queue-item .jobhead{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.queue-item .jobtitle{font-size:13px;font-weight:750;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.queue-item .jobstatus{font-size:10px;background:#2e4832;border-radius:7px;padding:5px 7px;color:#d3e9c9;white-space:nowrap}
+.queue-item .jobeta{font-size:10px;color:#b0c6ad;line-height:1.4}
+.queue-item a{color:#bbff87;font-size:11px;text-decoration:underline}
+.queue-item[data-state="deployed"]{border-color:#82c76b}
+.queue-empty{font-size:11px;color:#9eb4a0;padding:8px 16px}
+@media(max-width:600px){.invent{min-height:500px!important}.deploy-surface{min-height:340px}.invent-header h1{font-size:38px!important}.deploy-foot{font-size:9px}}
+</style></head>
 <body><main class="app" id="home"><header><div><div class="mini">INSTRUMENT LABORATORY</div><div class="logo">parasite</div></div><div class="status"><strong>●</strong> HUB + DEPLOY</div></header>
 <div class="workspace"><aside class="library"><div class="library-header"><div class="label">YOUR COLLECTION</div><h1>hub</h1><p class="sub">Your instruments and modules. Tap one to open it.</p></div>
-<div class="modules" id="modules"><button class="module " data-unit="orbit"><span class="orb">◎</span><span class="module-info"><h2>orbit</h2><p>Strings · 6 clocks · Space Echo</p></span><span class="arrow">↗</span></button><button class="module slice" data-unit="slice"><span class="orb">▥</span><span class="module-info"><h2>slice</h2><p>16 MPC pads · one chopped sample</p></span><span class="arrow">↗</span></button><button class="module " data-unit="bounce"><span class="orb">◉</span><span class="module-info"><h2>bounce</h2><p>Kinetic bouncing-ball instrument</p></span><span class="arrow">↗</span></button><button class="module " data-unit="relay"><span class="orb">↔</span><span class="module-info"><h2>relay</h2><p>Audio relay / hardware experiment</p></span><span class="arrow">↗</span></button></div>
+<div class="queue-caption" id="queueCaption" hidden>Build queue <span id="queueCount"></span></div><div class="queue-jobs" id="queueJobs" aria-live="polite" style="padding:0 12px;display:flex;flex-direction:column;gap:8px;max-height:35%;overflow:auto"></div><div class="modules" id="modules"><button class="module " data-unit="orbit"><span class="orb">◎</span><span class="module-info"><h2>orbit</h2><p>Strings · 6 clocks · Space Echo</p></span><span class="arrow">↗</span></button><button class="module slice" data-unit="slice"><span class="orb">▥</span><span class="module-info"><h2>slice</h2><p>16 MPC pads · one chopped sample</p></span><span class="arrow">↗</span></button><button class="module " data-unit="bounce"><span class="orb">◉</span><span class="module-info"><h2>bounce</h2><p>Kinetic bouncing-ball instrument</p></span><span class="arrow">↗</span></button><button class="module " data-unit="relay"><span class="orb">↔</span><span class="module-info"><h2>relay</h2><p>Audio relay / hardware experiment</p></span><span class="arrow">↗</span></button></div>
 <div class="library-bottom"><small id="cacheState" role="status">Checking offline files…</small><button class="sync" id="offlineSync">SAVE FOR OFFLINE</button></div></aside>
-<section class="invent"><div class="invent-header"><div class="label">PARASITE / MODULE CONTROL</div><h1>deploy<span>.</span></h1><p class="sub">Create a new synth, sampler, sequencer or effect — or describe a change to an existing module. Tell Parasite what to build or update.</p></div>
-<div class="concepts"><button class="chip" data-example="Create a new four-oscillator synthesizer with chord planets, glide and vintage tape echo.">+ NEW SYNTH</button><button class="chip" data-example="Update Orbit: describe the change you want to its controls, sounds or sequencing.">↻ CHANGE ORBIT</button><button class="chip" data-example="Update Slice: describe the change you want to its 16-pad sampler, effects or sequencer.">↻ CHANGE SLICE</button><button class="chip" data-example="Create a new instrument that turns recordings into granular textures controlled by touch.">+ NEW MODULE</button></div>
-<div class="prompt"><label for="inventPrompt">NEW MODULE OR CHANGE REQUEST</label><textarea id="inventPrompt" maxlength="5000" spellcheck="true" placeholder="Create a new synth that… or update Orbit / Slice / Bounce / Relay to…"></textarea><div class="prompt-actions"><span class="wordcount" id="count">0 / 5000 characters</span><button class="button primary" id="send" disabled>CONTINUE TO DEPLOY ↗</button></div></div>
-<div id="notice" role="status"></div><div class="info"><strong>Deploy is private.</strong> Request a new instrument or an update to an existing module. Your description is copied and the protected module-request portal opens; paste it there to submit. This screen does not submit or build the request automatically.</div></section></div></main>
+<section class="invent" id="deployWorkspace"><div class="invent-header"><div class="label">PARASITE / BUILD CONTROL</div><h1>deploy<span>.</span></h1><p class="sub">Build a new synth or request a change to any existing module. Submit here — the request appears in the Hub as soon as the build queue confirms it.</p></div>
+<div class="deploy-surface"><iframe id="deployFrame" title="Deploy a new instrument or modify an existing module" src="/creator/" allow="clipboard-write; microphone"></iframe></div>
+<div class="deploy-foot" id="deployHelp">Secure owner-only queue. New requests appear on the left as <strong>Pending</strong>. The queue is checked approximately hourly; completion time depends on the build.</div></section></div></main>
 <section class="player" aria-label="Playing instrument"><iframe title="Parasite instrument" id="instrument" allow="autoplay; microphone"></iframe><div class="backbar"><button id="back">← HUB + DEPLOY</button><span class="name" id="playingName">ORBIT</span></div></section>
 <script>
 'use strict';
@@ -80,17 +98,67 @@ frame.addEventListener('load',()=>{
  }
  }catch(e){console.warn('Parasite viewport adaptation:',e)}
 });
-const prompt=document.getElementById('inventPrompt'),send=document.getElementById('send'),count=document.getElementById('count');
-function update(){count.textContent=prompt.value.length+' / 5000 characters';send.disabled=prompt.value.trim().length<8;try{sessionStorage.setItem('parasite-invent-draft',prompt.value)}catch(e){}}
-try{const draft=sessionStorage.getItem('parasite-invent-draft');if(draft)prompt.value=draft}catch(e){}
-prompt.addEventListener('input',update);update();
-document.querySelectorAll('[data-example]').forEach(b=>b.onclick=()=>{prompt.value=b.dataset.example;update();prompt.focus()});
-send.onclick=async()=>{
- const brief=prompt.value.trim();if(brief.length<8)return;
- try{await navigator.clipboard.writeText(brief);notice.textContent='Request copied. Paste it into the Deploy portal.'}
- catch(e){notice.textContent='Copy your request before continuing to the Deploy portal.'}
- window.open('https://parasite-creator.vercel.app','_blank','noopener,noreferrer');
-};
+
+const queueCaption=document.getElementById('queueCaption'),queueJobs=document.getElementById('queueJobs'),queueCount=document.getElementById('queueCount');
+let queueSignature='',queueLoading=false;
+const pretty={queued:'Pending',building:'Building',deployed:'Ready',needs_input:'Needs input',blocked:'Needs attention'};
+const eta=state=>state==='queued'?'Estimated queue pickup: about 0–60 minutes. Build finish time is not yet known.':state==='building'?'Build underway · completion estimate unavailable.':state==='deployed'?'Build completed.':state==='needs_input'?'More information is needed in Deploy.':'Check the request details in Deploy.';
+function safeRelease(url){try{const u=new URL(url);return u.protocol==='https:'?u.href:null}catch(e){return null}}
+function extractJobs(value){
+ if(Array.isArray(value))return value;
+ for(const key of ['items','requests','queue','data','result'])if(Array.isArray(value?.[key]))return value[key];
+ return null;
+}
+function paintQueue(jobs){
+ const sig=JSON.stringify(jobs.map(j=>[j.id,j.state,j.note,j.release_url,j.updated_at,j.brief]));
+ if(sig===queueSignature)return;queueSignature=sig;
+ queueJobs.replaceChildren();queueCaption.hidden=jobs.length===0;
+ queueCount.textContent='('+jobs.length+')';
+ for(const job of jobs.slice(0,16)){
+  const state=String(job.state||'queued');
+  const card=document.createElement('div');card.className='queue-item';card.dataset.state=state;
+  const head=document.createElement('div');head.className='jobhead';
+  const name=document.createElement('span');name.className='jobtitle';name.textContent=String(job.brief||'Instrument request').slice(0,88);
+  const status=document.createElement('span');status.className='jobstatus';status.textContent=pretty[state]||state;
+  head.append(name,status);
+  const note=document.createElement('div');note.className='jobeta';note.textContent=eta(state);
+  card.append(head,note);
+  if(typeof job.note==='string'&&job.note.trim()){
+   const detail=document.createElement('div');detail.className='jobeta';detail.textContent=job.note.slice(0,220);card.append(detail);
+  }
+  if(state==='deployed'){
+   const url=safeRelease(job.release_url);
+   if(url){const a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener noreferrer';a.textContent='OPEN DEPLOYED INSTRUMENT';card.append(a)}
+  }
+  queueJobs.append(card);
+ }
+}
+async function refreshQueue(){
+ if(queueLoading||document.hidden)return;queueLoading=true;
+ try{
+  const response=await fetch('/api/queue',{method:'GET',credentials:'same-origin',cache:'no-store',headers:{accept:'application/json'}});
+  if(response.status===401||response.status===403){queueCaption.hidden=true;queueJobs.replaceChildren();queueSignature='';return}
+  if(!response.ok)throw Error('Queue response '+response.status);
+  const data=await response.json(),jobs=extractJobs(data);
+  if(jobs)paintQueue(jobs);
+ }catch(e){/* Keep last confirmed queue view; do not invent or erase states. */}
+ finally{queueLoading=false}
+}
+const deployFrame=document.getElementById('deployFrame');
+deployFrame.addEventListener('load',()=>{
+ try{
+  const doc=deployFrame.contentDocument;if(!doc?.head)return;
+  const style=doc.createElement('style');
+  style.textContent='html,body{background:#0c170f!important}header{display:none!important}main{max-width:none!important;margin:0!important;padding:8px!important}#workspace{max-width:none!important}';
+  doc.head.append(style);
+  const body=doc.body;
+  if(body){const observer=new MutationObserver(()=>refreshQueue());observer.observe(body,{childList:true,subtree:true,attributes:false});}
+ }catch(e){}
+ refreshQueue();
+});
+setInterval(refreshQueue,9000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshQueue()});
+refreshQueue();
 if('serviceWorker'in navigator){
  const label=document.getElementById('cacheState'),button=document.getElementById('offlineSync');
  function show(d){if(d.ready){label.textContent='Core files cached · test offline';button.textContent='CORE FILES SAVED';button.disabled=true}else{label.textContent=(d.saved||0)+' / '+(d.total||0)+' core files cached';button.textContent='SAVE FOR OFFLINE';button.disabled=false}}
