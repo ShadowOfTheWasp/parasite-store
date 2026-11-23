@@ -29,6 +29,14 @@ Status: IN PROGRESS, NOT 9/10. This file is an engineering checklist, not a prom
 - Original-request clarification reply is not implemented end-to-end; owner follow-up currently creates a new request. **Fails**.
 - Real device audio/microphone, per-user separation, server-side billing, and automated UI regression tests are **unverified or not implemented**.
 
+## Quality sprint: automated regression infrastructure (2026-11-23, feature/v3-e2e-regression-gate)
+
+- Added pinned Playwright test runner and four Chromium profiles: desktop, iPhone 13 emulation, iPad emulation, and Kindle-sized touch emulation. These are **browser emulations, not physical device evidence**.
+- Added browser assertions for logged-out catalogue discovery, in-app navigation, composer error handling, horizontal overflow, Web Audio graph startup and voice activation, and service-worker offline precache/relaunch.
+- Added a Node syntax/catalogue invariant test for the Hub, service worker, all published tools, unique versioned URLs and offline manifest entries.
+- Added GitHub Actions workflow to execute checks on V3 release branches and pull requests. This is a CI check, **not yet a guaranteed deployment block** because Vercel can still deploy independently of GitHub status.
+- **Gate 8 remains FAIL / unverified:** no passing GitHub Actions run, physical-device run or enforced production release block recorded yet. Tests are newly authored and must be run and repaired before credit. The suite deliberately mocks private API errors; it does not test authenticated submit/reply or real multi-user isolation.
+
 ## Next prioritized engineering work
 
 1. Implement authenticated in-place replies (same request ID, audit trail, safely return to queued), then validate entire question/answer/resume cycle.
