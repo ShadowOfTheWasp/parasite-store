@@ -1,0 +1,8 @@
+plugins { id 'com.android.application' }
+android {
+    namespace 'com.markup.fire7'
+    compileSdk 35
+    defaultConfig { applicationId 'com.markup.fire7'; minSdk 22; targetSdk 28; versionCode 1; versionName '1.0' }
+    buildTypes { release { minifyEnabled false } }
+    compileOptions { sourceCompatibility JavaVersion.VERSION_1_8; targetCompatibility JavaVersion.VERSION_1_8 }
+}
