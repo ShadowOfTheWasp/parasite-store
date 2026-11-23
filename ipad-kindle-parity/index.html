@@ -98,11 +98,7 @@ header{flex:none;display:flex;align-items:center;justify-content:space-between;g
 <body><main class="app" id="home"><header><div><div class="mini">NOCTURNE TOOL FACTORY / V3</div><div class="logo">parasite</div></div><div class="status"><span class="p2-plan" id="p2PlanState" title="Subscriptions are not yet enabled"><span class="light"></span> V3 · EARLY ACCESS</span></div></header>
 <div class="workspace"><aside class="library"><div class="library-header"><div class="label">PARASITE V3 / YOUR WORKSHOP</div><h1>hub<span class="v3-dot">.</span></h1><p class="sub">Your personal audio tool collection starts here. Invent your first tool in Deploy.</p></div>
 <div class="queue-caption" id="queueCaption" hidden>Build queue <span id="queueCount"></span></div><div class="queue-jobs" id="queueJobs" aria-live="polite" style="padding:0 12px;display:flex;flex-direction:column;gap:8px;max-height:35%;overflow:auto"></div><div class="modules" id="modules">
-<a class="module v3-created" data-pinned-tool="rta-history" href="/tools/rta-history/v1.0.0/index.html" aria-label="Open RTA History spectrum analyser">
-<span class="orb">▥</span><span class="module-info"><h2>RTA History</h2><p>READY · Spectrum history analyser</p></span><span class="arrow">↗</span></a>
-<a class="module v3-created" data-pinned-tool="tape-keys" href="/tools/tape-keys/v1.0.0/index.html" aria-label="Open Tape Keys sampler">
-<span class="orb">◉</span><span class="module-info"><h2>Tape Keys</h2><p>READY · Mellotron-inspired sample keyboard</p></span><span class="arrow">↗</span></a>
-<div class="hub-empty" id="hubEmpty" hidden>
+<div class="hub-empty" id="hubEmpty">
 <div class="hub-empty-art" aria-hidden="true"><span class="hub-empty-center">✦</span><span class="hub-empty-ring r1"></span><span class="hub-empty-ring r2"></span></div>
 <div class="hub-empty-kicker">AN EMPTY WORKSHOP</div>
 <h2>No tools yet.</h2>
@@ -130,7 +126,13 @@ header{flex:none;display:flex;align-items:center;justify-content:space-between;g
 'use strict';
 const units=Object.create(null); // V3 begins with an empty library. Previous units are archived, not deleted.
 const frame=document.getElementById('instrument'),notice=document.getElementById('notice');
-function openUnit(id){const u=units[id];if(!u)return;document.body.classList.add('playing');frame.src=u.url;document.getElementById('playingName').textContent=u.label;history.replaceState({unit:id},'',location.pathname+'#'+id)}
+function openTool(url,title){
+ if(!/^\/tools\/[a-z0-9-]+\/v[0-9]+\.[0-9]+\.[0-9]+\/index\.html$/.test(url))return;
+ document.body.classList.add('playing');frame.src=url;
+ document.getElementById('playingName').textContent=String(title||'MY TOOL').toUpperCase().slice(0,50);
+ history.replaceState({tool:url},'',location.pathname+'#tool');
+}
+function openUnit(id){const u=units[id];if(!u)return;openTool(u.url,u.label)}
 function closeUnit(){document.body.classList.remove('playing');frame.removeAttribute('src');history.replaceState(null,'',location.pathname)}
 document.getElementById('hubCreate').addEventListener('click',()=>{document.getElementById('deployWorkspace').scrollIntoView({behavior:'smooth',block:'nearest'});document.getElementById('deployBrief').focus()});
 document.getElementById('back').addEventListener('click',closeUnit);
@@ -143,7 +145,7 @@ frame.addEventListener('load',()=>{
   vp.content='width=device-width,initial-scale=1,viewport-fit=cover';
   const src=frame.getAttribute('src')||'';
   const unit=window.ParasiteV2?.detect(src)||'custom';
-  window.ParasiteV2?.injectFrame(frame,unit);
+  if(src.startsWith('/tools/'))return; // Native V3 tools are self-contained; legacy adapters must not rewrite them.\n  window.ParasiteV2?.injectFrame(frame,unit);
   if(!doc.querySelector('link[data-p2-layout]')){
    const style=doc.createElement('link');style.rel='stylesheet';style.href='/parasite-v2-layout.css';style.dataset.p2Layout='1';doc.head.append(style);
   }
@@ -164,6 +166,44 @@ const queueCaption=document.getElementById('queueCaption'),queueJobs=document.ge
 // Earlier request history is retained privately but excluded from the V3 view.
 const V3_QUEUE_START=Date.parse('2026-11-23T01:33:46.527Z');
 const hubEmpty=document.getElementById('hubEmpty'),hubModules=document.getElementById('modules');
+let publicTools=[],catalogueLoaded=false;
+function validTool(value){
+ if(!value||typeof value!=='object')return null;
+ const url=String(value.url||'');
+ if(!/^\/tools\/[a-z0-9-]+\/v[0-9]+\.[0-9]+\.[0-9]+\/index\.html$/.test(url))return null;
+ return {id:String(value.id||'').slice(0,70),title:String(value.title||'New tool').slice(0,60),description:String(value.description||'Ready').slice(0,120),url,icon:String(value.icon||'✦').slice(0,2)};
+}
+function createToolCard(tool){
+ const card=document.createElement('a');card.className='module v3-created';card.href=tool.url;
+ card.dataset.catalogueTool=tool.id;card.setAttribute('aria-label','Open '+tool.title+' inside Parasite');
+ const orb=document.createElement('span');orb.className='orb';orb.textContent=tool.icon;
+ const info=document.createElement('span');info.className='module-info';
+ const title=document.createElement('h2');title.textContent=tool.title;
+ const subtitle=document.createElement('p');subtitle.textContent='READY · '+tool.description;
+ const arrow=document.createElement('span');arrow.className='arrow';arrow.textContent='↗';
+ info.append(title,subtitle);card.append(orb,info,arrow);
+ card.addEventListener('click',event=>{event.preventDefault();openTool(tool.url,tool.title)});
+ return card;
+}
+function renderCatalogue(){
+ hubModules.querySelectorAll('[data-catalogue-tool]').forEach(el=>el.remove());
+ for(const tool of publicTools)hubModules.append(createToolCard(tool));
+ hubEmpty.hidden=publicTools.length>0||hubModules.querySelectorAll('[data-created-job]').length>0;
+}
+async function refreshCatalogue(){
+ try{
+  const response=await fetch('/tools/catalogue.json',{cache:'no-store'});
+  if(!response.ok)throw Error('Catalog HTTP '+response.status);
+  const data=await response.json();
+  if(data?.version!==1||!Array.isArray(data.tools))throw Error('Unknown catalogue format');
+  publicTools=data.tools.map(validTool).filter(Boolean);catalogueLoaded=true;
+  renderCatalogue();
+ }catch(e){
+  if(!catalogueLoaded){hubEmpty.hidden=false;hubEmpty.querySelector('p').textContent='Your tools could not be checked while offline. Reconnect to refresh the Hub.';}
+ }
+}
+refreshCatalogue();
+
 let queueSignature='',queueLoading=false,knownQueue=[],selectedDeployId=null,deployBusy=false;
 const pretty={queued:'Pending',building:'Building',deployed:'Ready',needs_input:'Needs response',blocked:'Needs attention'};
 const eta=state=>state==='queued'?'Estimated queue pickup: about 0–60 minutes. Build finish time is not yet known.':state==='building'?'Build underway · completion estimate unavailable.':state==='deployed'?'Build completed.':state==='needs_input'?'The builder is waiting for one answer before continuing.':'Check the request details in Deploy.';
@@ -184,18 +224,18 @@ function paintQueue(incoming){
  queueCaption.hidden=pending.length===0;
  queueCount.textContent='('+pending.length+')';
  hubModules.querySelectorAll('[data-created-job]').forEach(node=>node.remove());
- hubEmpty.hidden=ready.length>0||Boolean(hubModules.querySelector('[data-pinned-tool]'));
+ hubEmpty.hidden=ready.length>0||publicTools.length>0;
  for(const job of ready){
-  if(['762dade4-c8b9-4647-9a8e-4c3e60ad8fad','b275bc88-789b-4032-9d07-b1e9eb3fecc3'].includes(String(job.id)))continue; // RTA is always visible as a pinned V3 tool, even before owner login.
+  if(publicTools.some(t=>t.url===new URL(job.release_url||'',location.origin).pathname))continue;
   const href=safeRelease(job.release_url);
-  const card=document.createElement('a');card.className='module v3-created';card.href=href;card.target='_blank';card.rel='noopener noreferrer';
+  if(new URL(href).origin!==location.origin)continue;\n  const card=document.createElement('a');card.className='module v3-created';card.href=href;
   card.dataset.createdJob=String(job.id);
   const orb=document.createElement('span');orb.className='orb';orb.textContent='✦';
   const info=document.createElement('span');info.className='module-info';
   const title=document.createElement('h2');title.textContent=String(job.brief||'My tool').split('\\n')[0].slice(0,48);
   const subtitle=document.createElement('p');subtitle.textContent='READY · OPEN YOUR TOOL';
   info.append(title,subtitle);const arrow=document.createElement('span');arrow.className='arrow';arrow.textContent='↗';
-  card.append(orb,info,arrow);hubModules.append(card);
+  card.append(orb,info,arrow);card.addEventListener('click',e=>{e.preventDefault();openTool(new URL(href).pathname,title.textContent)});hubModules.append(card);
  }
  for(const job of pending.slice(0,16)){
   const state=String(job.state||'queued');
@@ -312,7 +352,7 @@ deploySend.addEventListener('click',async()=>{
  }finally{deployBusy=false;updateDeployDraft()}
 });
 updateDeployDraft();
-setInterval(refreshQueue,9000);
+setInterval(refreshQueue,9000);setInterval(refreshCatalogue,60000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshQueue()});
 refreshQueue();
 // This is a display-only readiness check. Billing entitlements must be validated server-side.
