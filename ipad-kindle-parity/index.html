@@ -272,7 +272,7 @@ function focusDeployReply(requestId){
  document.getElementById('deployBrief').value='';
  updateDeployDraft();
  document.getElementById('deployBrief').focus();
- document.getElementById('deployStatus').textContent='Answer the question here. Deploy will send a follow-up with the original request context.';
+ document.getElementById('deployStatus').textContent='Reply to this request only. If the server cannot accept an in-place reply, no duplicate build will be created.';
 }
 async function refreshQueue(){
  if(queueLoading||document.hidden)return;queueLoading=true;
@@ -304,8 +304,7 @@ async function deployApi(body){
 function updateDeployDraft(){
  const value=deployEditor.value;
  safeLocalSet(draftKey,value);
- const active=knownQueue.find(x=>x.id===selectedDeployId);
- const composed=active?String(active.brief||'')+'\n\nOwner follow-up for request '+active.id+'\n'+value.trim():value.trim();
+ const composed=value.trim(); // Replies are sent against the original request ID, never concatenated into a new brief.
  document.getElementById('deployCount').textContent=composed.length.toLocaleString('en-GB')+' / 4,000';
  deploySend.disabled=deployBusy||value.trim().length<10||composed.length>4000;
  return composed;
@@ -333,10 +332,21 @@ document.getElementById('deployUnlock').addEventListener('submit',async event=>{
 deploySend.addEventListener('click',async()=>{
  if(deployBusy)return;
  const message=deployEditor.value.trim(),brief=updateDeployDraft();
- if(message.length<10||brief.length>4000){deploymentReply('Enter at least 10 characters (maximum 4,000 including follow-up context).');return}
+ if(message.length<10||brief.length>4000){deploymentReply('Enter at least 10 characters (maximum 4,000).');return}
  deployBusy=true;deploySend.disabled=true;
  deploymentReply('Sending your request…');
  try{
+  if(selectedDeployId){
+   const existing=knownQueue.find(j=>String(j.id)===String(selectedDeployId));
+   if(!existing||existing.state!=='needs_input')throw Error('The original request is no longer awaiting a reply. Refresh the queue.');
+   // A reply is an update to the same request. Never fall through to action:submit.
+   const response=await deployApi({action:'reply',id:String(existing.id),reply:message});
+   if(!response?.request||String(response.request.id)!==String(existing.id))throw Error('The server did not confirm an in-place reply. No new request was created.');
+   safeLocalSet(draftKey,null);deployEditor.value='';selectedDeployId=null;
+   document.getElementById('deploySelection').hidden=true;
+   deploymentReply('CONFIRMED · Reply attached to the original request. Builder will resume.');
+   await refreshQueue();return;
+  }
   let pending;try{pending=JSON.parse(safeLocalGet(pendingKey))}catch{}
   const id=pending?.brief===brief?pending.id:crypto.randomUUID();
   safeLocalSet(pendingKey,JSON.stringify({id,brief}));
