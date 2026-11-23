@@ -11,7 +11,7 @@
 html,body{box-sizing:border-box}
 body.p2-unified{margin:0!important;overflow:hidden!important;min-height:0!important;height:100dvh!important;background:#08100f!important;color:#e9f5eb!important;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important}
 body.p2-unified main{max-width:none!important;min-width:0!important;box-sizing:border-box!important}
-body.p2-unified main:not(.app){height:100dvh!important;min-height:0!important;overflow:hidden!important;margin:0!important;padding:max(4px,env(safe-area-inset-top)) 10px max(8px,env(safe-area-inset-bottom))!important;display:flex!important;flex-direction:column!important;gap:7px!important}
+body.p2-unified main:not(.app):not(.p2-machine){height:100dvh!important;min-height:0!important;overflow:hidden!important;margin:0!important;padding:max(4px,env(safe-area-inset-top)) 10px max(8px,env(safe-area-inset-bottom))!important;display:flex!important;flex-direction:column!important;gap:7px!important}
 body.p2-unified .p2-original-header{display:none!important}
 #p2-toolbar{box-sizing:border-box;position:relative;z-index:3;display:flex;flex:none;justify-content:space-between;align-items:center;gap:10px;min-height:50px;max-height:58px;padding:5px 9px;background:linear-gradient(110deg,#182c25,#10221e 68%,#18242b);border:1px solid #537369;border-radius:9px;box-shadow:inset 0 1px #ffffff1b}
 #p2-toolbar::after{content:"";position:absolute;height:2px;bottom:0;left:10px;right:10px;background:linear-gradient(90deg,#c6ff91,#f6d18b,#85e4f9,#c4a8f7);border-radius:2px}
@@ -26,8 +26,8 @@ body.p2-unified .p2-original-header{display:none!important}
 /* The original legacy pages can be much taller than an iPad.
    Keep the canvas/route visual live, and put secondary panels in collapsible
    sections rather than shrinking all control hitboxes. */
-body.p2-unified main:not(.app) > h1,body.p2-unified main:not(.app) > .hero,
-body.p2-unified main:not(.app) > p:not(.hint){display:none!important}
+body.p2-unified main:not(.app):not(.p2-machine) > h1,body.p2-unified main:not(.app):not(.p2-machine) > .hero,
+body.p2-unified main:not(.app):not(.p2-machine) > p:not(.hint){display:none!important}
 body.p2-unified h1{font-size:clamp(24px,3vw,33px)!important;letter-spacing:-1.5px!important;margin:0!important}
 body.p2-unified h2{font-size:clamp(12px,1.4vw,17px)!important;letter-spacing:-.4px!important;margin:0!important}
 body.p2-unified p{font-size:11px!important;line-height:1.35!important}
@@ -68,7 +68,7 @@ body.p2-unified canvas{touch-action:none}
 body.p2-unified .pad{min-height:0!important}
 body.p2-unified #parasite-clock .step{min-height:0!important}
 @media(min-width:760px) and (orientation:landscape){
- body.p2-unified main:not(.app){gap:6px!important}
+ body.p2-unified main:not(.app):not(.p2-machine){gap:6px!important}
  body.p2-unified main > .room{min-height:210px!important}
  body.p2-unified main > .p2-advanced{max-height:36%}
 }
