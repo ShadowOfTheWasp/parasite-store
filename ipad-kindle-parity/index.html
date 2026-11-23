@@ -78,34 +78,56 @@ header{flex:none;display:flex;align-items:center;justify-content:space-between;g
 .queue-respond{min-height:44px!important;width:100%;border-radius:8px;border:1px solid #e2f1c4;background:linear-gradient(135deg,#d0f9b1,#a0dcc1);color:#11261e;font-size:10px;font-weight:850;letter-spacing:1px;cursor:pointer}
 .queue-respond:hover{filter:brightness(1.08)}
 .queue-respond:focus-visible{outline:2px solid #85e4f9;outline-offset:2px}
+
+/* V3 - empty workshop. One premium brand, no pre-installed modules. */
+.v3-dot{color:#c6ff91}
+.modules:has(.hub-empty:not([hidden])){justify-content:center;align-items:stretch}
+.hub-empty{padding:clamp(16px,2.6vw,26px) 13px 28px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:9px;color:#e4f5e3}
+.hub-empty[hidden]{display:none!important}
+.hub-empty-art{width:134px;height:134px;position:relative;margin-bottom:10px;display:grid;place-items:center}
+.hub-empty-ring{position:absolute;inset:5px;border-radius:50%;border:1px solid #9ee6b083;box-shadow:0 0 35px #c6ff9120}
+.hub-empty-ring.r2{inset:22px;border:1px solid #85e4f999;box-shadow:0 0 24px #c4a8f73d}
+.hub-empty-center{font-size:36px;color:#f6d18b;text-shadow:0 0 25px #f6d18b99}
+.hub-empty-kicker{font-size:9px;font-weight:800;letter-spacing:2.4px;color:#a7d4b0}
+.hub-empty h2{font-size:clamp(21px,3vw,29px)!important;letter-spacing:-1px;color:#f1ffe9;margin:0}
+.hub-empty p{max-width:310px;font-size:12px;line-height:1.55;color:#aec6b5;margin:0}
+#hubCreate{min-height:48px;margin-top:13px;padding:11px 15px;border:1px solid #d8ffc1;border-radius:9px;background:linear-gradient(105deg,#c6ff91,#a2f8cf);color:#10231b;font-size:11px;font-weight:900;letter-spacing:.4px}
+#hubCreate span{margin-left:10px}
+.v3-created{display:flex;min-height:92px!important;text-decoration:none}
 </style><link rel="stylesheet" href="/parasite-v2.css"><script src="/parasite-v2.js"></script></head>
-<body><main class="app" id="home"><header><div><div class="mini">NOCTURNE INSTRUMENT LABORATORY / V2</div><div class="logo">parasite</div></div><div class="status"><span class="p2-plan" id="p2PlanState" title="Subscriptions are not yet enabled"><span class="light"></span> V2 · EARLY ACCESS</span></div></header>
-<div class="workspace"><aside class="library"><div class="library-header"><div class="label">COLLECTION / 004 MACHINES</div><h1>hub</h1><p class="sub">Your instruments, living in one laboratory. Touch to awaken.</p></div>
-<div class="queue-caption" id="queueCaption" hidden>Build queue <span id="queueCount"></span></div><div class="queue-jobs" id="queueJobs" aria-live="polite" style="padding:0 12px;display:flex;flex-direction:column;gap:8px;max-height:35%;overflow:auto"></div><div class="modules" id="modules"><button class="module " data-unit="orbit"><span class="orb">◎</span><span class="module-info"><h2>orbit</h2><p>Strings · 6 clocks · Space Echo</p></span><span class="arrow">↗</span></button><button class="module slice" data-unit="slice"><span class="orb">▥</span><span class="module-info"><h2>slice</h2><p>16 MPC pads · one chopped sample</p></span><span class="arrow">↗</span></button><button class="module " data-unit="bounce"><span class="orb">◉</span><span class="module-info"><h2>bounce</h2><p>Room collisions · kinetic instrument</p></span><span class="arrow">↗</span></button><button class="module " data-unit="relay"><span class="orb">↔</span><span class="module-info"><h2>relay</h2><p>Audio relay / hardware experiment</p></span><span class="arrow">↗</span></button></div>
+<body><main class="app" id="home"><header><div><div class="mini">NOCTURNE TOOL FACTORY / V3</div><div class="logo">parasite</div></div><div class="status"><span class="p2-plan" id="p2PlanState" title="Subscriptions are not yet enabled"><span class="light"></span> V3 · EARLY ACCESS</span></div></header>
+<div class="workspace"><aside class="library"><div class="library-header"><div class="label">PARASITE V3 / YOUR WORKSHOP</div><h1>hub<span class="v3-dot">.</span></h1><p class="sub">Your personal audio tool collection starts here. Invent your first tool in Deploy.</p></div>
+<div class="queue-caption" id="queueCaption" hidden>Build queue <span id="queueCount"></span></div><div class="queue-jobs" id="queueJobs" aria-live="polite" style="padding:0 12px;display:flex;flex-direction:column;gap:8px;max-height:35%;overflow:auto"></div><div class="modules" id="modules"><div class="hub-empty" id="hubEmpty">
+<div class="hub-empty-art" aria-hidden="true"><span class="hub-empty-center">✦</span><span class="hub-empty-ring r1"></span><span class="hub-empty-ring r2"></span></div>
+<div class="hub-empty-kicker">AN EMPTY WORKSHOP</div>
+<h2>No tools yet.</h2>
+<p>Everything begins with an idea. Use Deploy to invent a synth, a calculator, an OSC controller, or anything useful for audio production.</p>
+<button id="hubCreate" type="button">INVENT YOUR FIRST TOOL <span aria-hidden="true">↗</span></button>
+</div></div>
 <div class="library-bottom"><small id="cacheState" role="status">Checking offline files…</small><button class="sync" id="offlineSync">SAVE FOR OFFLINE</button></div></aside>
-<section class="invent" id="deployWorkspace"><div class="invent-header"><div class="label">DEPLOY / YOUR INSTRUMENT FORGE</div><h1>deploy<span>.</span></h1><p class="sub">Build a new synth or request a change to any existing module. Submit here — the request appears in the Hub as soon as the build queue confirms it.</p></div>
+<section class="invent" id="deployWorkspace"><div class="invent-header"><div class="label">DEPLOY / INVENT YOUR TOOL</div><h1>deploy<span>.</span></h1><p class="sub">Describe an audio-production tool you wish existed. Parasite will research it, build it, and add the finished tool to your Hub.</p></div>
 <div class="deploy-surface deploy-native">
 <form id="deployUnlock" class="deploy-unlock" autocomplete="off">
 <label for="deployPassword">PRIVATE BUILDER ACCESS</label>
 <div class="deploy-inline"><input id="deployPassword" type="password" autocomplete="current-password" maxlength="90" placeholder="Your access password" required><button id="deployUnlockButton" type="submit">UNLOCK</button></div>
 </form>
 <div class="deploy-compose">
-<label for="deployBrief">DESCRIBE THE TOOL OR CHANGE</label>
-<textarea id="deployBrief" maxlength="4000" rows="7" spellcheck="true" placeholder="For example: Update Orbit so the sequencer has a glide control and a chug mode. Keep everything else working."></textarea>
+<label for="deployBrief">DESCRIBE YOUR FIRST TOOL</label>
+<textarea id="deployBrief" maxlength="4000" rows="7" spellcheck="true" placeholder="For example: Invent a delay alignment calculator for my live sound system, with metres, feet and milliseconds."></textarea>
 <div class="deploy-actionrow"><span id="deployCount">0 / 4,000</span><button id="deployNew" type="button">NEW REQUEST</button><button id="deploySend" type="button">DEPLOY REQUEST</button></div>
 <div id="deploySelection" class="deploy-selection" hidden></div>
 <div id="deployStatus" class="deploy-message" role="status" aria-live="polite">Describe a tool or update above. The request is only submitted when Deploy confirms it.</div>
 </div>
 </div>
 <div class="deploy-foot" id="deployHelp">Private builder. Confirmed requests appear in the collection as <strong>Pending</strong>. Queue pickup is checked about hourly; build completion time is not guaranteed.</div></section></div></main>
-<section class="player" aria-label="Playing instrument"><nav class="backbar" aria-label="Instrument navigation"><button id="back">← HUB + DEPLOY</button><span class="name" id="playingName">ORBIT</span></nav><iframe title="Parasite instrument" id="instrument" allow="autoplay; microphone" scrolling="yes"></iframe></section>
+<section class="player" aria-label="Playing instrument"><nav class="backbar" aria-label="Instrument navigation"><button id="back">← HUB + DEPLOY</button><span class="name" id="playingName">YOUR TOOL</span></nav><iframe title="Parasite instrument" id="instrument" allow="autoplay; microphone" scrolling="yes"></iframe></section>
 <script>
 'use strict';
-const units={orbit:{url:'/orbit/v4.1.0/index.html',label:'ORBIT'},slice:{url:'/slice-dual/index.html',label:'SLICE'},bounce:{url:'/bounce/v3.6.0/index.html',label:'BOUNCE'},relay:{url:'/relay/v1.1.0/index.html',label:'RELAY'}};
+const units=Object.create(null); // V3 begins with an empty library. Previous units are archived, not deleted.
 const frame=document.getElementById('instrument'),notice=document.getElementById('notice');
 function openUnit(id){const u=units[id];if(!u)return;document.body.classList.add('playing');frame.src=u.url;document.getElementById('playingName').textContent=u.label;history.replaceState({unit:id},'',location.pathname+'#'+id)}
 function closeUnit(){document.body.classList.remove('playing');frame.removeAttribute('src');history.replaceState(null,'',location.pathname)}
-document.querySelectorAll('[data-unit]').forEach(btn=>btn.addEventListener('click',()=>openUnit(btn.dataset.unit)));
+document.getElementById('hubCreate').addEventListener('click',()=>{document.getElementById('deployWorkspace').scrollIntoView({behavior:'smooth',block:'nearest'});document.getElementById('deployBrief').focus()});
 document.getElementById('back').addEventListener('click',closeUnit);
 window.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.body.classList.contains('playing'))closeUnit()});
 frame.addEventListener('load',()=>{
@@ -133,6 +155,10 @@ frame.addEventListener('load',()=>{
  }catch(e){console.warn('Parasite V2 interface:',e)}
 });
 const queueCaption=document.getElementById('queueCaption'),queueJobs=document.getElementById('queueJobs'),queueCount=document.getElementById('queueCount');
+// V3 starts clean: only builds requested after this release belongs in this Hub.
+// Earlier request history is retained privately but excluded from the V3 view.
+const V3_QUEUE_START=Date.parse('2026-11-23T01:33:46.527Z');
+const hubEmpty=document.getElementById('hubEmpty'),hubModules=document.getElementById('modules');
 let queueSignature='',queueLoading=false,knownQueue=[],selectedDeployId=null,deployBusy=false;
 const pretty={queued:'Pending',building:'Building',deployed:'Ready',needs_input:'Needs response',blocked:'Needs attention'};
 const eta=state=>state==='queued'?'Estimated queue pickup: about 0–60 minutes. Build finish time is not yet known.':state==='building'?'Build underway · completion estimate unavailable.':state==='deployed'?'Build completed.':state==='needs_input'?'The builder is waiting for one answer before continuing.':'Check the request details in Deploy.';
@@ -142,17 +168,34 @@ function extractJobs(value){
  for(const key of ['items','requests','queue','data','result'])if(Array.isArray(value?.[key]))return value[key];
  return null;
 }
-function paintQueue(jobs){
+function paintQueue(incoming){
+ const jobs=incoming.filter(j=>Number.isFinite(Date.parse(j.created_at))&&Date.parse(j.created_at)>=V3_QUEUE_START);
  knownQueue=jobs;
  const sig=JSON.stringify(jobs.map(j=>[j.id,j.state,j.note,j.release_url,j.updated_at,j.brief]));
  if(sig===queueSignature)return;queueSignature=sig;
- queueJobs.replaceChildren();queueCaption.hidden=jobs.length===0;
- queueCount.textContent='('+jobs.length+')';
- for(const job of jobs.slice(0,16)){
+ queueJobs.replaceChildren();
+ const pending=jobs.filter(j=>j.state!=='deployed');
+ const ready=jobs.filter(j=>j.state==='deployed'&&safeRelease(j.release_url));
+ queueCaption.hidden=pending.length===0;
+ queueCount.textContent='('+pending.length+')';
+ hubModules.querySelectorAll('[data-created-job]').forEach(node=>node.remove());
+ hubEmpty.hidden=ready.length>0;
+ for(const job of ready){
+  const href=safeRelease(job.release_url);
+  const card=document.createElement('a');card.className='module v3-created';card.href=href;card.target='_blank';card.rel='noopener noreferrer';
+  card.dataset.createdJob=String(job.id);
+  const orb=document.createElement('span');orb.className='orb';orb.textContent='✦';
+  const info=document.createElement('span');info.className='module-info';
+  const title=document.createElement('h2');title.textContent=String(job.brief||'My tool').split('\\n')[0].slice(0,48);
+  const subtitle=document.createElement('p');subtitle.textContent='READY · OPEN YOUR TOOL';
+  info.append(title,subtitle);const arrow=document.createElement('span');arrow.className='arrow';arrow.textContent='↗';
+  card.append(orb,info,arrow);hubModules.append(card);
+ }
+ for(const job of pending.slice(0,16)){
   const state=String(job.state||'queued');
   const card=document.createElement('div');card.className='queue-item';card.dataset.state=state;
   const head=document.createElement('div');head.className='jobhead';
-  const name=document.createElement('span');name.className='jobtitle';name.textContent=String(job.brief||'Instrument request').slice(0,88);
+  const name=document.createElement('span');name.className='jobtitle';name.textContent=String(job.brief||'Tool request').slice(0,88);
   const status=document.createElement('span');status.className='jobstatus';status.textContent=pretty[state]||state;
   head.append(name,status);
   const note=document.createElement('div');note.className='jobeta';note.textContent=eta(state);
@@ -164,14 +207,9 @@ function paintQueue(jobs){
    const respond=document.createElement('button');respond.className='queue-respond';respond.type='button';respond.textContent='RESPOND TO BUILDER';
    respond.setAttribute('aria-label','Answer the builder about '+String(job.brief||'your request').slice(0,65));
    respond.addEventListener('click',()=>focusDeployReply(job.id));
-   question.append(eyebrow,copy,respond);
-   card.append(question);
+   question.append(eyebrow,copy,respond);card.append(question);
   }else if(typeof job.note==='string'&&job.note.trim()){
    const detail=document.createElement('div');detail.className='jobeta';detail.textContent=job.note.slice(0,220);card.append(detail);
-  }
-  if(state==='deployed'){
-   const url=safeRelease(job.release_url);
-   if(url){const a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener noreferrer';a.textContent='OPEN DEPLOYED INSTRUMENT';card.append(a)}
   }
   queueJobs.append(card);
  }
@@ -204,8 +242,8 @@ async function refreshQueue(){
 const deployEditor=document.getElementById('deployBrief');
 const deployMsg=document.getElementById('deployStatus');
 const deploySend=document.getElementById('deploySend');
-const draftKey='parasite-hub-native-deploy-draft';
-const pendingKey='parasite-hub-native-deploy-pending';
+const draftKey='parasite-v3-native-deploy-draft';
+const pendingKey='parasite-v3-native-deploy-pending';
 const deploymentReply=(value)=>{deployMsg.textContent=value};
 function safeLocalGet(key){try{return localStorage.getItem(key)||''}catch{return ''}}
 function safeLocalSet(key,val){try{if(val===null)localStorage.removeItem(key);else localStorage.setItem(key,val)}catch{}}
@@ -276,7 +314,7 @@ fetch('/api/subscription-status',{cache:'no-store',credentials:'same-origin'}).t
  const el=document.getElementById('p2PlanState');if(!el||!config)return;
  el.title=config.message||'Subscription not configured';
  // Never infer a paid plan from browser state.
- if(config.billingEnabled===false)el.lastChild.textContent=' V2 · EARLY ACCESS';
+ if(config.billingEnabled===false)el.lastChild.textContent=' V3 · EARLY ACCESS';
 }).catch(()=>{});
 if('serviceWorker'in navigator){
  const label=document.getElementById('cacheState'),button=document.getElementById('offlineSync');
