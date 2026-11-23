@@ -1,0 +1,10 @@
+name: MARKUP tool check
+on:
+  push:
+    branches: [markup-fire7-v1]
+  workflow_dispatch:
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo Android setup check
