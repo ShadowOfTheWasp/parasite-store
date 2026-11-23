@@ -82,3 +82,42 @@ body.p2-unified .p2-advanced :where(button,select,input:not([type=range]):not([t
 body.p2-unified .p2-advanced :where(button,select){padding:8px 11px!important}
 body.p2-unified .p2-advanced > :not(summary){margin-top:6px}
 body.p2-unified .p2-advanced:not([open]) > :not(summary){display:none}
+
+/* iPad Orbit fix / 2026-11-23.
+ * The original Orbit is taller than the viewport; never trap it behind
+ * 100dvh + overflow:hidden. Keep native touch scrolling and full-size knobs.
+ * Navigation is outside this document in the parent Hub toolbar. */
+html:has(body.p2-unified[data-p2-module="orbit"]){
+ height:100%!important;overflow-y:auto!important;overscroll-behavior-y:contain;
+ -webkit-overflow-scrolling:touch
+}
+body.p2-unified[data-p2-module="orbit"]{
+ height:auto!important;min-height:100%!important;overflow-y:auto!important;
+ overflow-x:hidden!important;overscroll-behavior-y:contain;
+ -webkit-overflow-scrolling:touch;touch-action:pan-y
+}
+body.p2-unified[data-p2-module="orbit"] main:not(.app):not(.p2-machine){
+ height:auto!important;min-height:100%!important;max-width:1210px!important;
+ margin:0 auto!important;padding:8px 12px max(45px,env(safe-area-inset-bottom))!important;
+ display:block!important;overflow:visible!important
+}
+body.p2-unified[data-p2-module="orbit"] #p2-toolbar{margin-bottom:8px}
+body.p2-unified[data-p2-module="orbit"] .stage{display:flex!important;flex-direction:column!important;gap:8px!important}
+body.p2-unified[data-p2-module="orbit"] .stage>.pane:first-child{
+ min-height:0!important;overflow:visible!important
+}
+body.p2-unified[data-p2-module="orbit"] .orbitCanvas{
+ height:clamp(260px,59dvh,610px)!important;min-height:0!important
+}
+body.p2-unified[data-p2-module="orbit"] .advanced[open]{
+ overflow:visible!important
+}
+body.p2-unified[data-p2-module="orbit"] .advanced[open] .controlGroup,
+body.p2-unified[data-p2-module="orbit"] .advanced[open] .seqGrid{
+ overflow:visible!important
+}
+@media(orientation:portrait){
+ body.p2-unified[data-p2-module="orbit"] .orbitCanvas{
+  height:clamp(270px,44dvh,540px)!important
+ }
+}
