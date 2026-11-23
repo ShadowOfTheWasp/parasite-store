@@ -46,3 +46,11 @@ Do not claim a 9/10 release while these mandatory gates remain unmet.
 - Offline readiness now counts every tool in the cached catalogue, not only the release's fixed precache list. The service worker cache version advances so installed clients update.
 - Reproducible JavaScript mock tests executed via V8 against the actual updated service-worker source: (a) complete catalogue and all tools: `ready=true`, catalogue committed; (b) one missing tool: `ready=false`, catalogue not committed; (c) unsafe external URL: `ready=false`, catalogue not committed. JavaScript syntax check passed. This is a mocked network/cache test, **not** a physical iPad/Kindle offline test.
 - Gate 6 remains **provisional**, not independently passed, until browser service-worker and real-device airplane-mode checks confirm installation, refresh, fallback and offline audio. No score increment awarded.
+
+## Gate 8 CI contract addition (2026-11-23 22:39 UTC)
+
+- Production deployment confirmed READY at `7099b0bcc62c875a29e035dc8f41f788ee144498`; this isolated branch starts at that exact commit.
+- Added `tests/catalogue-contract.cjs`, a Node 22 executable contract test that verifies catalogue version, unique tool IDs/URLs, versioned paths, existence of all instrument entrypoints, Hub catalogue discovery and service-worker catalogue refresh markers. Includes four negative fixtures (duplicate, path traversal, missing entrypoint, incompatible schema version).
+- Added `.github/workflows/parasite-v3-catalogue-contract.yml` to execute syntax and contract tests on the feature branch and relevant pull requests.
+- GitHub commit succeeded; **CI run completion has not been observed**. Do not claim tests passed or gate 8 completed until workflow results are inspected and browser, API, mobile layout and audio engine regressions are also verified.
+- No changes to production, existing instruments, public catalogue, Supabase data, queue claims, credentials or billing. No quality gate awarded.
