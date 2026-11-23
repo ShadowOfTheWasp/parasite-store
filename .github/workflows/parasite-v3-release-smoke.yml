@@ -1,0 +1,25 @@
+name: Parasite V3 release smoke
+on:
+  push:
+    branches: [main, 'release/**', 'feature/**']
+    paths:
+      - 'ipad-kindle-parity/**'
+      - '.github/workflows/parasite-v3-release-smoke.yml'
+  pull_request:
+    paths:
+      - 'ipad-kindle-parity/**'
+      - '.github/workflows/parasite-v3-release-smoke.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  release-smoke:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate published Hub, tools and offline assets
+        run: node ipad-kindle-parity/tests/release-smoke.cjs
