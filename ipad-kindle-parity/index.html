@@ -86,6 +86,7 @@ frame.addEventListener('load',()=>{
   // natively after its audio engine; other modules receive the same control here.
   if(unit!=='slice')inject('/save-control.js','save');
   if(unit==='bounce'||unit==='relay')inject('/parasite-v2-module-layout.js','layout');
+  if(unit==='bounce')inject('/bounce-collision-start.js','bounce-room-collisions');
  }catch(e){console.warn('Parasite V2 interface:',e)}
 });
 const queueCaption=document.getElementById('queueCaption'),queueJobs=document.getElementById('queueJobs'),queueCount=document.getElementById('queueCount');
