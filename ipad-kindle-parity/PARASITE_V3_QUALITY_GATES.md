@@ -46,3 +46,10 @@ Do not claim a 9/10 release while these mandatory gates remain unmet.
 - Offline readiness now counts every tool in the cached catalogue, not only the release's fixed precache list. The service worker cache version advances so installed clients update.
 - Reproducible JavaScript mock tests executed via V8 against the actual updated service-worker source: (a) complete catalogue and all tools: `ready=true`, catalogue committed; (b) one missing tool: `ready=false`, catalogue not committed; (c) unsafe external URL: `ready=false`, catalogue not committed. JavaScript syntax check passed. This is a mocked network/cache test, **not** a physical iPad/Kindle offline test.
 - Gate 6 remains **provisional**, not independently passed, until browser service-worker and real-device airplane-mode checks confirm installation, refresh, fallback and offline audio. No score increment awarded.
+
+## 2026-11-23 09:29 UTC — Gate 8 CI validation attempt
+
+- Inspected current Vercel production deployment `dpl_CJLTJWVGznWBGf7Ur9BbgH9FnrnS`, READY at commit `7099b0bcc62c875a29e035dc8f41f788ee144498` (branch `feature/v3-offline-catalogue-consistency`).
+- Created fresh `feature/v3-ci-production-smoke-0928` from the exact production commit and introduced `tests/release-static.cjs` plus `.github/workflows/parasite-v3-release-integrity.yml` (Ubuntu 24.04, Node 22).
+- Opened draft PR #3 (`https://github.com/ShadowOfTheWasp/parasite-store/pull/3`) to exercise pull-request CI. Initial commit workflow-run query returned **zero runs**, so there is **no CI PASS evidence**. The PR targets a significantly older `main` branch and includes 164 historical commits; do not merge without reconciling branch ancestry.
+- Static suite is intended to catch unsafe catalogue entries, missing published tools, JS parse failures and offline integration regressions; it does **not** cover authenticated API, audio output, browser layout or actual iPad/Kindle behaviour. Gate 8 remains **FAILED/UNVERIFIED** and production is intentionally unchanged.
