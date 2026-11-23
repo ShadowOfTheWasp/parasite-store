@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": "2026-11-23T03:27:00Z",
+  "updated_at": "2026-11-23T04:00:00Z",
   "tools": [
     {
       "id": "rta-history",
@@ -17,6 +17,14 @@
       "url": "/tools/tape-keys/v1.0.0/index.html",
       "version": "1.0.0",
       "icon": "◉"
+    },
+    {
+      "id": "chorus-6",
+      "title": "Chorus 6",
+      "description": "Original six-voice-style analogue polysynth",
+      "url": "/tools/chorus-6/v1.0.0/index.html",
+      "version": "1.0.0",
+      "icon": "◈"
     }
   ]
 }
