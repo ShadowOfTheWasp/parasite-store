@@ -1,0 +1,18 @@
+{
+  "name": "Parasite",
+  "short_name": "Parasite",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "theme_color": "#09110b",
+  "background_color": "#09110b",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "description": "Parasite V3 — invent and save your own live-audio tools, musical instruments and production utilities."
+}

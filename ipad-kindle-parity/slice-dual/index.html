@@ -1,0 +1,96 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#08120d"><title>Parasite / Slice · Tide & Space</title><style>
+:root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color-scheme:dark;color:#e8f6e3;background:#08110b;--lime:#baff87;--line:#36583c}*{box-sizing:border-box}html,body{width:100%;height:100%;margin:0;overflow:hidden;overscroll-behavior:none}button,input,select{font:inherit}button{touch-action:manipulation;cursor:pointer;color:inherit}button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--lime)}.app{height:100dvh;overflow:hidden;display:grid;grid-template-rows:45px minmax(0,1fr);gap:6px;padding:max(5px,env(safe-area-inset-top)) 9px max(7px,env(safe-area-inset-bottom));background:radial-gradient(ellipse at 80% 4%,#1d3921,#08110b 60%)}header{display:flex;align-items:center;justify-content:space-between;padding:0 6px}.brand{font-size:30px;font-weight:850;letter-spacing:-1.7px;color:var(--lime)}.eyebrow{font-size:10px;letter-spacing:1px;color:#9db99e}.content{min-height:0;display:grid;grid-template-columns:1.12fr 1fr;gap:7px}.left,.right{min-height:0;display:grid;gap:7px}.left{grid-template-rows:minmax(0,.69fr) minmax(0,1.38fr) minmax(0,.68fr)}.right{grid-template-rows:minmax(0,.92fr) minmax(0,.9fr)}.panel{border:1px solid var(--line);background:#13261a;border-radius:12px;padding:9px 11px;min-height:0;display:flex;flex-direction:column;gap:6px;overflow:hidden}.head{display:flex;justify-content:space-between;align-items:center;gap:9px;flex:none}.head h2{margin:0;font-size:11px;font-weight:800;letter-spacing:1.5px;color:var(--lime)}.label{font-size:9px;letter-spacing:1px;color:#a6bba5}.note{font-size:10px;color:#bfd4b7}.sample-name{font-size:clamp(11px,1.5vw,18px);font-weight:750;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.row{display:flex;align-items:center;gap:5px;flex-wrap:wrap}.btn{padding:7px 9px;border:1px solid #5a7c58;background:#294630;color:#e7f9df;border-radius:8px;font-weight:750;font-size:10px;white-space:nowrap}.btn.hot{background:var(--lime);border-color:var(--lime);color:#19301b}.btn:disabled{opacity:.45}input[type=file]{display:none}.controls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px 9px;flex:1;min-height:0;align-content:space-around}.control{min-width:0;display:grid;grid-template-columns:minmax(0,1fr) 30px;grid-template-rows:12px 15px;align-items:center;gap:1px 4px}.control>label{font-size:9px;letter-spacing:.45px;color:#bad4b4;grid-column:1 / 3}.control input[type=range]{width:100%;height:16px;margin:0;accent-color:var(--lime)}.control output{font-size:9px;color:#affc93;text-align:right;font-variant-numeric:tabular-nums}.padgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:repeat(4,minmax(0,1fr));gap:5px;min-height:0;flex:1;touch-action:none;user-select:none;-webkit-user-select:none}
+.pad{border:1px solid #5f875d;border-bottom:4px solid #29422b;background:linear-gradient(145deg,#3c6143,#213b28);border-radius:9px;min-width:0;min-height:0;color:#deffd1;display:flex;justify-content:space-between;align-items:end;padding:5px 7px;font-size:clamp(11px,1.6vw,17px);font-weight:800;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.pad small{font-size:8px;font-weight:600;color:#b1d1a7}.pad.selected{border-color:var(--lime);box-shadow:inset 0 0 0 1px var(--lime)}.pad.down{background:var(--lime);color:#18321e}.pad.down small{color:#244224}.stepgrid{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));gap:4px;flex:1;min-height:0}.step{border:1px solid #577558;background:#233b28;border-radius:7px;font-size:13px;color:#c6d9c2}.step.on{background:#a9f27c;color:#152d18;font-weight:800}.step.playing{outline:2px solid #fff9a3;outline-offset:-2px}.transport{display:flex;gap:6px;align-items:center}.transport>.control{flex:1;max-width:170px}.transport .btn{padding:7px}.state{font-size:10px;color:#b7d6b3;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;flex:1}.fxtop{display:flex;gap:8px;align-items:center}.switch{font-size:10px;color:#c5dbc4;white-space:nowrap}.switch input{accent-color:var(--lime)}select{border:1px solid #577459;background:#152b1c;color:#eaf9e1;border-radius:7px;padding:7px;font-size:10px;max-width:100%;min-width:0}.mode{display:flex;align-items:center;gap:7px}.mode select{flex:1}.mode .label{white-space:nowrap}.fxcontrols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:3px 9px;min-height:0;flex:1;align-content:space-around}.fxcontrols .control{grid-template-rows:12px 15px}.status{font-size:10px;color:#a8cf9d;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media(orientation:portrait) and (min-width:600px){.content{grid-template-columns:1fr;grid-template-rows:minmax(0,1.05fr) minmax(0,.95fr)}.left{grid-template-rows:.75fr 1.25fr .7fr}.right{grid-template-rows:1fr .95fr}.panel{padding:6px 9px}.controls{gap:2px 8px}.fxcontrols{gap:2px 8px}.brand{font-size:26px}}
+@media(max-width:599px){.content{grid-template-columns:1fr;grid-template-rows:1.1fr .9fr}.left{grid-template-rows:.75fr 1.25fr .7fr}.right{grid-template-rows:1fr 1fr}.panel{padding:4px}.app{grid-template-rows:32px minmax(0,1fr);gap:3px;padding:4px}.controls,.fxcontrols{gap:1px 4px}.control>label{font-size:8px}.control output{font-size:8px}.key{font-size:6px}.brand{font-size:24px}.note{display:none}}
+</style><style>
+/* Slice / Tide + Space — overlap-safe 100dvh layout and hardware-sized controls.
+   Effects are complete: Tide has independent L/R pitch shift, time, feedback and mix.
+   Space retains 12 heads/spring modes and all six sound controls. */
+.app{grid-template-rows:minmax(56px,auto) minmax(0,1fr)!important;gap:6px!important;overflow:hidden!important}
+.app>header{min-height:54px;max-height:65px;gap:10px;min-width:0;flex-wrap:nowrap!important}
+.app>header>.eyebrow{display:none!important}
+.app>header .brand{font-size:clamp(21px,2.4vw,29px)!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.app>header .brand .eyebrow{font-size:9px!important}
+.app>header>.p2-toolbar-actions{margin-left:auto;flex:none;max-width:45%}
+.app>header #p2-save-state{display:none}
+.app>.content{min-height:0;overflow:hidden;grid-template-columns:minmax(0,1.08fr) minmax(0,1fr)!important;gap:6px!important}
+.app .left,.app .right{min-width:0;min-height:0;overflow:hidden;gap:6px!important}
+.app .left{grid-template-rows:minmax(0,.85fr) minmax(0,1.4fr) minmax(0,.82fr)!important}
+.app .right{grid-template-rows:minmax(0,.90fr) minmax(0,1.12fr)!important}
+.app .panel{padding:7px 9px!important;gap:4px!important;overflow:hidden!important}
+.app .head{gap:6px;flex-wrap:nowrap;min-width:0}
+.app .head h2{flex:none;min-width:0;letter-spacing:1.2px!important}
+.app .head .label{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:8px!important}
+.app .head .switch{margin-left:auto;flex:none}
+.app .sample-name{font-size:clamp(10px,1.45vw,14px)!important;line-height:1.15}
+.app .row{flex-wrap:nowrap!important;gap:4px!important}
+.app .row>.btn{min-width:0!important;padding:5px 6px!important;min-height:31px!important;height:34px!important;font-size:9px!important;overflow:hidden;text-overflow:ellipsis}
+.app .controls,.app .fxcontrols{min-width:0;min-height:0;overflow:hidden;align-content:space-around;column-gap:7px!important;row-gap:3px!important}
+.app .tide-controls{grid-template-columns:repeat(3,minmax(0,1fr));grid-auto-rows:minmax(27px,1fr)}
+.app .control{grid-template-rows:12px minmax(13px,1fr);min-width:0;min-height:0}
+.app .control>label{font-size:8.5px!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.app .control input[type=range]{width:100%;min-width:0}
+.app .padgrid{min-width:0;min-height:0;gap:4px!important}
+.app .pad{padding:3px 5px!important}
+.app .stepgrid{min-height:0!important}
+.app .step{min-height:0!important;padding:1px!important;font-size:11px!important}
+.app .transport{gap:4px!important;min-width:0;flex:none}
+.app .transport>.control{min-width:55px;max-width:120px}
+.app .transport>.btn{flex:none;min-height:32px!important;height:34px!important;padding:5px 7px!important;font-size:9px!important}
+.app .mode{min-height:0;gap:4px!important}
+.app .mode .label{flex:none}
+.app .mode select{min-height:32px!important;height:34px!important;padding:2px 6px!important;font-size:9px!important}
+.app .status,.app .note{line-height:1.15!important;font-size:9px!important}
+@media (orientation:portrait){
+ .app>.content{grid-template-columns:minmax(0,1fr)!important;grid-template-rows:minmax(0,1.18fr) minmax(0,.9fr)!important}
+ .app .left{grid-template-rows:minmax(0,.7fr) minmax(0,1.5fr) minmax(0,.68fr)!important}
+ .app .right{grid-template-rows:minmax(0,.9fr) minmax(0,1.1fr)!important}
+ .app .panel{padding:5px 7px!important}
+ .app .controls,.app .fxcontrols{row-gap:1px!important}
+}
+@media(max-height:680px){
+ .app{grid-template-rows:48px minmax(0,1fr)!important}
+ .app>header{min-height:45px;max-height:48px}
+ .app .panel{padding:4px 6px!important;gap:2px!important}
+ .app .head .label{display:none}
+ .app .sample-name{font-size:10px!important}
+ .app .row>.btn{height:29px!important;min-height:29px!important}
+ .app .transport>.btn{height:29px!important;min-height:29px!important}
+ .app .mode select{height:29px!important;min-height:29px!important}
+ .app .control{grid-template-rows:10px 13px}
+}
+</style><style>
+/* Secondary sample shaping is one tap away; never let it cover the 16 pads. */
+.app .slice-drawer{border:1px solid #547365;border-radius:8px;background:#0c201c;min-height:27px;max-height:100%;overflow:auto;flex:1 1 auto}
+.app .slice-drawer>summary{min-height:29px;display:flex;align-items:center;padding:4px 9px;list-style:none;font-size:9px;font-weight:800;letter-spacing:1px;color:#c6ff91;cursor:pointer}
+.app .slice-drawer>summary::after{content:"+";margin-left:auto;color:#85e4f9;font-size:18px}
+.app .slice-drawer[open]>summary::after{content:"−"}
+.app .slice-drawer>summary::-webkit-details-marker{display:none}
+.app .slice-drawer>.controls{padding:5px 7px 8px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-auto-rows:minmax(27px,1fr);overflow:visible;flex:none}
+.app .slice-drawer:not([open])>.controls{display:none}
+.app .row>.btn{min-height:40px!important;height:40px!important}
+.app .transport>.btn{min-height:40px!important;height:40px!important}
+.app .mode select{min-height:40px!important;height:40px!important}
+@media(orientation:portrait){
+ .app .left{grid-template-rows:minmax(0,.64fr) minmax(0,1.56fr) minmax(0,.76fr)!important}
+ .app .slice-drawer{min-height:24px}
+ .app .left>.panel:first-child{gap:2px!important}
+ .app .left>.panel:first-child .note{display:none}
+ .app .left>.panel:first-child .status{font-size:8px!important}
+ .app .left>.panel:first-child .row>.btn{height:34px!important;min-height:34px!important}
+}
+@media(max-height:680px){
+ .app .row>.btn,.app .transport>.btn,.app .mode select{min-height:29px!important;height:29px!important}
+}
+</style><link rel="stylesheet" href="../parasite-v2.css"><link rel="stylesheet" href="../parasite-v2-layout.css"></head><body class="parasite-v2-module" data-p2-module="slice"><main class="app"><header><div class="brand">slice <span class="eyebrow">/ PARASITE 02 · NOCTURNE</span></div><span class="eyebrow">ONE SAMPLE · 16 PADS · SAVE</span></header><div class="content"><div class="left">
+<section class="panel"><div class="head"><h2>TAPE SOURCE</h2><span class="label">16 CHOPS / SINGLE SOURCE</span></div><div class="sample-name" id="sampleTitle">TAPE FLUTE · FACTORY CHOP SAMPLE</div><div class="row"><button class="btn" id="record">● RECORD 8s</button><button class="btn" id="stopRecord" disabled>STOP</button><label class="btn" for="upload">IMPORT AUDIO</label><input id="upload" type="file" accept="audio/*"></div><div class="status" id="sampleState">One sample · 16 chops ready</div><div id="sourceInfo" class="note">One source sample, 16 independent pads and step triggers.</div>
+<details class="slice-drawer"><summary>SAMPLE SHAPING</summary><div class="controls">
+<div class="control"><label for="sampleLevel">LEVEL</label><input id="sampleLevel" type="range" min="0" max="1" value="0.82" step=".01"><output></output></div><div class="control"><label for="sliceStart">START</label><input id="sliceStart" type="range" min="0" max="0.94" value="0" step=".01"><output></output></div><div class="control"><label for="sliceLength">LENGTH</label><input id="sliceLength" type="range" min="0.05" max="1" value="0.8" step=".01"><output></output></div><div class="control"><label for="flange">FLUTTER</label><input id="flange" type="range" min="0" max="1" value="0.26" step=".01"><output></output></div><div class="control"><label for="warmth">WARMTH</label><input id="warmth" type="range" min="0" max="1" value="0.72" step=".01"><output></output></div><div class="control"><label for="attack">ATTACK</label><input id="attack" type="range" min="0.005" max="0.8" value="0.018" step="0.005"><output></output></div><div class="control"><label for="release">RELEASE</label><input id="release" type="range" min="0.05" max="2.5" value="0.38" step=".01"><output></output></div><div class="control"><label for="tapeWear">TAPE AGE</label><input id="tapeWear" type="range" min="0" max="1" value="0.28" step=".01"><output></output></div><div class="control"><label for="master">MASTER</label><input id="master" type="range" min="0" max="1" value="0.7" step=".01"><output></output></div></div></details></section>
+<section class="panel"><div class="head"><h2>16 PERFORMANCE PADS</h2><span class="label">4 × 4 · CHOPPED FROM ONE SAMPLE</span></div><div class="padgrid" id="pads" role="group" aria-label="16 MPC-style sample trigger pads"></div></section>
+<section class="panel"><div class="head"><h2>16-STEP SEQUENCER</h2><span class="label">16 STEPS · LONG-PRESS STEP TO ASSIGN SELECTED PAD</span></div><div class="stepgrid" id="steps"></div><div class="transport"><div class="control"><label>BPM</label><input id="bpm" type="range" min="50" max="180" value="98" step="1"><output></output></div><button id="playSeq" class="btn hot">▶ PLAY</button><button id="stopSeq" class="btn">■ STOP</button><button id="panic" class="btn">PANIC</button></div></section>
+</div><div class="right">
+<section class="panel"><div class="head"><h2>TIDE</h2><span class="label">STEREO MICROSHIFT / H910 INSPIRED</span><label class="switch"><input type="checkbox" id="hEnable" checked> ON</label></div><div class="controls tide-controls"><div class="control"><label for="hLeft">LEFT SHIFT</label><input id="hLeft" type="range" min="-60" max="60" value="-9" step="1"><output></output></div><div class="control"><label for="hRight">RIGHT SHIFT</label><input id="hRight" type="range" min="-60" max="60" value="12" step="1"><output></output></div><div class="control"><label>MIX</label><input id="hMix" type="range" min="0" max="1" value="0.22" step=".01"><output></output></div><div class="control"><label>DELAY</label><input id="hTime" type="range" min="10" max="112" value="35" step="1"><output></output></div><div class="control"><label>FEEDBACK</label><input id="hFeedback" type="range" min="0" max="0.65" value="0.14" step=".01"><output></output></div></div><div id="state" class="status">Tap a pad or start the sequencer.</div></section>
+<section class="panel"><div class="head"><h2>SPACE</h2><span class="label">MULTI-HEAD TAPE / SPRING</span><label class="switch"><input type="checkbox" id="echoOn" checked> ON</label></div><div class="mode"><span class="label">MODE</span><select id="echoMode"><option value="1" >1 · HEAD 1</option><option value="2" >2 · HEAD 2</option><option value="3" >3 · HEAD 3</option><option value="4" >4 · HEADS 1+2</option><option value="5" >5 · HEAD 2 + SPRING</option><option value="6" >6 · HEAD 3 + SPRING</option><option value="7" >7 · HEAD 1 + SPRING</option><option value="8" selected>8 · HEADS 1+2 + SPRING</option><option value="9" >9 · HEADS 2+3 + SPRING</option><option value="10" >10 · HEADS 1+3 + SPRING</option><option value="11" >11 · ALL HEADS + SPRING</option><option value="12" >12 · SPRING ONLY</option></select></div>
+<div class="fxcontrols"><div class="control"><label>RATE</label><input id="echoRate" type="range" min="0.07" max="0.65" value="0.27" step=".01"><output></output></div><div class="control"><label>INTENSITY</label><input id="echoIntensity" type="range" min="0" max="0.88" value="0.31" step=".01"><output></output></div><div class="control"><label>ECHO</label><input id="echoLevel" type="range" min="0" max="1" value="0.29" step=".01"><output></output></div><div class="control"><label>SPRING</label><input id="reverbLevel" type="range" min="0" max="1" value="0.23" step=".01"><output></output></div><div class="control"><label>BASS</label><input id="bass" type="range" min="0" max="10" value="5" step="0.1"><output></output></div><div class="control"><label>TREBLE</label><input id="treble" type="range" min="0" max="10" value="5" step="0.1"><output></output></div></div></section></div></div></main><script src="../orbit-synth/echo.js"></script><script src="./slice-single.js"></script><script src="../save-control.js"></script></body></html>

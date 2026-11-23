@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#080e0c"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Parasite"><link rel="manifest" href="./manifest.webmanifest"><title>Parasite — iPad V2</title><style>
+:root{color-scheme:dark;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#080e0c;color:#ecf8ee}*{box-sizing:border-box}body{margin:0;overscroll-behavior:none}button,input,select,textarea{font:inherit}button{cursor:pointer}button:disabled{opacity:.45}button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid #a6ff65}#app{min-height:100dvh;max-width:900px;margin:auto;padding:max(20px,env(safe-area-inset-top)) 20px max(110px,env(safe-area-inset-bottom))}header{display:flex;justify-content:space-between;align-items:start;gap:12px}h1{font-size:42px;letter-spacing:-3px;line-height:1;margin:0;color:#aeff70;font-weight:750}h2{font-size:29px;letter-spacing:-1px;margin:0 0 10px}h3{font-size:17px;margin:0 0 6px}.kicker{font-size:10px;letter-spacing:3px;color:#90ac99;text-transform:uppercase}.status{font-size:11px;color:#91aa98}.dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#a6ff65;margin-right:4px}.muted{color:#98aca0}.panel{background:#121e19;border:1px solid #2a3c2f;border-radius:22px;padding:21px;margin-top:18px}.tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:22px}.tile{min-height:170px;text-align:left;background:#15231b;border:1px solid #344b38;border-radius:22px;padding:20px;color:#e3f5e9;display:flex;flex-direction:column;justify-content:space-between}.tile strong{font-size:28px;letter-spacing:-1px}.tile small{color:#a5b8a9}.tile .glyph{font-size:28px;color:#a6ff65}.primary{background:#a6ff65;color:#102012;border:0;border-radius:13px;padding:13px 17px;font-weight:800}.secondary{border:1px solid #3d5742;background:#1b2b21;color:#edfaee;border-radius:13px;padding:11px 15px}.toolbar{display:flex;gap:9px;flex-wrap:wrap}.hidden{display:none!important}nav{position:fixed;bottom:0;left:0;right:0;background:#0c1713ed;border-top:1px solid #334336;display:flex;justify-content:center;gap:2px;padding:12px 12px max(15px,env(safe-area-inset-bottom));backdrop-filter:blur(15px)}nav button{width:30%;max-width:175px;border:0;background:none;color:#8aa394;padding:8px;border-radius:10px;font-size:14px}nav button.active{background:#29412e;color:#b6ff7c}.orbital{height:min(62vw,340px);max-height:340px;position:relative;border:1px solid #25392b;border-radius:50%;margin:28px auto;width:min(62vw,340px);background:radial-gradient(circle,#1b3825,#07100c 66%)}.planet{position:absolute;border-radius:50%;border:1px solid #c5ff9d;background:#95ff5699;box-shadow:0 0 20px #6bff5360;touch-action:none;user-select:none}.planet:active,.planet.on{background:#d0ffb0;box-shadow:0 0 36px #a4ff89}.control{display:flex;align-items:center;gap:14px;margin:13px 0}.control label{width:100px;font-size:13px;color:#adbfaf}input[type=range]{flex:1;accent-color:#a6ff65;min-width:20px}select,input[type=text],textarea{width:100%;background:#0a130f;color:#e6fae7;border:1px solid #4a6450;border-radius:12px;padding:13px}textarea{min-height:120px;resize:vertical}.keys{display:grid;grid-template-columns:repeat(8,1fr);gap:5px;margin-top:30px}.key{height:150px;border-radius:0 0 10px 10px;background:#d3ead3;color:#112212;border:none;touch-action:none;font-size:11px;align-content:end;padding-bottom:12px}.key:active,.key.on{background:#a6ff65}.sample-pads{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:20px}.pad{border:1px solid #56745b;border-radius:18px;background:#1d3525;color:#c9ffbc;min-height:95px}.pad:active{background:#426f49}.notice{font-size:12px;color:#cbdacb;line-height:1.5}.mini{font-size:12px;color:#a4b6a6}.instruments{display:grid;grid-template-columns:1fr 1fr;gap:11px}.ins{border:1px solid #3a503e;border-radius:16px;padding:16px;text-align:left;background:#17261c;color:#ebf3ec}.ins strong{display:block;font-size:21px}.ins small{color:#92a99b}.spacer{height:18px}@media(min-width:700px){.tiles{grid-template-columns:repeat(3,1fr)}.tile{min-height:220px}.keys{gap:10px}.key{height:220px}}
+.orbit-controls{display:flex;flex-wrap:wrap;align-items:center;column-gap:16px}
+#orbit-chug{min-height:44px;min-width:84px}
+#orbit-chug[aria-pressed=true]{background:#a6ff65;color:#102012;border-color:#a6ff65}
+.orbit-glide{flex:1 1 200px;min-height:44px;margin:0}
+.orbit-glide label{width:auto}
+.orbit-glide output{color:#adbfaf;font-size:13px;min-width:53px;text-align:right;font-variant-numeric:tabular-nums}
+nav button{width:24%}input[type=number],input[type=email],input[type=password]{width:100%;background:#0a130f;color:#e6fae7;border:1px solid #4a6450;border-radius:12px;padding:13px}.auth{max-width:490px;margin:9vh auto 0}.auth h2{font-size:36px}.auth.hidden{display:none!important}.busy{opacity:.7;pointer-events:none}.pill{display:inline-block;border:1px solid #455f43;color:#aeff70;border-radius:99px;padding:5px 10px;font-size:11px}#app.gated>section,#app.gated>nav{display:none!important}#app.gated>#auth-panel{display:block!important}#auth-panel{display:none}#app:not(.gated) #auth-panel{display:none!important}</style></head><body><div id="app" class="gated"><header><div><div class="kicker">INSTRUMENT LABORATORY / 002</div><h1>parasite</h1></div><div class="status"><button id="auth-signout" class="secondary" style="font-size:11px;padding:6px;margin-bottom:6px" hidden>SIGN OUT</button><br><span class="dot"></span><span id="net">ready</span><br><span>IPAD V2</span></div></header>
+<section id="auth-panel" class="auth panel"><div class="kicker">PARASITE / ACCESS</div><h2>Make anything sound.</h2><p class="muted">A Parasite subscription is required to use Hub, Invent and the creator marketplace.</p><div class="panel"><div class="kicker">CREATOR MEMBERSHIP</div><h2>£9.99 <span class="muted" style="font-size:15px">/ month</span></h2><p class="mini">Create and keep instrument presets, prepare marketplace listings and access your collection. AI-generated code and paid marketplace checkout are pending integration.</p></div><div class="spacer"></div><label class="mini" for="auth-email">EMAIL</label><input type="email" autocomplete="username" id="auth-email" placeholder="you@example.com"><div class="spacer"></div><label class="mini" for="auth-password">PASSWORD</label><input type="password" autocomplete="current-password" id="auth-password" minlength="8" placeholder="At least 8 characters"><div class="spacer"></div><div class="toolbar"><button class="primary" id="auth-signin">SIGN IN</button><button class="secondary" id="auth-signup">CREATE ACCOUNT</button></div><div class="spacer"></div><button class="secondary" id="auth-refresh">CHECK SUBSCRIPTION</button><p class="notice" id="auth-feedback" role="status">Checking your account…</p><p class="notice"><strong>Billing status:</strong> The secure £9.99 payment service is not yet connected. Creating an account does not start a subscription.</p></section><section id="view-home"><div class="panel"><div class="kicker">PARASITE / V2</div><h2 style="margin-top:12px">Your music laboratory.</h2><p class="muted">Two spaces. One instrument universe. Hub is where you play and collect. Invent is where you build.</p><div class="tiles"><button class="tile" data-nav="hub"><span class="glyph">◎</span><strong>hub</strong><small>Your made and purchased inventions</small></button><button class="tile" data-nav="invent"><span class="glyph">✳</span><strong>invent</strong><small>Design your own instruments</small></button></div></div><div class="panel notice">Subscription £9.99/month required for Hub, Invent and marketplace publishing. This preview has no live checkout yet; accounts cannot be activated until billing is connected.</div></section>
+<section id="view-hub" class="hidden"><div class="kicker">YOUR COLLECTION</div><h2>hub</h2><div id="instrument-grid" class="instruments"></div><p class="mini">Audio works offline after the app and its assets have been successfully cached. Internet is needed for first install and future cloud Invent features.</p></section>
+<section id="view-play" class="hidden"><div class="toolbar"><button class="secondary" data-nav="hub">← HUB</button><button id="panic" class="secondary">STOP AUDIO</button></div><div class="spacer"></div><div class="kicker" id="play-kicker"></div><h2 id="play-title"></h2><div id="play-orbit" class="hidden"><p class="muted">Hold a planet to play. Drag up or down to change its pitch.</p><div class="orbital" id="planets"></div>
+<div class="orbit-controls">
+  <button class="secondary" id="orbit-chug" type="button" aria-pressed="false">Chug</button>
+  <div class="control orbit-glide">
+    <label for="orbit-glide">Glide</label>
+    <input id="orbit-glide" type="range" min="0" max="500" step="5" value="0">
+    <output id="orbit-glide-value" for="orbit-glide">Off</output>
+  </div>
+</div><div class="control"><label>Decay</label><input id="orbit-decay" type="range" min=".1" max="4" step=".1" value="1.4"></div><div class="control"><label>Brightness</label><input id="orbit-tone" type="range" min="250" max="7000" step="50" value="2800"></div></div>
+<div id="play-melt" class="hidden"><p class="muted">Expressive eight-note playable synth. Hold multiple keys together.</p><div class="control"><label>Attack</label><input id="melt-attack" type="range" min=".005" max="2" step=".005" value=".05"></div><div class="control"><label>Release</label><input id="melt-release" type="range" min=".05" max="5" step=".05" value="1.5"></div><div class="control"><label>Waveform</label><select id="melt-wave"><option>sine</option><option selected>triangle</option><option>sawtooth</option><option>square</option></select></div><div class="keys" id="keys"></div></div>
+<div id="play-tape" class="hidden"><p class="muted">Four-tone tape-texture generator with flutter, saturation-like filtering and slow amplitude movement.</p><div class="sample-pads" id="tape-pads"></div><div class="control"><label>Flutter</label><input id="tape-flutter" type="range" min="0" max="15" step=".2" value="3.2"></div><div class="control"><label>Texture</label><input id="tape-texture" type="range" min="200" max="6000" step="50" value="1800"></div></div>
+<div id="play-custom" class="hidden"><p class="muted">Your saved instrument preset.</p><div class="keys" id="custom-keys"></div></div>
+</section>
+<section id="view-market" class="hidden"><div class="kicker">CREATOR MARKETPLACE</div><h2>marketplace</h2><p class="muted">Discover instruments made by other members and prepare your own listing. Sales and payouts will activate after payment integration, seller checks and moderation.</p><div id="market-items" class="instruments"></div><div class="panel"><h3>List your invention</h3><label class="mini" for="sell-instrument">YOUR INSTRUMENT</label><select id="sell-instrument"></select><div class="spacer"></div><label class="mini" for="sell-price">PRICE (£)</label><input id="sell-price" type="number" min="0.99" max="999.99" value="4.99" step="0.01"><div class="spacer"></div><button class="secondary" id="sell-draft">SAVE DRAFT LISTING</button><p class="mini" role="status" id="sell-feedback"></p></div></section>
+<section id="view-invent" class="hidden"><div class="kicker">LOCAL EXPERIMENTAL CREATOR</div><h2>invent</h2><p class="muted">Create and save a playable synth preset. AI-generated instrument code is not yet enabled; the production builder needs a secured generation service and validation process.</p><div class="panel"><label class="mini" for="invent-name">INSTRUMENT NAME</label><input id="invent-name" type="text" maxlength="40" placeholder="e.g. Glass Forest" value="Glass Forest"><div class="spacer"></div><label class="mini" for="invent-description">DESCRIBE YOUR SOUND</label><textarea id="invent-description" placeholder="e.g. soft glassy bells with a long decay">Soft glassy bells floating through a dark forest</textarea><div class="control"><label>Wave</label><select id="invent-wave"><option>sine</option><option selected>triangle</option><option>sawtooth</option><option>square</option></select></div><div class="control"><label>Attack</label><input id="invent-attack" type="range" min=".005" max="2" value=".04" step=".005"></div><div class="control"><label>Release</label><input id="invent-release" type="range" min=".05" max="5" value="2.2" step=".05"></div><button class="primary" id="save-invent">SAVE & PLAY INSTRUMENT</button><p id="invent-feedback" class="mini" role="status"></p></div></section></div>
+<nav><button data-nav="home" class="active">◌<br>PARASITE</button><button data-nav="hub">◎<br>HUB</button><button data-nav="invent">✳<br>INVENT</button><button data-nav="market">◇<br>MARKET</button></nav><script>
+"use strict";
+const $=id=>document.getElementById(id);let ctx,master,active=new Map(),current=null,voices=[],allNotes=[261.63,293.66,329.63,349.23,392,440,493.88,523.25];const STORE="parasite-v2-instruments";
+function audio(){if(!ctx){ctx=new (window.AudioContext||window.webkitAudioContext)();master=ctx.createGain();master.gain.value=.45;master.connect(ctx.destination)}if(ctx.state==="suspended")ctx.resume();return ctx}
+function stopAll(){orbitNotes.clear();lastOrbitPitch=null;for(const v of [...voices]){try{v.osc.stop();v.osc.disconnect();v.gain.disconnect();v.filter?.disconnect();v.lfo?.stop();v.lfo?.disconnect()}catch(e){}}voices=[];active.clear();document.querySelectorAll(".on").forEach(x=>x.classList.remove("on"))}
+function voice(freq,opts={}){const a=audio(),osc=a.createOscillator(),gain=a.createGain(),filter=a.createBiquadFilter();osc.type=opts.wave||"triangle";osc.frequency.value=freq;filter.type="lowpass";filter.frequency.value=opts.tone||3400;const attack=Math.max(.005,Number(opts.attack??.025)),t=a.currentTime;gain.gain.setValueAtTime(.0001,t);gain.gain.exponentialRampToValueAtTime(Math.max(.002,opts.level||.18),t+attack);osc.connect(filter);filter.connect(gain);gain.connect(opts.output||master);osc.start();const v={osc,gain,filter,release:Math.max(.05,Number(opts.release??1.4))};voices.push(v);return v}
+function release(v,holdUntil=0){if(!v)return;const now=audio().currentTime,t=Math.max(now,holdUntil);try{v.gain.gain.cancelScheduledValues(t);v.gain.gain.setTargetAtTime(.0001,t,Math.max(.03,v.release/5));v.osc.stop(t+v.release+0.3);setTimeout(()=>{voices=voices.filter(x=>x!==v);v.osc.disconnect();v.gain.disconnect();v.filter.disconnect()},(t-now+v.release+.5)*1000)}catch(e){}}
+function playOnce(freq,opts){const v=voice(freq,opts);release(v)}
+function nav(page){stopAll();for(let v of ["home","hub","invent","play","market"])$("view-"+v).classList.toggle("hidden",v!==page);document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("active",b.dataset.nav===page));if(page==="hub")renderLibrary();if(page==="market" && window.parasiteRenderMarket)window.parasiteRenderMarket();scrollTo(0,0)}
+function library(){try{const x=JSON.parse(localStorage.getItem(STORE+":"+(window.parasiteUserId||"guest"))||"[]");return Array.isArray(x)?x:[]}catch(e){return []}}
+function renderLibrary(){let items=[["orbit","ORBIT","Planetary oscillator"],["melt","MELT","Touch synthesizer"],["tape","TAPE","Four evolving textures"],...library().map((v,i)=>["custom:"+i,v.name,"Saved custom instrument"])];$("instrument-grid").replaceChildren();for(const [key,name,desc] of items){let b=document.createElement("button");b.className="ins";let s=document.createElement("strong"),d=document.createElement("small");s.textContent=name;d.textContent=desc;b.append(s,d);b.onclick=()=>openInstrument(key);$("instrument-grid").append(b)}}
+function openInstrument(name){current=name;nav("play");$("play-title").textContent=name.startsWith("custom:")?library()[Number(name.split(":")[1])]?.name||"CUSTOM":name.toUpperCase();$("play-kicker").textContent="PLAY / LIVE AUDIO";for(const k of ["orbit","melt","tape","custom"])$("play-"+k).classList.toggle("hidden",!(name===k||(k==="custom"&&name.startsWith("custom:"))));if(name==="orbit")drawOrbit();if(name==="melt")drawKeys("keys",()=>({wave:$("melt-wave").value,attack:$("melt-attack").value,release:$("melt-release").value}));if(name==="custom")drawKeys("custom-keys",()=>library()[Number(name.split(":")[1])]||{});if(name==="tape")drawTape()}
+function drawKeys(id,getOpts){const target=$(id);target.replaceChildren();allNotes.forEach((freq,i)=>{const b=document.createElement("button");b.className="key";b.textContent=["C","D","E","F","G","A","B","C"][i];b.onpointerdown=e=>{e.preventDefault();b.setPointerCapture(e.pointerId);const v=voice(freq,getOpts());active.set(b,v);b.classList.add("on")};function up(){if(active.has(b)){release(active.get(b));active.delete(b)}b.classList.remove("on")}b.onpointerup=up;b.onpointercancel=up;b.onlostpointercapture=up;target.append(b)})}
+const orbitNotes = new Map();
+let lastOrbitPitch = null;
+let chugBuffer;
+const glideInput = $("orbit-glide");
+const chugButton = $("orbit-chug");
+
+function orbitChugEnabled() {
+  return chugButton.getAttribute("aria-pressed") === "true";
+}
+
+glideInput.oninput = () => {
+  $("orbit-glide-value").textContent = Number(glideInput.value) ? glideInput.value + " ms" : "Off";
+};
+chugButton.onclick = () => {
+  const enabled = !orbitChugEnabled();
+  chugButton.setAttribute("aria-pressed", String(enabled));
+  for (const note of orbitNotes.values()) {
+    note.chugDepth.gain.setTargetAtTime(Number(enabled), ctx.currentTime, .008);
+  }
+};
+
+function orbitPulse(a) {
+  if (chugBuffer) return chugBuffer;
+  const period = .18;
+  chugBuffer = a.createBuffer(1, Math.round(a.sampleRate * period), a.sampleRate);
+  const samples = chugBuffer.getChannelData(0);
+  for (let i = 0; i < samples.length; i++) {
+    const t = i / a.sampleRate;
+    const gain = Math.max(0, Math.min(1, t / .007, (.083 - t) / .021));
+    samples[i] = gain - 1;
+  }
+  return chugBuffer;
+}
+
+function tuneOrbit(note, pitch) {
+  const time = ctx.currentTime;
+  const glide = Number(glideInput.value) / 1000;
+  const progress = note.end > time ? (time - note.start) / (note.end - note.start) : 1;
+  const current = note.from * Math.pow(note.to / note.from, progress);
+  const frequency = note.voice.osc.frequency;
+  frequency.cancelScheduledValues(time);
+  frequency.setValueAtTime(glide ? current : pitch, time);
+  if (glide) frequency.exponentialRampToValueAtTime(pitch, time + glide);
+  Object.assign(note, {from: glide ? current : pitch, to: pitch, start: time, end: time + glide});
+  lastOrbitPitch = pitch;
+}
+
+function startOrbit(planet, pitch, index) {
+  const a = audio();
+  const gate = a.createGain();
+  const chugDepth = a.createGain();
+  const pulse = a.createBufferSource();
+  gate.gain.value = 1;
+  gate.connect(master);
+  chugDepth.gain.value = Number(orbitChugEnabled());
+  chugDepth.connect(gate.gain);
+  pulse.buffer = orbitPulse(a);
+  pulse.loop = true;
+  pulse.connect(chugDepth);
+  pulse.start();
+  const initial = Number(glideInput.value) && lastOrbitPitch !== null ? lastOrbitPitch : pitch;
+  const played = voice(initial, {
+    wave: index % 2 ? "sine" : "triangle",
+    tone: Number($("orbit-tone").value),
+    attack: .012,
+    release: Number($("orbit-decay").value),
+    level: .12,
+    output: gate
+  });
+  played.osc.addEventListener("ended", () => {
+    pulse.stop();
+    pulse.disconnect();
+    chugDepth.disconnect();
+    gate.disconnect();
+  }, {once: true});
+  const time = a.currentTime;
+  const note = {voice: played, chugDepth, planet, from: initial, to: initial, start: time, end: time, pressedAt: time};
+  tuneOrbit(note, pitch);
+  planet.classList.add("on");
+  return note;
+}
+
+function endOrbit(id) {
+  const note = orbitNotes.get(id);
+  if (!note) return;
+  orbitNotes.delete(id);
+  if (orbitChugEnabled()) note.voice.release = .07;
+  release(note.voice, note.pressedAt + .018);
+  if (![...orbitNotes.values()].some(other => other.planet === note.planet)) {
+    note.planet.classList.remove("on");
+  }
+}
+
+function drawOrbit() {
+  const target = $("planets");
+  target.replaceChildren();
+  const names = ["C", "D", "E", "F", "G", "A"];
+  for (let i = 0; i < names.length; i++) {
+    const planet = document.createElement("button");
+    const angle = 2 * Math.PI * i / names.length - Math.PI / 2;
+    const size = 40 + (i % 3) * 9;
+    let pitch = allNotes[i];
+    planet.className = "planet";
+    planet.type = "button";
+    planet.setAttribute("aria-label", names[i] + " planet");
+    planet.style.cssText = `width:${size}px;height:${size}px;left:calc(${50+Math.cos(angle)*32}% - ${size/2}px);top:calc(${50+Math.sin(angle)*32}% - ${size/2}px)`;
+    planet.onpointerdown = event => {
+      if (event.button !== 0) return;
+      event.preventDefault();
+      planet.setPointerCapture(event.pointerId);
+      const note = startOrbit(planet, pitch, i);
+      Object.assign(note, {initialY: event.clientY, basePitch: pitch});
+      orbitNotes.set(event.pointerId, note);
+    };
+    planet.onpointermove = event => {
+      const note = orbitNotes.get(event.pointerId);
+      if (!note) return;
+      const steps = Math.round((note.initialY - event.clientY) / 32);
+      pitch = Math.min(1500, Math.max(70, note.basePitch * Math.pow(2, steps / 12)));
+      if (pitch !== note.to) tuneOrbit(note, pitch);
+    };
+    planet.onpointerup = planet.onpointercancel = planet.onlostpointercapture = event => endOrbit(event.pointerId);
+    planet.onclick = event => {
+      if (event.detail !== 0) return;
+      const id = Symbol();
+      orbitNotes.set(id, startOrbit(planet, pitch, i));
+      setTimeout(() => endOrbit(id), orbitChugEnabled() ? 320 : 140);
+    };
+    target.append(planet);
+  }
+}
+function drawTape(){const el=$("tape-pads");el.replaceChildren();[110,164.81,220,329.63].forEach((freq,i)=>{const b=document.createElement("button");b.className="pad";b.textContent="LOOP "+(i+1);b.onclick=()=>{const a=audio(),v=voice(freq,{wave:"sawtooth",tone:Number($("tape-texture").value),release:3.1,attack:.4,level:.08});const lfo=a.createOscillator(),depth=a.createGain();lfo.frequency.value=2+Number($("tape-flutter").value);depth.gain.value=1.5+Number($("tape-flutter").value);lfo.connect(depth);depth.connect(v.osc.detune);lfo.start();v.lfo=lfo;setTimeout(()=>{try{lfo.stop()}catch(e){}},3100);release(v)};el.append(b)})}
+document.querySelectorAll("[data-nav]").forEach(b=>b.onclick=()=>nav(b.dataset.nav));document.querySelectorAll("[data-open]").forEach(b=>b.onclick=()=>openInstrument(b.dataset.open));$("panic").onclick=stopAll;$("save-invent").onclick=()=>{const name=$("invent-name").value.trim(),description=$("invent-description").value.trim();if(!name){$("invent-feedback").textContent="Please enter a name";return}const entries=library();if(entries.length>=30){$("invent-feedback").textContent="Prototype limit: 30 presets";return}entries.push({name:name.slice(0,40),description:description.slice(0,500),wave:$("invent-wave").value,attack:Number($("invent-attack").value),release:Number($("invent-release").value)});try{localStorage.setItem(STORE+":"+(window.parasiteUserId||"guest"),JSON.stringify(entries));openInstrument("custom:"+(entries.length-1))}catch(e){$("invent-feedback").textContent="Device storage unavailable"}};window.addEventListener("pagehide",stopAll);window.addEventListener("offline",()=>{$("net").textContent="offline / local"});window.addEventListener("online",()=>{$("net").textContent="online"});$("net").textContent=navigator.onLine?"online":"offline / local";if("serviceWorker" in navigator)navigator.serviceWorker.register("./sw.js").catch(()=>{});renderLibrary();
+</script><script src="./v2.js" defer></script></body></html>

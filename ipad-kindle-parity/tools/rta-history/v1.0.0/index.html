@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#07120f">
+<title>Parasite / RTA History 1.0</title><style>
+:root{color-scheme:dark;font:13px -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif;background:#07120f;color:#eaf8e8;--g:#c6ff91;--a:#f6d18b;--c:#85e4f9;--v:#c4a8f7}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top right,#18352b,#07120f 55%);min-height:100dvh}main{max-width:1150px;margin:auto;padding:15px clamp(10px,2vw,22px) 35px}
+header{display:flex;align-items:center;justify-content:space-between;gap:10px;border-bottom:1px solid #3d5c51;padding-bottom:12px}header strong{font-size:26px;color:var(--g);letter-spacing:-1px}header span{font-size:11px;color:#a3d9cb;letter-spacing:1px;text-align:right}
+h1{font-size:clamp(25px,4vw,39px);margin:15px 0 6px;letter-spacing:-1.4px}p{line-height:1.5;margin:0 0 12px;color:#afc7be}
+.controls{display:flex;flex-wrap:wrap;align-items:center;gap:9px;margin:12px 0}
+button,select{min-height:44px;border:1px solid #648578;border-radius:8px;padding:9px 13px;background:#1a3429;color:#edffec;font-weight:700;touch-action:manipulation}
+button.primary{background:var(--g);color:#0a2115;border-color:#dafdc8}button:disabled{opacity:.43}button:focus-visible,select:focus-visible{outline:2px solid var(--c);outline-offset:2px}
+.tag{font:700 10px monospace;letter-spacing:1px;color:#aad7c2}.status{padding:10px 12px;border:1px solid #466d56;border-radius:9px;color:var(--g);background:#13251b;margin:10px 0}
+.panel{background:#10211c;border:1px solid #395b4e;border-radius:12px;padding:14px;min-width:0}.plot-grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:12px}
+.panel h2{font-size:11px;text-transform:uppercase;letter-spacing:1.7px;margin:0 0 11px;color:#b9e9d0}
+canvas{display:block;width:100%;border:1px solid #314e40;border-radius:7px;background:#06110d;touch-action:pan-y}
+#spectrum{height:280px}#history{height:280px}
+.legend{display:flex;gap:15px;flex-wrap:wrap;margin:10px 0 3px;font:11px monospace;color:#bdd7c8}.legend i{display:inline-block;width:11px;height:3px;vertical-align:middle;margin-right:6px;background:var(--g)}.legend i.base{background:var(--a)}.legend i.delta{background:var(--c)}
+.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:12px 0}
+.metric{border:1px solid #3b594d;background:#11271e;padding:13px;border-radius:9px;min-width:0}.metric small{display:block;font-size:9px;color:#a0c9b1;letter-spacing:1.1px;min-height:22px}.metric b{font:700 clamp(15px,2.5vw,24px) monospace;color:var(--g);display:block;margin:4px 0}
+.note{margin-top:13px;font-size:11px;color:#98b9aa;line-height:1.5}.history-table{font:11px monospace;display:flex;justify-content:space-between;gap:8px;color:#a7cabb;margin-top:8px}
+#elapsed{color:var(--a)}#event{color:var(--c)}
+@media(max-width:730px){.plot-grid{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}#spectrum,#history{height:220px}}
+</style></head><body><main>
+<header><strong>parasite_</strong><span>TOOL 001 / ANALYSIS / V3</span></header>
+<h1>RTA <span style="color:var(--c)">History.</span></h1>
+<p>Live microphone spectrum analyser · baseline comparison · record frequency response changes over time.</p>
+<div class="controls">
+<button id="start" class="primary">START MICROPHONE</button><button id="stop" disabled>STOP</button>
+<button id="baseline" disabled>CAPTURE BASELINE</button>
+<button id="record" disabled>RECORD HISTORY</button>
+<button id="export" disabled>EXPORT CSV</button>
+<button id="clear">CLEAR HISTORY</button>
+</div>
+<div class="controls">
+<label class="tag" for="interval">LOG EVERY</label>
+<select id="interval"><option value="1">1 SECOND</option><option value="2" selected>2 SECONDS</option><option value="5">5 SECONDS</option><option value="10">10 SECONDS</option></select>
+<label class="tag" for="smooth">SMOOTHING</label>
+<select id="smooth"><option value="0.45">FAST</option><option value="0.75" selected>MEDIUM</option><option value="0.90">SLOW</option></select>
+</div>
+<div class="status" id="status" role="status" aria-live="polite">Ready. Tap START MICROPHONE and allow permission to begin.</div>
+<div class="metrics">
+<div class="metric"><small>LIVE INPUT</small><b id="rms">—</b></div>
+<div class="metric"><small>MOST CHANGED BAND</small><b id="change">—</b></div>
+<div class="metric"><small>CHANGE vs BASELINE</small><b id="delta">—</b></div>
+<div class="metric"><small>LOGGED SNAPSHOTS</small><b id="count">0</b></div>
+</div>
+<div class="plot-grid">
+<section class="panel"><h2>01 / Live Frequency Response</h2><canvas id="spectrum" aria-label="Live frequency spectrum chart"></canvas><div class="legend"><span><i></i>Current</span><span><i class="base"></i>Baseline</span><span><i class="delta"></i>Change</span></div></section>
+<section class="panel"><h2>02 / Frequency History</h2><canvas id="history" aria-label="Frequency response variation over logged history"></canvas>
+<div class="history-table"><span id="elapsed">0:00 elapsed</span><span id="event">WAITING FOR INPUT</span></div></section>
+</div>
+<p class="note"><strong>Measurement note:</strong> The chart shows relative microphone response in dBFS across 30 logarithmically spaced bands from 32 Hz to 16 kHz. It is not a calibrated SPL meter, and room, microphone response, movement and input automatic gain control can affect readings. For meaningful comparisons, keep microphone position and input gain fixed; headphones can reduce feedback. History remains in this session until exported as CSV.</p>
+</main><script>
+'use strict';
+const el=id=>document.getElementById(id);
+const N=30, minF=32, maxF=16000;
+const hz=Array.from({length:N},(_,i)=>minF*Math.pow(maxF/minF,i/(N-1)));
+let ctx=null,analyser=null,stream=null,source=null,data=null,time=null;
+let baseline=null,live=Array(N).fill(-110),history=[],recording=false,started=0,lastLog=0,raf=0;
+const setStatus=v=>el('status').textContent=v;
+const fmtHz=f=>f>=1000?(f/1000).toFixed(f>=10000?0:1)+'k':String(Math.round(f));
+const drawSetup=(canvas)=>{
+ const rect=canvas.getBoundingClientRect(),scale=Math.min(2,devicePixelRatio||1);
+ const width=Math.max(280,Math.round(rect.width*scale)),height=Math.max(150,Math.round(rect.height*scale));
+ if(canvas.width!==width||canvas.height!==height){canvas.width=width;canvas.height=height}
+ return {c:canvas.getContext('2d'),w:width,h:height};
+};
+function plotAxes(c,w,h,ylabels){
+ c.clearRect(0,0,w,h);
+ c.fillStyle='#081810';c.fillRect(0,0,w,h);
+ c.font=Math.max(9,Math.round(w/80))+'px monospace';c.textAlign='left';
+ c.strokeStyle='#335041';c.fillStyle='#8fb8a0';c.lineWidth=1;
+ for(let i=0;i<=4;i++){const y=18+(h-40)*i/4;c.beginPath();c.moveTo(38,y);c.lineTo(w-9,y);c.stroke();c.fillText(ylabels[i],3,y+3)}
+}
+function bandData(){
+ analyser.getFloatFrequencyData(data);
+ const sampleRate=ctx.sampleRate,fft=analyser.fftSize,nyquist=sampleRate/2;
+ return hz.map((f,i)=>{
+  const lo=Math.max(20,f/Math.sqrt(Math.pow(maxF/minF,1/(N-1))));
+  const hi=Math.min(nyquist,f*Math.pow(maxF/minF,1/(2*(N-1))));
+  const first=Math.max(1,Math.floor(lo*fft/sampleRate));
+  const last=Math.min(data.length-1,Math.max(first,Math.ceil(hi*fft/sampleRate)));
+  // Band level is the power-mean of FFT magnitudes, not a sum of bin dB values.
+  let power=0,n=0;
+  for(let k=first;k<=last;k++){const v=data[k];if(Number.isFinite(v)){power+=Math.pow(10,v/10);n++}}
+  return n?Math.max(-110,Math.min(0,10*Math.log10(Math.max(1e-11,power/n)))):-110;
+ });
+}
+function drawSpectrum(){
+ const {c,w,h}=drawSetup(el('spectrum'));plotAxes(c,w,h,['0','−25','−50','−75','−100']);
+ const x=i=>39+i*(w-50)/(N-1),y=db=>18+(Math.max(-100,Math.min(0,db))/-100)*(h-40);
+ c.textAlign='center';c.font=Math.max(9,Math.round(w/82))+'px monospace';c.fillStyle='#94b8a5';
+ [0,6,12,18,24,29].forEach(i=>c.fillText(fmtHz(hz[i]),x(i),h-4));
+ const line=(values,color,width)=>{
+  if(!values)return;c.beginPath();c.lineWidth=width;c.strokeStyle=color;
+  values.forEach((v,i)=>{if(i)c.lineTo(x(i),y(v));else c.moveTo(x(i),y(v))});c.stroke();
+ };
+ line(live,'#c6ff91',Math.max(1.6,w/280));line(baseline,'#f6d18b',Math.max(1.5,w/400));
+}
+function drawHistory(){
+ const {c,w,h}=drawSetup(el('history'));plotAxes(c,w,h,['+20','+10','0','−10','−20']);
+ if(!history.length||!baseline){c.fillStyle='#90bda9';c.textAlign='center';c.fillText('CAPTURE BASELINE · RECORD TO START',w/2,h/2);return}
+ const cell=(w-46)/Math.max(history.length,24),rows=history.length;
+ for(let t=0;t<rows;t++){
+  const values=history[t].values;
+  for(let band=0;band<N;band++){
+   const diff=Math.max(-20,Math.min(20,values[band]-baseline[band]));
+   const strength=Math.min(1,Math.abs(diff)/15);
+   c.fillStyle=diff>=0?'rgba(133,228,249,'+(0.12+0.88*strength)+')':'rgba(246,209,139,'+(0.12+0.88*strength)+')';
+   c.fillRect(39+t*cell,18+(N-1-band)*(h-40)/N,Math.max(1,cell+0.2),(h-40)/N+0.7);
+  }
+ }
+ c.fillStyle='#9fc8ae';c.textAlign='right';c.fillText('LOW',w-8,h-26);c.fillText('HIGH',w-8,28);
+}
+function showMetrics(){
+ el('count').textContent=String(history.length);
+ const elapsed=(Date.now()-started)/1000;
+ if(started)el('elapsed').textContent=Math.floor(elapsed/60)+':'+String(Math.floor(elapsed)%60).padStart(2,'0')+' elapsed';
+ if(!baseline){el('change').textContent='—';el('delta').textContent='—';return}
+ let idx=0,delta=0;for(let i=0;i<N;i++){const d=live[i]-baseline[i];if(Math.abs(d)>Math.abs(delta)){delta=d;idx=i}}
+ el('change').textContent=fmtHz(hz[idx])+'Hz';
+ el('delta').textContent=(delta>=0?'+':'')+delta.toFixed(1)+' dB';
+}
+function tick(now){
+ if(!analyser)return;
+ live=bandData();
+ analyser.getFloatTimeDomainData(time);
+ const rms=Math.sqrt(time.reduce((s,x)=>s+x*x,0)/time.length);
+ el('rms').textContent=(20*Math.log10(Math.max(rms,1e-6))).toFixed(1)+' dBFS';
+ const interval=Number(el('interval').value)*1000;
+ if(recording&&baseline&&now-lastLog>=interval){
+  history.push({time:new Date().toISOString(),seconds:(Date.now()-started)/1000,values:live.slice()});
+  // Keep a bounded memory footprint for mobile browsers.
+  if(history.length>1200){history.shift();el('event').textContent='1200 SAMPLES · OLDEST ROLLED OFF'}
+  else el('event').textContent='RECORDING · '+history.length+' SNAPSHOTS';
+  lastLog=now;
+ }
+ showMetrics();drawSpectrum();drawHistory();
+ raf=requestAnimationFrame(tick);
+}
+async function start(){
+ if(analyser)return;
+ if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){setStatus('This browser does not support microphone capture. Open the tool over HTTPS in Safari or another current browser.');return}
+ el('start').disabled=true;setStatus('Requesting microphone permission…');
+ try{
+  stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false},video:false});
+  ctx=new (window.AudioContext||window.webkitAudioContext)();
+  await ctx.resume();
+  analyser=ctx.createAnalyser();analyser.fftSize=8192;analyser.minDecibels=-110;analyser.maxDecibels=0;analyser.smoothingTimeConstant=Number(el('smooth').value);
+  data=new Float32Array(analyser.frequencyBinCount);time=new Float32Array(analyser.fftSize);
+  source=ctx.createMediaStreamSource(stream);source.connect(analyser); // Never send microphone audio to speakers.
+  started=Date.now();lastLog=0;
+  el('stop').disabled=false;el('baseline').disabled=false;el('record').disabled=false;
+  setStatus('Microphone active · '+ctx.sampleRate+' Hz · raw capture requested. Disable microphone processing at the OS level if needed.');
+  raf=requestAnimationFrame(tick);
+ }catch(e){
+  if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}
+  if(ctx){await ctx.close().catch(()=>{});ctx=null}
+  analyser=null;el('start').disabled=false;setStatus('Microphone could not start: '+(e?.message||'permission denied'));
+ }
+}
+async function stop(){
+ cancelAnimationFrame(raf);recording=false;
+ if(stream)stream.getTracks().forEach(t=>t.stop());
+ if(source)source.disconnect();if(analyser)analyser.disconnect();
+ if(ctx)await ctx.close().catch(()=>{});
+ source=null;stream=null;ctx=null;analyser=null;
+ el('start').disabled=false;el('stop').disabled=true;el('baseline').disabled=true;el('record').disabled=true;el('record').textContent='RECORD HISTORY';
+ setStatus('Stopped. Data remains available for export.');el('event').textContent='STOPPED';
+}
+el('start').addEventListener('click',start);el('stop').addEventListener('click',stop);
+el('baseline').addEventListener('click',()=>{if(!analyser)return;baseline=live.slice();history=[];lastLog=0;el('export').disabled=true;setStatus('Baseline captured · start recording to track frequency-response differences.');el('event').textContent='BASELINE SET';drawHistory()});
+el('record').addEventListener('click',()=>{
+ if(!analyser)return;
+ if(!baseline){setStatus('Capture a baseline before recording changes.');return}
+ recording=!recording;lastLog=0;
+ el('record').textContent=recording?'PAUSE RECORDING':'RECORD HISTORY';
+ el('event').textContent=recording?'RECORDING':'PAUSED';
+ el('export').disabled=history.length===0;
+});
+el('clear').addEventListener('click',()=>{history=[];recording=false;lastLog=0;el('record').textContent='RECORD HISTORY';el('export').disabled=true;el('count').textContent='0';el('event').textContent='HISTORY CLEARED';drawHistory()});
+el('smooth').addEventListener('change',()=>{if(analyser)analyser.smoothingTimeConstant=Number(el('smooth').value)});
+el('export').addEventListener('click',()=>{
+ if(!history.length)return;
+ const header=['timestamp','elapsed_s',...hz.map(f=>'hz_'+Math.round(f))];
+ const rows=history.map(row=>[row.time,row.seconds.toFixed(2),...row.values.map(x=>x.toFixed(2))].join(','));
+ const content='# Parasite V3 RTA History · uncalibrated dBFS, baseline snapshot follows\n# BASELINE,'+baseline.map(x=>x.toFixed(2)).join(',')+'\n'+header.join(',')+'\n'+rows.join('\n')+'\n';
+ const file=new Blob([content],{type:'text/csv;charset=utf-8'});
+ const url=URL.createObjectURL(file),a=document.createElement('a');a.href=url;a.download='parasite-rta-history-'+new Date().toISOString().slice(0,10)+'.csv';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+});
+const exportSwitch=new MutationObserver(()=>{el('export').disabled=!history.length});exportSwitch.observe(el('count'),{childList:true,characterData:true,subtree:true});
+addEventListener('resize',()=>{drawSpectrum();drawHistory()});
+drawSpectrum();drawHistory();
+</script></body></html>
