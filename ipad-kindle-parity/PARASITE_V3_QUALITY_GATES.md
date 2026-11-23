@@ -46,3 +46,10 @@ Do not claim a 9/10 release while these mandatory gates remain unmet.
 - Offline readiness now counts every tool in the cached catalogue, not only the release's fixed precache list. The service worker cache version advances so installed clients update.
 - Reproducible JavaScript mock tests executed via V8 against the actual updated service-worker source: (a) complete catalogue and all tools: `ready=true`, catalogue committed; (b) one missing tool: `ready=false`, catalogue not committed; (c) unsafe external URL: `ready=false`, catalogue not committed. JavaScript syntax check passed. This is a mocked network/cache test, **not** a physical iPad/Kindle offline test.
 - Gate 6 remains **provisional**, not independently passed, until browser service-worker and real-device airplane-mode checks confirm installation, refresh, fallback and offline audio. No score increment awarded.
+
+## Gate 3 clarification composer guard (2026-11-23 16:16 UTC)
+
+- Feature branch `feature/v3-reply-no-duplicate-20261123-1616` created from live production commit `7099b0bcc62c875a29e035dc8f41f788ee144498`.
+- The Hub's existing clarification composer now sends `{action:'reply', id:<original request ID>, answer:<owner answer>}` rather than using the new-request `submit` operation. It refuses to reply when the known request is not `needs_input` and requires a same-ID `queued` server acknowledgment before clearing the draft. New request submissions retain their existing idempotency behavior.
+- Five source-level contract assertions passed during the patch: no follow-up brief duplication, same-ID reply payload, distinct new-submit path, server confirmation check, and reply-mode branch. These are static checks, NOT browser tests or proof the upstream queue API supports `reply`.
+- No production deployment: backend reply contract, authenticated round trip, worker consumption and on-device test remain unverified. Gate 3 remains FAILED/INCOMPLETE. No queue records, customer instruments, secrets or DB claims were modified.
