@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#091610"><title>Chorus 6 — Parasite V3</title>
+<style>
+:root{color-scheme:dark;--g:#c6ff91;--a:#f6d18b;--c:#85e4f9;--v:#c4a8f7;--surface:#132721;--line:#4d7566}*{box-sizing:border-box}
+body{background:radial-gradient(ellipse at 60% -15%,#244537,#091410 65%);color:#e7f4ea;margin:0;font:13px/1.4 system-ui,-apple-system,sans-serif}button,input,select{font:inherit}button{cursor:pointer;touch-action:manipulation}main{max-width:1150px;margin:0 auto;padding:15px 15px max(28px,env(safe-area-inset-bottom))}header{display:flex;justify-content:space-between;align-items:center}.brand{font-size:21px;font-weight:900;color:var(--g)}.eyebrow{font:800 10px monospace;letter-spacing:1.5px;color:#b0cbbb}.line{height:3px;border-radius:5px;margin:12px 0 18px;background:linear-gradient(90deg,var(--g),var(--a),var(--c),var(--v))}
+h1{font-size:clamp(34px,7vw,63px);margin:0;line-height:1.1;letter-spacing:-2.5px}h1 span{color:var(--a)}p{color:#b2cbbc;margin:7px 0 14px}.panel{background:linear-gradient(145deg,#182c24,#10201b);border:1px solid var(--line);padding:13px;border-radius:11px;margin:12px 0}.panel h2{font:800 11px monospace;color:var(--a);letter-spacing:1.3px;margin:0 0 12px}.controls{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}.control{background:#0b1d16;border:1px solid #3f6051;border-radius:8px;padding:9px;min-width:0}.control label{color:#d9e8d8;font:800 10px monospace;letter-spacing:.5px;display:flex;flex-direction:column;gap:3px}.control output{color:var(--c);font:11px monospace}.control input{width:100%;accent-color:var(--g);margin:13px 0 4px}.control select{width:100%;background:#182e25;color:#eaffdf;min-height:34px;border:1px solid #60876d;border-radius:5px;margin:9px 0 0;padding:4px}.toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.toolbar button{background:#223d30;color:#eaffea;border:1px solid #638471;border-radius:7px;min-height:44px;padding:10px 13px;font-weight:750}.toolbar .start{background:var(--g);border-color:var(--g);color:#0d2415}.toolbar button[aria-pressed=true]{background:var(--a);color:#15241b}.status{font-size:11px;color:#a6dfbf;margin-left:auto}.keyboard{height:clamp(190px,29vw,240px);border:1px solid #55775b;border-radius:7px;display:flex;position:relative;touch-action:none;overflow:hidden;background:#06120d;margin:12px 0 0}.white{height:100%;flex:1;min-width:0;display:flex;align-items:end;justify-content:center;padding-bottom:12px;border:1px solid #8b9e83;border-radius:0 0 6px 6px;background:linear-gradient(#f1f6e8,#bdcdb6);color:#24432d;font:10px monospace;user-select:none}.black{z-index:2;position:absolute;height:58%;width:5%;max-width:43px;min-width:12px;transform:translateX(-50%);top:0;border-radius:0 0 5px 5px;border:1px solid #617967;background:linear-gradient(#172a21,#0b1611 70%,#394f3c);box-shadow:0 6px 6px #0b1b1155}.white.active{background:linear-gradient(#d3f4c5,#8cad92)}.black.active{background:linear-gradient(#638c67,#355e3c)}.hint{font-size:11px;color:#aec6b8}.light{width:10px;height:10px;background:#416251;border:1px solid #678571;border-radius:50%;display:inline-block;margin:0 6px}.light.on{background:var(--g);box-shadow:0 0 11px var(--g)}@media(max-width:720px){.controls{grid-template-columns:repeat(3,minmax(0,1fr))}.status{width:100%;margin-left:0}.white{font-size:8px}}@media(max-width:420px){.controls{grid-template-columns:repeat(2,minmax(0,1fr))}main{padding:9px}.panel{padding:10px}}
+</style></head><body><main>
+<header><div class="brand">parasite_</div><div class="eyebrow">ANALOG LAB / V3 · 1.0</div></header><div class="line"></div>
+<h1>Chorus <span>6.</span></h1><p>Original vintage-polysynth instrument inspired by classic 1980s subtractive synthesis. Polyphonic saw/pulse oscillators, a resonant low-pass filter, envelope, LFO modulation, sub oscillator and stereo chorus.</p>
+<section class="panel"><div class="toolbar">
+<button class="start" id="power">START AUDIO</button><button id="hold" aria-pressed="false">HOLD OFF</button>
+<button id="panic">STOP ALL</button>
+<select id="preset" aria-label="Sound preset"><option value="pad">WARM PAD</option><option value="bass">ACID BASS</option><option value="brass">SYNTH BRASS</option><option value="strings">CHORUS STRINGS</option><option value="pluck">PLUCKED KEYS</option></select>
+<span id="status" role="status" class="status"><i class="light" id="light"></i>Tap START AUDIO</span></div></section>
+<section class="panel"><h2>01 / OSCILLATOR & FILTER</h2><div class="controls">
+<div class="control"><label for="wave">WAVEFORM</label><select id="wave"><option value="sawtooth">SAW</option><option value="square">PULSE</option><option value="triangle">TRIANGLE</option></select></div>
+<div class="control"><label for="sub">SUB OSC<output id="subOut"></output></label><input id="sub" type="range" min="0" max="100" value="22"></div>
+<div class="control"><label for="cut">CUTOFF<output id="cutOut"></output></label><input id="cut" type="range" min="80" max="14000" value="3500"></div>
+<div class="control"><label for="res">RESONANCE<output id="resOut"></output></label><input id="res" type="range" min="0" max="95" value="24"></div>
+<div class="control"><label for="env">FILTER ENV<output id="envOut"></output></label><input id="env" type="range" min="0" max="100" value="43"></div>
+<div class="control"><label for="noise">NOISE<output id="noiseOut"></output></label><input id="noise" type="range" min="0" max="100" value="4"></div>
+</div></section>
+<section class="panel"><h2>02 / ENVELOPE & LFO</h2><div class="controls">
+<div class="control"><label for="attack">ATTACK<output id="attackOut"></output></label><input id="attack" type="range" min="5" max="3000" value="240"></div>
+<div class="control"><label for="decay">DECAY<output id="decayOut"></output></label><input id="decay" type="range" min="20" max="3000" value="680"></div>
+<div class="control"><label for="sustain">SUSTAIN<output id="sustainOut"></output></label><input id="sustain" type="range" min="0" max="100" value="72"></div>
+<div class="control"><label for="release">RELEASE<output id="releaseOut"></output></label><input id="release" type="range" min="20" max="5000" value="1100"></div>
+<div class="control"><label for="lfo">LFO RATE<output id="lfoOut"></output></label><input id="lfo" type="range" min="1" max="120" value="36"></div>
+<div class="control"><label for="vibrato">VIBRATO<output id="vibratoOut"></output></label><input id="vibrato" type="range" min="0" max="100" value="9"></div>
+</div></section>
+<section class="panel"><h2>03 / STEREO CHORUS & OUTPUT</h2><div class="controls">
+<div class="control"><label for="chorus">CHORUS MIX<output id="chorusOut"></output></label><input id="chorus" type="range" min="0" max="100" value="60"></div>
+<div class="control"><label for="width">STEREO WIDTH<output id="widthOut"></output></label><input id="width" type="range" min="0" max="100" value="90"></div>
+<div class="control"><label for="gain">OUTPUT<output id="gainOut"></output></label><input id="gain" type="range" min="0" max="100" value="57"></div>
+</div></section>
+<section class="panel"><h2>04 / PERFORMANCE · TWO OCTAVES</h2><div class="keyboard" id="keyboard" aria-label="24-note touch keyboard"></div><p class="hint">Touch notes or use A/W/S/E/D/F/T/G/Y/H/U/J/K on a computer. Start audio with a tap first; use HOLD to sustain a chord. All synthesis runs locally after the page loads. No external audio or samples.</p></section>
+</main><script>
+'use strict';
+const $=id=>document.getElementById(id),pids=['sub','cut','res','env','noise','attack','decay','sustain','release','lfo','vibrato','chorus','width','gain'];
+const value=id=>Number($(id).value),notes=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'],nname=m=>notes[m%12]+(Math.floor(m/12)-1);
+function updateLabels(){for(const id of pids){const out=$(id+'Out');if(out)out.textContent=value(id)+(id==='cut'?' Hz':id==='lfo'?' / 10 Hz':['attack','decay','release'].includes(id)?' ms':'%')}}pids.forEach(id=>$(id).addEventListener('input',()=>{updateLabels();updateEffects();}));updateLabels();
+const presetData={pad:{wave:'sawtooth',sub:22,cut:3500,res:24,env:43,noise:4,attack:240,decay:680,sustain:72,release:1100,lfo:36,vibrato:9,chorus:60,width:90,gain:57},bass:{wave:'square',sub:70,cut:880,res:63,env:77,noise:0,attack:7,decay:280,sustain:38,release:120,lfo:25,vibrato:2,chorus:10,width:20,gain:65},brass:{wave:'sawtooth',sub:25,cut:2400,res:28,env:85,noise:5,attack:45,decay:730,sustain:76,release:220,lfo:27,vibrato:4,chorus:42,width:68,gain:58},strings:{wave:'sawtooth',sub:12,cut:5500,res:10,env:20,noise:9,attack:750,decay:900,sustain:91,release:1750,lfo:40,vibrato:12,chorus:85,width:100,gain:53},pluck:{wave:'triangle',sub:17,cut:7700,res:36,env:83,noise:5,attack:5,decay:350,sustain:5,release:390,lfo:40,vibrato:2,chorus:47,width:70,gain:69}};
+$('preset').addEventListener('change',()=>{const data=presetData[$('preset').value];for(const [id,v] of Object.entries(data))$(id).value=v;updateLabels();updateEffects()});
+let ctx,output,dry,wet,left,right,delayL,delayR,lfoL,lfoR,lfoGainL,lfoGainR,master,active=new Map(),held=false,noiseBuffer;
+function status(s){$('status').textContent=s;$('light').classList.toggle('on',!!ctx&&ctx.state==='running')}
+const midiHz=m=>440*Math.pow(2,(m-69)/12);
+function makeNoise(c){const b=c.createBuffer(1,c.sampleRate,c.sampleRate);const ch=b.getChannelData(0);for(let i=0;i<ch.length;i++)ch[i]=Math.random()*2-1;return b}
+async function ensureAudio(){
+ if(!ctx){
+ const AC=window.AudioContext||window.webkitAudioContext;if(!AC)throw Error('Web Audio not supported');
+ ctx=new AC();noiseBuffer=makeNoise(ctx);output=ctx.createDynamicsCompressor();output.threshold.value=-11;output.ratio.value=5;output.attack.value=.005;output.release.value=.19;output.connect(ctx.destination);
+ master=ctx.createGain();master.connect(output);
+ dry=ctx.createGain();wet=ctx.createGain();dry.connect(master);
+ const splitter=ctx.createChannelMerger(2);splitter.connect(wet);wet.connect(master);
+ delayL=ctx.createDelay(.15);delayR=ctx.createDelay(.15);delayL.delayTime.value=.017;delayR.delayTime.value=.024;
+ const panL=ctx.createGain(),panR=ctx.createGain();panL.gain.value=1;panR.gain.value=1;delayL.connect(panL);delayR.connect(panR);panL.connect(splitter,0,0);panR.connect(splitter,0,1);
+ left=delayL;right=delayR;lfoL=ctx.createOscillator();lfoR=ctx.createOscillator();lfoL.frequency.value=.76;lfoR.frequency.value=.92;
+ lfoGainL=ctx.createGain();lfoGainR=ctx.createGain();lfoL.connect(lfoGainL);lfoR.connect(lfoGainR);lfoGainL.connect(delayL.delayTime);lfoGainR.connect(delayR.delayTime);lfoL.start();lfoR.start();
+ }
+ if(ctx.state!=='running')await ctx.resume();updateEffects();status('AUDIO READY · '+active.size+' notes');return ctx;
+}
+function updateEffects(){if(!ctx)return;const t=ctx.currentTime;master.gain.setTargetAtTime(Math.pow(value('gain')/100,1.4)*.55,t,.03);const chorus=value('chorus')/100;dry.gain.setTargetAtTime(1-chorus*.5,t,.03);wet.gain.setTargetAtTime(chorus*.62,t,.03);const width=value('width')/100;lfoGainL.gain.setTargetAtTime(.0035*width,t,.08);lfoGainR.gain.setTargetAtTime(.0041*width,t,.08);lfoL.frequency.setTargetAtTime(.52+width*.22,t,.08);lfoR.frequency.setTargetAtTime(.64+width*.3,t,.08)}
+const voicesMax=8;let counter=0;
+function releaseVoice(id,immediate=false){const v=active.get(id);if(!v)return;active.delete(id);const t=ctx.currentTime;const rel=immediate?.035:Math.max(.025,value('release')/1000);v.amp.gain.cancelScheduledValues(t);v.amp.gain.setTargetAtTime(0,t,rel/4);v.filter.frequency.cancelScheduledValues(t);try{v.sources.forEach(o=>o.stop(t+rel+.07))}catch{}updateVoiceStatus()}
+function panic(){for(const id of [...active.keys()])releaseVoice(id,true);status('ALL NOTES OFF')}
+function updateVoiceStatus(){if(ctx)status('AUDIO READY · '+active.size+' notes')}
+async function noteOn(m,id){
+ try{const c=await ensureAudio();if(active.size>=voicesMax)releaseVoice(active.keys().next().value,true);releaseVoice(id,true);
+ const t=c.currentTime,frequency=midiHz(m),attack=Math.max(.005,value('attack')/1000),decay=Math.max(.02,value('decay')/1000),sus=value('sustain')/100;
+ const amp=c.createGain();amp.gain.setValueAtTime(0,t);amp.gain.linearRampToValueAtTime(.7,t+attack);amp.gain.linearRampToValueAtTime(.7*sus,t+attack+decay);
+ const filter=c.createBiquadFilter();filter.type='lowpass';filter.Q.value=.7+(value('res')/95)*16;
+ const cut=Math.min(c.sampleRate*.47,value('cut'));filter.frequency.setValueAtTime(Math.max(100,cut*(.2+.3*(1-value('env')/100))),t);
+ filter.frequency.exponentialRampToValueAtTime(Math.min(c.sampleRate*.47,Math.max(110,cut*(1+value('env')/100*2))),t+attack);
+ filter.frequency.exponentialRampToValueAtTime(Math.max(100,cut*.65),t+attack+decay);
+ filter.connect(amp);amp.connect(dry);amp.connect(left);amp.connect(right);
+ const sources=[];
+ const osc=c.createOscillator();osc.type=$('wave').value;osc.frequency.value=frequency;const og=c.createGain();og.gain.value=.62;osc.connect(og);og.connect(filter);osc.start(t);sources.push(osc);
+ if(value('sub')>0){const sub=c.createOscillator();sub.type='square';sub.frequency.value=frequency*.5;const g=c.createGain();g.gain.value=value('sub')/100*.23;sub.connect(g);g.connect(filter);sub.start(t);sources.push(sub)}
+ if(value('noise')>0){const noise=c.createBufferSource();noise.buffer=noiseBuffer;noise.loop=true;const g=c.createGain();g.gain.value=value('noise')/100*.09;noise.connect(g);g.connect(filter);noise.start(t);sources.push(noise)}
+ const lfo=c.createOscillator();lfo.type='sine';lfo.frequency.value=value('lfo')/10;const lg=c.createGain();lg.gain.value=value('vibrato')/100*frequency*.014;lfo.connect(lg);lg.connect(osc.frequency);lfo.start(t);sources.push(lfo);
+ const voice={sources,amp,filter,created:++counter};
+ for(const src of sources)src.onended=()=>{if(active.get(id)===voice&&src===osc){active.delete(id);updateVoiceStatus()}};active.set(id,voice);updateVoiceStatus();
+ }catch(e){status('Audio error: '+e.message)}
+}
+$('power').addEventListener('click',()=>ensureAudio().catch(e=>status(e.message)));
+$('panic').addEventListener('click',panic);
+$('hold').addEventListener('click',()=>{held=!held;$('hold').setAttribute('aria-pressed',String(held));$('hold').textContent=held?'HOLD ON':'HOLD OFF';if(!held)panic()});
+const keys=$('keyboard'),keyMap=new Map(),whites=[0,2,4,5,7,9,11],start=48,nkeys=24;
+const whitePos=m=>{let n=0;for(let i=start;i<m;i++)if(whites.includes(i%12))n++;return n};
+for(let m=start;m<start+nkeys;m++){if(!whites.includes(m%12))continue;const key=document.createElement('button');key.type='button';key.className='white';key.dataset.m=m;key.textContent=m%12===0?nname(m):'';keys.append(key)}
+for(let m=start;m<start+nkeys;m++){if(whites.includes(m%12))continue;const key=document.createElement('button');key.type='button';key.className='black';key.dataset.m=m;key.style.left=(100*whitePos(m)/14)+'%';key.setAttribute('aria-label',nname(m));keys.append(key)}
+keys.addEventListener('pointerdown',e=>{const el=e.target.closest('[data-m]');if(!el)return;e.preventDefault();el.setPointerCapture(e.pointerId);const id='touch-'+e.pointerId;keyMap.set(e.pointerId,{id,el});el.classList.add('active');noteOn(Number(el.dataset.m),id)});
+for(const ev of ['pointerup','pointercancel','lostpointercapture'])keys.addEventListener(ev,e=>{const k=keyMap.get(e.pointerId);if(!k)return;if(!held)releaseVoice(k.id);k.el.classList.remove('active');keyMap.delete(e.pointerId)});
+const chars=['a','w','s','e','d','f','t','g','y','h','u','j','k'],pressed=new Set();
+window.addEventListener('keydown',e=>{if(e.repeat||e.target.matches('input,select,textarea'))return;const i=chars.indexOf(e.key.toLowerCase());if(i<0||pressed.has(e.key))return;pressed.add(e.key);const midi=60+i;keys.querySelector('[data-m="'+midi+'"]')?.classList.add('active');noteOn(midi,'key-'+e.key)});
+window.addEventListener('keyup',e=>{if(!pressed.has(e.key))return;pressed.delete(e.key);const i=chars.indexOf(e.key.toLowerCase());keys.querySelector('[data-m="'+(60+i)+'"]')?.classList.remove('active');if(!held)releaseVoice('key-'+e.key)});
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&ctx)panic()});
+</script></body></html>
