@@ -47,6 +47,15 @@ header{flex:none;display:flex;align-items:center;justify-content:space-between;g
 .queue-item[data-state="deployed"]{border-color:#82c76b}
 .queue-empty{font-size:11px;color:#9eb4a0;padding:8px 16px}
 @media(max-width:600px){.invent{min-height:500px!important}.deploy-surface{min-height:340px}.invent-header h1{font-size:38px!important}.deploy-foot{font-size:9px}}
+
+.queue-item[data-state="needs_input"]{border-color:#f6d18b!important;box-shadow:0 0 0 1px #f6d18b24,inset 0 1px 0 #fff3c31c!important}
+.queue-item[data-state="needs_input"] .jobstatus{background:#594526!important;color:#fff0c1!important}
+.queue-question{display:flex;flex-direction:column;gap:9px;padding:10px;background:linear-gradient(135deg,#30291e,#182723);border:1px solid #f6d18b66;border-radius:9px}
+.queue-question>strong{color:#f6d18b;font-size:9px;letter-spacing:1.3px}
+.queue-question p{margin:0!important;color:#f8f1da!important;font-size:12px!important;line-height:1.5!important;overflow-wrap:anywhere}
+.queue-respond{min-height:44px!important;width:100%;border-radius:8px;border:1px solid #e2f1c4;background:linear-gradient(135deg,#d0f9b1,#a0dcc1);color:#11261e;font-size:10px;font-weight:850;letter-spacing:1px;cursor:pointer}
+.queue-respond:hover{filter:brightness(1.08)}
+.queue-respond:focus-visible{outline:2px solid #85e4f9;outline-offset:2px}
 </style><link rel="stylesheet" href="/parasite-v2.css"><script src="/parasite-v2.js"></script></head>
 <body><main class="app" id="home"><header><div><div class="mini">NOCTURNE INSTRUMENT LABORATORY / V2</div><div class="logo">parasite</div></div><div class="status"><span class="p2-plan" id="p2PlanState" title="Subscriptions are not yet enabled"><span class="light"></span> V2 · EARLY ACCESS</span></div></header>
 <div class="workspace"><aside class="library"><div class="library-header"><div class="label">COLLECTION / 004 MACHINES</div><h1>hub</h1><p class="sub">Your instruments, living in one laboratory. Touch to awaken.</p></div>
@@ -91,8 +100,8 @@ frame.addEventListener('load',()=>{
 });
 const queueCaption=document.getElementById('queueCaption'),queueJobs=document.getElementById('queueJobs'),queueCount=document.getElementById('queueCount');
 let queueSignature='',queueLoading=false;
-const pretty={queued:'Pending',building:'Building',deployed:'Ready',needs_input:'Needs input',blocked:'Needs attention'};
-const eta=state=>state==='queued'?'Estimated queue pickup: about 0–60 minutes. Build finish time is not yet known.':state==='building'?'Build underway · completion estimate unavailable.':state==='deployed'?'Build completed.':state==='needs_input'?'More information is needed in Deploy.':'Check the request details in Deploy.';
+const pretty={queued:'Pending',building:'Building',deployed:'Ready',needs_input:'Needs response',blocked:'Needs attention'};
+const eta=state=>state==='queued'?'Estimated queue pickup: about 0–60 minutes. Build finish time is not yet known.':state==='building'?'Build underway · completion estimate unavailable.':state==='deployed'?'Build completed.':state==='needs_input'?'The builder is waiting for one answer before continuing.':'Check the request details in Deploy.';
 function safeRelease(url){try{const u=new URL(url);return u.protocol==='https:'?u.href:null}catch(e){return null}}
 function extractJobs(value){
  if(Array.isArray(value))return value;
@@ -113,7 +122,16 @@ function paintQueue(jobs){
   head.append(name,status);
   const note=document.createElement('div');note.className='jobeta';note.textContent=eta(state);
   card.append(head,note);
-  if(typeof job.note==='string'&&job.note.trim()){
+  if(state==='needs_input'){
+   const question=document.createElement('div');question.className='queue-question';question.setAttribute('aria-label','Question from the Parasite builder');
+   const eyebrow=document.createElement('strong');eyebrow.textContent='ONE QUESTION FROM PARASITE';
+   const copy=document.createElement('p');copy.textContent=typeof job.note==='string'&&job.note.trim()?job.note.slice(0,900):'The builder needs one detail to continue. Review the request below.';
+   const respond=document.createElement('button');respond.className='queue-respond';respond.type='button';respond.textContent='RESPOND TO BUILDER';
+   respond.setAttribute('aria-label','Answer the builder about '+String(job.brief||'your request').slice(0,65));
+   respond.addEventListener('click',()=>focusDeployReply(job.id));
+   question.append(eyebrow,copy,respond);
+   card.append(question);
+  }else if(typeof job.note==='string'&&job.note.trim()){
    const detail=document.createElement('div');detail.className='jobeta';detail.textContent=job.note.slice(0,220);card.append(detail);
   }
   if(state==='deployed'){
@@ -122,6 +140,25 @@ function paintQueue(jobs){
   }
   queueJobs.append(card);
  }
+}
+function focusDeployReply(requestId){
+ const workspace=document.getElementById('deployWorkspace'),frame=document.getElementById('deployFrame');
+ if(!workspace||!frame)return;
+ workspace.scrollIntoView({behavior:'smooth',block:'nearest'});
+ frame.focus();
+ const help=document.getElementById('deployHelp');
+ if(help)help.textContent='Select this request in the private Deploy conversation and send your answer. Your existing request will continue, without creating another instrument.';
+ try{
+  const doc=frame.contentDocument;
+  if(!doc)return;
+  // Select the exact request only when the Creator UI exposes its ID. Never
+  // guess which chat is selected or send text to another request.
+  const candidates=[...doc.querySelectorAll('[data-request-id],[data-id]')];
+  const item=candidates.find(el=>el.getAttribute('data-request-id')===String(requestId)||el.getAttribute('data-id')===String(requestId));
+  if(item){const target=item.closest('button,[role="button"]')||item;target.click()}
+  const editor=doc.getElementById('brief');
+  if(editor)editor.focus();
+ }catch(e){/* Cross-origin or locked Creator: the user can unlock inside the same Hub. */}
 }
 async function refreshQueue(){
  if(queueLoading||document.hidden)return;queueLoading=true;
