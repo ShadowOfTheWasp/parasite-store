@@ -97,7 +97,10 @@ header{flex:none;display:flex;align-items:center;justify-content:space-between;g
 </style><link rel="stylesheet" href="/parasite-v2.css"><script src="/parasite-v2.js"></script></head>
 <body><main class="app" id="home"><header><div><div class="mini">NOCTURNE TOOL FACTORY / V3</div><div class="logo">parasite</div></div><div class="status"><span class="p2-plan" id="p2PlanState" title="Subscriptions are not yet enabled"><span class="light"></span> V3 · EARLY ACCESS</span></div></header>
 <div class="workspace"><aside class="library"><div class="library-header"><div class="label">PARASITE V3 / YOUR WORKSHOP</div><h1>hub<span class="v3-dot">.</span></h1><p class="sub">Your personal audio tool collection starts here. Invent your first tool in Deploy.</p></div>
-<div class="queue-caption" id="queueCaption" hidden>Build queue <span id="queueCount"></span></div><div class="queue-jobs" id="queueJobs" aria-live="polite" style="padding:0 12px;display:flex;flex-direction:column;gap:8px;max-height:35%;overflow:auto"></div><div class="modules" id="modules"><div class="hub-empty" id="hubEmpty">
+<div class="queue-caption" id="queueCaption" hidden>Build queue <span id="queueCount"></span></div><div class="queue-jobs" id="queueJobs" aria-live="polite" style="padding:0 12px;display:flex;flex-direction:column;gap:8px;max-height:35%;overflow:auto"></div><div class="modules" id="modules">
+<a class="module v3-created" data-pinned-tool="rta-history" href="/tools/rta-history/v1.0.0/index.html" aria-label="Open RTA History spectrum analyser">
+<span class="orb">▥</span><span class="module-info"><h2>RTA History</h2><p>READY · Spectrum history analyser</p></span><span class="arrow">↗</span></a>
+<div class="hub-empty" id="hubEmpty" hidden>
 <div class="hub-empty-art" aria-hidden="true"><span class="hub-empty-center">✦</span><span class="hub-empty-ring r1"></span><span class="hub-empty-ring r2"></span></div>
 <div class="hub-empty-kicker">AN EMPTY WORKSHOP</div>
 <h2>No tools yet.</h2>
@@ -179,8 +182,9 @@ function paintQueue(incoming){
  queueCaption.hidden=pending.length===0;
  queueCount.textContent='('+pending.length+')';
  hubModules.querySelectorAll('[data-created-job]').forEach(node=>node.remove());
- hubEmpty.hidden=ready.length>0;
+ hubEmpty.hidden=ready.length>0||Boolean(hubModules.querySelector('[data-pinned-tool]'));
  for(const job of ready){
+  if(String(job.id)==='762dade4-c8b9-4647-9a8e-4c3e60ad8fad')continue; // RTA is always visible as a pinned V3 tool, even before owner login.
   const href=safeRelease(job.release_url);
   const card=document.createElement('a');card.className='module v3-created';card.href=href;card.target='_blank';card.rel='noopener noreferrer';
   card.dataset.createdJob=String(job.id);
