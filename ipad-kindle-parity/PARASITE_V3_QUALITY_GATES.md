@@ -46,3 +46,10 @@ Do not claim a 9/10 release while these mandatory gates remain unmet.
 - Offline readiness now counts every tool in the cached catalogue, not only the release's fixed precache list. The service worker cache version advances so installed clients update.
 - Reproducible JavaScript mock tests executed via V8 against the actual updated service-worker source: (a) complete catalogue and all tools: `ready=true`, catalogue committed; (b) one missing tool: `ready=false`, catalogue not committed; (c) unsafe external URL: `ready=false`, catalogue not committed. JavaScript syntax check passed. This is a mocked network/cache test, **not** a physical iPad/Kindle offline test.
 - Gate 6 remains **provisional**, not independently passed, until browser service-worker and real-device airplane-mode checks confirm installation, refresh, fallback and offline audio. No score increment awarded.
+
+## Queue gateway regression evidence (2026-11-23, gate 8 — partial)
+
+- Fresh branch `feature/v3-queue-gateway-contract-tests-20261123-1342` starts from the confirmed READY production SHA `7099b0bcc62c875a29e035dc8f41f788ee144498`.
+- Added `tests/queue-gateway.test.mjs` using Node's built-in test runner, mocking the Creator upstream; no live owner requests or credentials are used. Run from `ipad-kindle-parity` with `node --test tests/queue-gateway.test.mjs`.
+- Local Node test execution: **8/8 passed** (unsupported method 405, cross-origin POST 403, malformed JSON 400, oversized request 413, GET cookie forwarding and no-store, POST payload forwarding/upstream 401, upstream network 502, oversized response 502). These tests exercise the existing gateway code, not Creator's actual authenticated reply implementation.
+- No browser CI execution, real authentication, audio, device QA, or deployment-enforcing check verified here. Gate 8 remains **incomplete**; no 9/10 claim. Production unchanged.
