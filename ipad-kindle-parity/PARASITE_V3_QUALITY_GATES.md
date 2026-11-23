@@ -46,3 +46,10 @@ Do not claim a 9/10 release while these mandatory gates remain unmet.
 - Offline readiness now counts every tool in the cached catalogue, not only the release's fixed precache list. The service worker cache version advances so installed clients update.
 - Reproducible JavaScript mock tests executed via V8 against the actual updated service-worker source: (a) complete catalogue and all tools: `ready=true`, catalogue committed; (b) one missing tool: `ready=false`, catalogue not committed; (c) unsafe external URL: `ready=false`, catalogue not committed. JavaScript syntax check passed. This is a mocked network/cache test, **not** a physical iPad/Kindle offline test.
 - Gate 6 remains **provisional**, not independently passed, until browser service-worker and real-device airplane-mode checks confirm installation, refresh, fallback and offline audio. No score increment awarded.
+
+## Gate 8 incremental release-contract tests (2026-11-23 17:21 UTC)
+
+- Production alias inspected and still READY at `7099b0bcc62c875a29e035dc8f41f788ee144498`; this branch was created from that exact commit.
+- Added `tests/v3-release-contract.test.cjs` (Node built-in test runner) to check unique/versioned/local catalogue paths, instrument file existence, offline precache coverage, Hub composer and iframe navigation contracts, and honest quality-gate wording.
+- Reproduction: from `ipad-kindle-parity`, run `node --test tests/v3-release-contract.test.cjs` on Node 22. **Execution unverified**: no local checkout/network access to GitHub raw files in this run; no GitHub CI result confirmed. Do not count these checks as passing or as Gate 8 completion.
+- No production deployment, queue worker, customer requests, DB data, secrets or existing instruments changed. Missing: verified Node/CI run, authenticated API tests, browser/device regression, real audio tests, mandatory release-blocking CI.
