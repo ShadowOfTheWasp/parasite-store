@@ -46,3 +46,11 @@ Do not claim a 9/10 release while these mandatory gates remain unmet.
 - Offline readiness now counts every tool in the cached catalogue, not only the release's fixed precache list. The service worker cache version advances so installed clients update.
 - Reproducible JavaScript mock tests executed via V8 against the actual updated service-worker source: (a) complete catalogue and all tools: `ready=true`, catalogue committed; (b) one missing tool: `ready=false`, catalogue not committed; (c) unsafe external URL: `ready=false`, catalogue not committed. JavaScript syntax check passed. This is a mocked network/cache test, **not** a physical iPad/Kindle offline test.
 - Gate 6 remains **provisional**, not independently passed, until browser service-worker and real-device airplane-mode checks confirm installation, refresh, fallback and offline audio. No score increment awarded.
+
+## Gate 8: executable catalogue contract suite (2026-11-23 18:13 UTC)
+
+- Fresh branch `feature/v3-gate8-executable-catalogue-20261123-1813` from live production commit `7099b0bcc62c875a29e035dc8f41f788ee144498`.
+- Added `tests/catalogue-contract.test.cjs` using Node built-in `node:test`; checks schema, ID/URL uniqueness, version correspondence, same-origin URL patterns, tool file presence, offline service worker paths and malformed-catalogue rejection.
+- Run from `ipad-kindle-parity`: `node --test tests/catalogue-contract.test.cjs`.
+- Local Node syntax check of the authored test file succeeded. The committed test has NOT been executed against a complete checked-out repository or in CI; GitHub source is available through the connector but container network checkout failed (DNS resolution). Do not count test pass or gate completion. No deployment attempted.
+- Follow-up: run test in GitHub Actions against the exact branch, add browser/mobile/audio tests and enforce required checks on production before claiming gate 8.
