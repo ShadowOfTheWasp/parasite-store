@@ -46,3 +46,11 @@ Do not claim a 9/10 release while these mandatory gates remain unmet.
 - Offline readiness now counts every tool in the cached catalogue, not only the release's fixed precache list. The service worker cache version advances so installed clients update.
 - Reproducible JavaScript mock tests executed via V8 against the actual updated service-worker source: (a) complete catalogue and all tools: `ready=true`, catalogue committed; (b) one missing tool: `ready=false`, catalogue not committed; (c) unsafe external URL: `ready=false`, catalogue not committed. JavaScript syntax check passed. This is a mocked network/cache test, **not** a physical iPad/Kindle offline test.
 - Gate 6 remains **provisional**, not independently passed, until browser service-worker and real-device airplane-mode checks confirm installation, refresh, fallback and offline audio. No score increment awarded.
+
+## DISSECT isolated instrument beta (2026-11-23)
+
+- Branch `feature/dissect-v1-synchronised-stem-mixer-20261123` starts from production commit `7099b0bcc62c875a29e035dc8f41f788ee144498`.
+- Added standalone `/tools/dissect/v0.1.0/index.html` with five local stem inputs (drums, bass, guitar, vocals, electronic), shared Web Audio clock, start/stop/seek, gain, pan, mute and master output.
+- **Not a Moises-equivalent separator**: the source-song picker is a reference placeholder only. Users must supply pre-separated, time-aligned stems. Server inference, source rights checks, storage and processing cost safeguards are still required before automatic separation can be offered.
+- No existing instruments, queue claims, database records or secrets changed. Not added to production catalogue, because browser/device/audio QA and deployment have not been completed. No quality gate awarded.
+- Validation still required: load actual five-stem test song in Safari iPad and Kindle WebView, verify sample alignment across pause/seek, ensure large-file memory limits and test interruption handling. Do not promote to production until tested.
