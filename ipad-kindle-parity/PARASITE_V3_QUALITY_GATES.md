@@ -46,3 +46,11 @@ Do not claim a 9/10 release while these mandatory gates remain unmet.
 - Offline readiness now counts every tool in the cached catalogue, not only the release's fixed precache list. The service worker cache version advances so installed clients update.
 - Reproducible JavaScript mock tests executed via V8 against the actual updated service-worker source: (a) complete catalogue and all tools: `ready=true`, catalogue committed; (b) one missing tool: `ready=false`, catalogue not committed; (c) unsafe external URL: `ready=false`, catalogue not committed. JavaScript syntax check passed. This is a mocked network/cache test, **not** a physical iPad/Kindle offline test.
 - Gate 6 remains **provisional**, not independently passed, until browser service-worker and real-device airplane-mode checks confirm installation, refresh, fallback and offline audio. No score increment awarded.
+
+## Offline navigation safety fix (2026-11-23 19:18 UTC)
+
+- Production source verified at `7099b0bcc62c875a29e035dc8f41f788ee144498`; isolated branch `feature/v3-offline-tool-fallback-safety-20261123-1918`.
+- Fixed an actual service-worker offline fetch defect: `catch(e)` shadowed the outer fetch event, causing `e.request.mode` to throw on network failure. Renamed the caught exception to preserve access to the original event.
+- Missing `/tools/...` navigation no longer silently falls back to Hub HTML, which could misrepresent a missing instrument as loaded. Hub navigation retains its offline fallback. Advanced cache namespace version v1 to v2.
+- Executed actual modified service-worker source in a mocked V8 service-worker environment. Four assertions passed: missing cached tool, unknown tool, offline Hub fallback, and tool URL with query string. JavaScript parsed and registered fetch handler.
+- This is a mock, **not** a real browser or iPad/Kindle offline test. No production deployment, instrument, queue or DB change. Gate 6 remains unpassed pending physical-device verification; no 9/10 claim.
