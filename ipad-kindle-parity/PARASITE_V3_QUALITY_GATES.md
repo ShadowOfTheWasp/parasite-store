@@ -46,3 +46,9 @@ Do not claim a 9/10 release while these mandatory gates remain unmet.
 - Offline readiness now counts every tool in the cached catalogue, not only the release's fixed precache list. The service worker cache version advances so installed clients update.
 - Reproducible JavaScript mock tests executed via V8 against the actual updated service-worker source: (a) complete catalogue and all tools: `ready=true`, catalogue committed; (b) one missing tool: `ready=false`, catalogue not committed; (c) unsafe external URL: `ready=false`, catalogue not committed. JavaScript syntax check passed. This is a mocked network/cache test, **not** a physical iPad/Kindle offline test.
 - Gate 6 remains **provisional**, not independently passed, until browser service-worker and real-device airplane-mode checks confirm installation, refresh, fallback and offline audio. No score increment awarded.
+
+## Release smoke CI candidate (2026-11-23, iteration 5)
+
+- Branch `feature/v3-ci-static-smoke-20261123` adds dependency-free `tests/release-smoke.cjs` and `.github/workflows/parasite-v3-release-smoke.yml` (Node 22, Ubuntu 24.04).
+- Checks include inline JavaScript syntax for Hub and published tool pages, service-worker syntax, unique versioned catalogue entries, existence of published tool files, in-app launch integration, offline manifest coverage and simple credential-pattern screening.
+- **Not a gate 8 pass:** GitHub Actions result and real browser/device tests must be observed. Static smoke alone cannot verify Web Audio, user interaction, authenticated API, or production branch protection. No production deploy until CI is green and appropriate browser regression evidence exists.
