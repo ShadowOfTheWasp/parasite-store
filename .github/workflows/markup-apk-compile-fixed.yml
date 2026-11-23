@@ -1,0 +1,29 @@
+name: MARKUP APK compile fixed
+on:
+  push:
+    branches: [markup-fire7-v1]
+    paths: ['markup-fire7/**', '.github/workflows/markup-apk-compile-fixed.yml']
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: 'platform-tools'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.10.2'
+      - run: |
+          sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+          mkdir -p markup-fire7/app/src/main/assets
+          cp markup-fire7/index.html markup-fire7/app/src/main/assets/index.html
+          gradle -p markup-fire7 :app:assembleRelease
+      - uses: actions/upload-artifact@v4
+        with:
+          name: MARKUP-unsigned
+          path: markup-fire7/app/build/outputs/apk/release/app-release-unsigned.apk
