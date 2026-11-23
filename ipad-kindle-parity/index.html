@@ -302,13 +302,14 @@ async function deployApi(body){
  return result;
 }
 function updateDeployDraft(){
- const value=deployEditor.value;
- safeLocalSet(draftKey,value);
- const active=knownQueue.find(x=>x.id===selectedDeployId);
- const composed=active?String(active.brief||'')+'\n\nOwner follow-up for request '+active.id+'\n'+value.trim():value.trim();
- document.getElementById('deployCount').textContent=composed.length.toLocaleString('en-GB')+' / 4,000';
- deploySend.disabled=deployBusy||value.trim().length<10||composed.length>4000;
- return composed;
+ const value=deployEditor.value.trim();
+ const selected=knownQueue.find(x=>String(x.id)===String(selectedDeployId));
+ const isReply=Boolean(selectedDeployId);
+ const validReply=!isReply||(selected&&selected.state==='needs_input');
+ const size=value.length;
+ document.getElementById('deployCount').textContent=size.toLocaleString('en-GB')+' / 4,000'+(isReply?' · REPLY TO EXISTING REQUEST':'');
+ deploySend.disabled=deployBusy||size<10||size>4000||!validReply;
+ return value;
 }
 deployEditor.value=safeLocalGet(draftKey);
 deployEditor.addEventListener('input',updateDeployDraft);
@@ -332,20 +333,35 @@ document.getElementById('deployUnlock').addEventListener('submit',async event=>{
 });
 deploySend.addEventListener('click',async()=>{
  if(deployBusy)return;
- const message=deployEditor.value.trim(),brief=updateDeployDraft();
- if(message.length<10||brief.length>4000){deploymentReply('Enter at least 10 characters (maximum 4,000 including follow-up context).');return}
+ const message=updateDeployDraft(),replyId=selectedDeployId;
+ if(message.length<10||message.length>4000){deploymentReply('Enter 10–4,000 characters.');return}
+ const existing=replyId?knownQueue.find(j=>String(j.id)===String(replyId)):null;
+ if(replyId&&(!existing||existing.state!=='needs_input')){
+  deploymentReply('Cannot reply: this request is no longer awaiting an answer. Refresh the queue and select the request again.');
+  return;
+ }
  deployBusy=true;deploySend.disabled=true;
- deploymentReply('Sending your request…');
+ deploymentReply(replyId?'Sending answer to the existing request…':'Sending your request…');
  try{
-  let pending;try{pending=JSON.parse(safeLocalGet(pendingKey))}catch{}
-  const id=pending?.brief===brief?pending.id:crypto.randomUUID();
-  safeLocalSet(pendingKey,JSON.stringify({id,brief}));
-  const response=await deployApi({action:'submit',id,brief});
-  if(!response?.request?.id)throw Error('Submission was not confirmed. Please try again.');
-  safeLocalSet(pendingKey,null);safeLocalSet(draftKey,null);
+  let response;
+  if(replyId){
+   // The server MUST authenticate and atomically update this exact request.
+   // Never silently fall back to creating a new request on unsupported APIs.
+   response=await deployApi({action:'reply',requestId:String(replyId),reply:message});
+   if(String(response?.request?.id)!==String(replyId)||response.request.state!=='queued')
+    throw Error('The existing request was not confirmed as resumed. Your answer is preserved.');
+  }else{
+   let pending;try{pending=JSON.parse(safeLocalGet(pendingKey))}catch{}
+   const id=pending?.brief===message?pending.id:crypto.randomUUID();
+   safeLocalSet(pendingKey,JSON.stringify({id,brief:message}));
+   response=await deployApi({action:'submit',id,brief:message});
+   if(!response?.request?.id)throw Error('Submission was not confirmed. Please try again.');
+   safeLocalSet(pendingKey,null);
+  }
+  safeLocalSet(draftKey,null);
   deployEditor.value='';selectedDeployId=null;document.getElementById('deploySelection').hidden=true;
-  deploymentReply('CONFIRMED · Your request is Pending in the Hub. The builder will review it.');
-  const queue=knownQueue.filter(j=>j.id!==response.request.id);
+  deploymentReply(replyId?'CONFIRMED · Answer attached to the existing request.':'CONFIRMED · Your request is Pending in the Hub.');
+  const queue=knownQueue.filter(j=>String(j.id)!==String(response.request.id));
   paintQueue([response.request,...queue]);
   await refreshQueue();
  }catch(e){
