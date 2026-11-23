@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "updated_at": "2026-11-23T03:27:00Z",
+  "tools": [
+    {
+      "id": "rta-history",
+      "title": "RTA History",
+      "description": "Spectrum and frequency-response history",
+      "url": "/tools/rta-history/v1.0.0/index.html",
+      "version": "1.0.0",
+      "icon": "▥"
+    },
+    {
+      "id": "tape-keys",
+      "title": "Tape Keys",
+      "description": "Mellotron-inspired sample keyboard",
+      "url": "/tools/tape-keys/v1.0.0/index.html",
+      "version": "1.0.0",
+      "icon": "◉"
+    }
+  ]
+}
