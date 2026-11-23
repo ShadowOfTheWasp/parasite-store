@@ -46,3 +46,11 @@ Do not claim a 9/10 release while these mandatory gates remain unmet.
 - Offline readiness now counts every tool in the cached catalogue, not only the release's fixed precache list. The service worker cache version advances so installed clients update.
 - Reproducible JavaScript mock tests executed via V8 against the actual updated service-worker source: (a) complete catalogue and all tools: `ready=true`, catalogue committed; (b) one missing tool: `ready=false`, catalogue not committed; (c) unsafe external URL: `ready=false`, catalogue not committed. JavaScript syntax check passed. This is a mocked network/cache test, **not** a physical iPad/Kindle offline test.
 - Gate 6 remains **provisional**, not independently passed, until browser service-worker and real-device airplane-mode checks confirm installation, refresh, fallback and offline audio. No score increment awarded.
+
+## Gate 6 offline-navigation safety iteration (2026-11-23 21:47 UTC)
+
+- Confirmed production deployment `dpl_CJLTJWVGznWBGf7Ur9BbgH9FnrnS` READY at `7099b0bcc62c875a29e035dc8f41f788ee144498`; branch `feature/v3-offline-navigation-guard-20261123-2147` created from exactly that commit.
+- Fixed a real catch-block variable-shadowing bug in `sw.js`: `catch(e)` previously hid the fetch event and tried `e.request.mode` on an Error. Changed to `catch(fetchError)` and kept access to the original fetch event.
+- For unavailable `/tools/` URLs, offline failure now returns `Response.error()` rather than silently substituting the Hub HTML. Ordinary non-tool navigations retain the cached Hub fallback. Advanced cache version to `parasite-v3-offline-integrity-20261123-v2`.
+- Added `tests/offline-navigation.test.cjs` with four Node behavioral cases: missing tool, Hub fallback, missing asset and cached tool. Run from the repo using `node --test ipad-kindle-parity/tests/offline-navigation.test.cjs`. Four source contract assertions passed in the connector execution environment; **the Node behavioral suite has not yet been executed in a complete checkout**, so its passing status is unverified.
+- No production deployment or gate pass awarded: browser service-worker installation, real iPad/Kindle offline tests and the Node regression run are still required. Existing catalogue, instruments, DB claims, credentials and tool-creation queue were not changed.
