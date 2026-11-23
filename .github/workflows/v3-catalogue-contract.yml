@@ -1,0 +1,25 @@
+name: V3 catalogue contract
+on:
+  pull_request:
+    paths:
+      - 'ipad-kindle-parity/**'
+      - '.github/workflows/v3-catalogue-contract.yml'
+  push:
+    branches:
+      - 'feature/v3-gate8-ci-catalogue-20261123-2024'
+    paths:
+      - 'ipad-kindle-parity/**'
+      - '.github/workflows/v3-catalogue-contract.yml'
+permissions:
+  contents: read
+jobs:
+  catalogue:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --check ipad-kindle-parity/tests/catalogue-contract.cjs
+      - run: node ipad-kindle-parity/tests/catalogue-contract.cjs ipad-kindle-parity
