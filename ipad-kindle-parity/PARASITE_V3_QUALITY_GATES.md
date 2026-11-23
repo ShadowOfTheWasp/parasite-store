@@ -38,3 +38,11 @@ Status: IN PROGRESS, NOT 9/10. This file is an engineering checklist, not a prom
 5. Capture actual conversion, build cost and retention data before setting paid plan limits.
 
 Do not claim a 9/10 release while these mandatory gates remain unmet.
+
+## Offline catalogue consistency improvement (2026-11-23)
+
+- Feature branch `feature/v3-offline-catalogue-consistency` modifies the service worker to validate all catalogue paths against the versioned same-origin tool path pattern and reject duplicates.
+- New catalogue contents are committed to Cache Storage only after every referenced tool page is cached; if a fetch fails, the previously cached catalogue remains available, avoiding a new offline tool card pointing at missing code.
+- Offline readiness now counts every tool in the cached catalogue, not only the release's fixed precache list. The service worker cache version advances so installed clients update.
+- Reproducible JavaScript mock tests executed via V8 against the actual updated service-worker source: (a) complete catalogue and all tools: `ready=true`, catalogue committed; (b) one missing tool: `ready=false`, catalogue not committed; (c) unsafe external URL: `ready=false`, catalogue not committed. JavaScript syntax check passed. This is a mocked network/cache test, **not** a physical iPad/Kindle offline test.
+- Gate 6 remains **provisional**, not independently passed, until browser service-worker and real-device airplane-mode checks confirm installation, refresh, fallback and offline audio. No score increment awarded.
