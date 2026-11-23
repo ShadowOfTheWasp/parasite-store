@@ -64,6 +64,6 @@ self.addEventListener('fetch',e=>{
   const existing=await cache.match(e.request,{ignoreSearch:false});
   if(existing)return existing;
   try{const response=await fetch(e.request);if(response.ok)cache.put(e.request,response.clone()).catch(()=>{});return response}
-  catch(e){if(e.request.mode==='navigate'&&!u.pathname.startsWith('/tools/'))return (await cache.match(offlineFallback))||Response.error();return Response.error()}
+  catch(fetchError){if(e.request.mode==='navigate'&&!u.pathname.startsWith('/tools/'))return (await cache.match(offlineFallback))||Response.error();return Response.error()}
  })());
 });
