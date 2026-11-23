@@ -46,3 +46,10 @@ Do not claim a 9/10 release while these mandatory gates remain unmet.
 - Offline readiness now counts every tool in the cached catalogue, not only the release's fixed precache list. The service worker cache version advances so installed clients update.
 - Reproducible JavaScript mock tests executed via V8 against the actual updated service-worker source: (a) complete catalogue and all tools: `ready=true`, catalogue committed; (b) one missing tool: `ready=false`, catalogue not committed; (c) unsafe external URL: `ready=false`, catalogue not committed. JavaScript syntax check passed. This is a mocked network/cache test, **not** a physical iPad/Kindle offline test.
 - Gate 6 remains **provisional**, not independently passed, until browser service-worker and real-device airplane-mode checks confirm installation, refresh, fallback and offline audio. No score increment awarded.
+
+## Clarification duplicate-prevention guard (2026-11-23)
+
+- Feature branch `feature/v3-prevent-duplicate-clarification-20261123`, based on production commit `7099b0bcc62c875a29e035dc8f41f788ee144498`, changes the Hub composer so a selected `needs_input` request uses `{action:'reply', id:<existing ID>, reply:<text>}` rather than `action:'submit'` with a fresh UUID and duplicated brief.
+- Response validation requires the exact original request ID. Missing, unsupported, or failing backend replies leave the draft intact and display an error; the frontend does not fall through to creating a new request.
+- JavaScript syntax validation passed against the updated Hub script. Static inspection confirms separate new-request and reply branches.
+- **Not deployed**: the production `/api/queue` handler has not yet been verified to accept `action:'reply'`, and authenticated end-to-end testing has not been performed. The additive database reply function alone is not proof of API support. Before deployment, wire the handler to the transactional same-ID reply RPC, verify authenticated success and rejection cases, and test builder consumption. Gate 3 remains **FAILED/INCOMPLETE**.
