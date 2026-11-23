@@ -46,3 +46,12 @@ Do not claim a 9/10 release while these mandatory gates remain unmet.
 - Offline readiness now counts every tool in the cached catalogue, not only the release's fixed precache list. The service worker cache version advances so installed clients update.
 - Reproducible JavaScript mock tests executed via V8 against the actual updated service-worker source: (a) complete catalogue and all tools: `ready=true`, catalogue committed; (b) one missing tool: `ready=false`, catalogue not committed; (c) unsafe external URL: `ready=false`, catalogue not committed. JavaScript syntax check passed. This is a mocked network/cache test, **not** a physical iPad/Kindle offline test.
 - Gate 6 remains **provisional**, not independently passed, until browser service-worker and real-device airplane-mode checks confirm installation, refresh, fallback and offline audio. No score increment awarded.
+
+## Clarification reply contract guard (2026-11-23, 12:15 UTC)
+
+- Branch `feature/v3-reply-contract-guard-20261123-1215` based on the production-source branch `feature/v3-offline-catalogue-consistency` (live Vercel deployment `dpl_CJLTJWVGznWBGf7Ur9BbgH9FnrnS`, READY, production commit `7099b0bcc62c875a29e035dc8f41f788ee144498`).
+- Updated Hub composer to send `{action:"reply",requestId:<existing UUID>,reply:<answer>}` only for requests in `needs_input`, without embedding the original brief into a newly generated job.
+- A reply succeeds only if the server acknowledges **the same request ID** and returns `state:"queued"`. Errors preserve the typed answer and selection; no fallback to `action:"submit"` is permitted.
+- New requests continue using the existing idempotent `action:"submit"` flow; reply messages use their own 4,000-character limit.
+- Evidence: JavaScript syntax compilation PASS on the full modified Hub script; source inspection confirms separate action paths and same-ID acknowledgment. This is a frontend contract guard, **not** an authenticated end-to-end pass.
+- **Deployment withheld**: the production `/api/queue` implementation is not in the release repository, and no verified response to `action:"reply"` exists. Deploying before backend support would expose a broken button. Gate 3 remains FAIL pending a compatible authenticated API handler, builder consumption of append-only replies, and a verified question/answer/resume/deploy test.
