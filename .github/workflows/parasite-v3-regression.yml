@@ -22,9 +22,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: npm
-          cache-dependency-path: ipad-kindle-parity/package-lock.json
-      - run: npm ci
+      - run: npm install --no-package-lock
       - run: npx playwright install --with-deps chromium
       - run: npm run test:all
       - name: Upload traces on failure
