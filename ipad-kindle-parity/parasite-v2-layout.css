@@ -1,0 +1,76 @@
+/* PARASITE NOCTURNE V2 — unified INDUSTRIAL instrument geometry.
+ * Four accent lights remain common to every module. No per-module "themes".
+ * Use one 46px header row, 44px minimum touch controls and fixed iPad viewport.
+ * Keep instruments' original DSP, event listeners, canvases and routing.
+ */
+:root{
+ --p2-unit:44px;--p2-radius:9px;--p2-gap:8px;
+ --p2-steel:#07110f;--p2-hardware:#11211d;--p2-plate:#1d2b28;
+ --p2-green:#c6ff91;--p2-amber:#f6d18b;--p2-cyan:#85e4f9;--p2-violet:#c4a8f7
+}
+html,body{box-sizing:border-box}
+body.p2-unified{margin:0!important;overflow:hidden!important;min-height:0!important;height:100dvh!important;background:#08100f!important;color:#e9f5eb!important;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important}
+body.p2-unified main{max-width:none!important;min-width:0!important;box-sizing:border-box!important}
+body.p2-unified main:not(.app){height:100dvh!important;min-height:0!important;overflow:hidden!important;margin:0!important;padding:max(4px,env(safe-area-inset-top)) 10px max(8px,env(safe-area-inset-bottom))!important;display:flex!important;flex-direction:column!important;gap:7px!important}
+body.p2-unified .p2-original-header{display:none!important}
+#p2-toolbar{box-sizing:border-box;position:relative;z-index:3;display:flex;flex:none;justify-content:space-between;align-items:center;gap:10px;min-height:50px;max-height:58px;padding:5px 9px;background:linear-gradient(110deg,#182c25,#10221e 68%,#18242b);border:1px solid #537369;border-radius:9px;box-shadow:inset 0 1px #ffffff1b}
+#p2-toolbar::after{content:"";position:absolute;height:2px;bottom:0;left:10px;right:10px;background:linear-gradient(90deg,#c6ff91,#f6d18b,#85e4f9,#c4a8f7);border-radius:2px}
+.p2-toolbar-title{display:flex;flex-direction:column;min-width:0;gap:2px}
+.p2-toolbar-title small{font-size:9px;letter-spacing:1.5px;font-weight:700;color:#95bbad}
+.p2-toolbar-title strong{font-size:18px;letter-spacing:-.6px;color:#f3fff0;font-weight:850;line-height:1}
+.p2-toolbar-actions{display:flex;flex:none;align-items:center;gap:8px;min-width:0}
+#p2-save-state{font-size:9px;letter-spacing:.6px;max-width:170px;text-overflow:ellipsis;white-space:nowrap;overflow:hidden;color:#c7dfbc}
+#p2-save{height:44px!important;min-height:44px!important;min-width:82px!important;box-sizing:border-box!important;padding:8px 15px!important;background:linear-gradient(160deg,#d4ffaf,#9ed893)!important;border:1px solid #d8ffce!important;border-radius:8px!important;color:#102518!important;font-size:11px!important;font-weight:850!important;letter-spacing:1px!important;box-shadow:inset 0 1px #fff9,0 2px 0 #0a2413!important}
+#p2-save:active{transform:translateY(2px)!important;box-shadow:inset 0 1px #fff9!important}
+#p2-save:disabled{opacity:.6}
+/* The original legacy pages can be much taller than an iPad.
+   Keep the canvas/route visual live, and put secondary panels in collapsible
+   sections rather than shrinking all control hitboxes. */
+body.p2-unified main:not(.app) > h1,body.p2-unified main:not(.app) > .hero,
+body.p2-unified main:not(.app) > p:not(.hint){display:none!important}
+body.p2-unified h1{font-size:clamp(24px,3vw,33px)!important;letter-spacing:-1.5px!important;margin:0!important}
+body.p2-unified h2{font-size:clamp(12px,1.4vw,17px)!important;letter-spacing:-.4px!important;margin:0!important}
+body.p2-unified p{font-size:11px!important;line-height:1.35!important}
+body.p2-unified button,body.p2-unified select,body.p2-unified input:not([type=range]):not([type=checkbox]):not([type=radio]):not([type=file]),body.p2-unified textarea{
+ min-height:44px;border-radius:8px;font:700 11px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+ letter-spacing:.25px;touch-action:manipulation
+}
+body.p2-unified button:focus-visible{outline:2px solid #85e4f9!important;outline-offset:2px}
+body.p2-unified button:active{filter:brightness(1.14)}
+body.p2-unified select{background:#18302a!important;color:#f2f8ee!important;border-color:#64877c!important}
+body.p2-unified input[type=range]{accent-color:#85e4f9!important;min-height:24px}
+body.p2-unified .panel,body.p2-unified .surface,body.p2-unified .room,body.p2-unified .p2-advanced{
+ background:linear-gradient(130deg,#1b2e29,#0c1d1a)!important;
+ border:1px solid #536b63!important;
+ box-shadow:inset 0 1px 0 #ffffff15,0 7px 14px #0005!important;
+ border-radius:10px!important;min-width:0;box-sizing:border-box
+}
+body.p2-unified .controls{display:flex;flex-wrap:wrap;gap:6px!important;align-items:center}
+body.p2-unified .controls button,body.p2-unified .controls select{height:44px}
+/* Bounce / physics chamber dominates, instead of a tall headline. */
+body.p2-unified main > .room{flex:1 1 48%!important;min-height:180px!important;max-height:none!important;overflow:hidden!important;position:relative}
+body.p2-unified .room canvas{display:block;width:100%!important;height:100%!important;min-height:0!important;max-height:none!important;touch-action:none}
+body.p2-unified .room .hint{font-size:10px!important;pointer-events:none}
+body.p2-unified main > .p2-advanced{flex:0 1 auto;min-height:0;max-height:34%;overflow:auto;padding:8px 10px!important}
+body.p2-unified .p2-advanced > summary{cursor:pointer;list-style:none;min-height:38px;display:flex;align-items:center;justify-content:space-between;gap:10px;color:#c6ff91;font-size:10px;letter-spacing:1.3px;font-weight:800}
+body.p2-unified .p2-advanced > summary::after{content:"+";font-size:20px;color:#85e4f9}
+body.p2-unified .p2-advanced[open] > summary::after{content:"−"}
+body.p2-unified .p2-advanced > summary::-webkit-details-marker{display:none}
+/* Relay / routing uses the same mechanical dimensions. */
+body.p2-unified main > .surface{padding:10px!important;flex:0 1 auto;min-height:0;overflow:auto!important}
+body.p2-unified .voice{margin:0!important;padding:8px!important}
+body.p2-unified .voice .controls{margin:5px 0!important}
+body.p2-unified .bar{gap:7px;flex-wrap:wrap}
+body.p2-unified .entry-head{font-size:10px!important}
+body.p2-unified .compose{display:flex;gap:7px!important;align-items:center}
+body.p2-unified .compose textarea,body.p2-unified .compose input{flex:1;min-width:0}
+body.p2-unified canvas{touch-action:none}
+body.p2-unified .pad{min-height:0!important}
+body.p2-unified #parasite-clock .step{min-height:0!important}
+@media(min-width:760px) and (orientation:landscape){
+ body.p2-unified main:not(.app){gap:6px!important}
+ body.p2-unified main > .room{min-height:210px!important}
+ body.p2-unified main > .p2-advanced{max-height:36%}
+}
+@media(orientation:portrait){body.p2-unified main>.room{flex-basis:45%}}
+@media(max-height:650px){#p2-toolbar{min-height:46px;max-height:48px}body.p2-unified main>.room{min-height:130px!important}body.p2-unified main>.p2-advanced{max-height:42%}}
