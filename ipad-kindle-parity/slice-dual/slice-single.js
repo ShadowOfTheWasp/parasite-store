@@ -36,14 +36,14 @@ function settings(){
  const o={};for(const key of keys)if($(key))o[key]=Number($(key).value);
  o.hEnable=$('hEnable').checked;o.echoOn=$('echoOn').checked;
  o.wear=Number($('tapeWear').value);o.flutter=Number($('flange').value);o.saturation=.35;
- o.hLeft=-9;o.hRight=12;return o;
+ return o;
 }
 async function startAudio(){
  if(!context){
   const Audio=window.AudioContext||window.webkitAudioContext;if(!Audio)throw Error('Web Audio unavailable');
   context=new Audio({latencyHint:'interactive'});
   // Store a single source buffer; replacing it replaces the whole instrument.
-  if(!sample){sample=createFactorySample(context);$('sampleState').textContent='Preset 1 · Mellotron-style flute loaded (8-second tape)'}
+  if(!sample){sample=createFactorySample(context);$('sampleState').textContent='Mellotron-style flute ready (8-second tape)'}
   const limiter=context.createDynamicsCompressor();limiter.threshold.value=-12;limiter.ratio.value=9;limiter.attack.value=.004;limiter.release.value=.17;limiter.connect(context.destination);
   masterGain=context.createGain();masterGain.gain.value=Number($('master').value);
   fx=new window.OrbitEffects(context,limiter);masterGain.connect(fx.input);fx.setAll(settings());
@@ -173,7 +173,7 @@ window.ParasitePresetBridge={
   try{blob=form._sampleKind==='user'?await loadBlob(window.ParasitePresetBank?.getSelected()||1):null}catch(e){}
   if(blob){await importBlob(blob,form._sourceName||'Saved sample')}
   else if(form._sampleKind==='user')throw Error('Saved audio unavailable on this device');
-  else{await startAudio();setSample(createFactorySample(context),'Mellotron-style tape flute · preset 1',null)}
+  else{await startAudio();setSample(createFactorySample(context),'Mellotron-style tape flute',null)}
   if(Array.isArray(form._sequence))form._sequence.forEach((v,i)=>{enabled[i]=!!v;steps.children[i]?.classList.toggle('on',!!v)});
   if(Array.isArray(form._pattern))form._pattern.forEach((v,i)=>{pattern[i]=clamp(v,0,15);if(steps.children[i]){steps.children[i].textContent=(i+1)+':'+String(pattern[i]+1).padStart(2,'0');steps.children[i].title='PAD '+(pattern[i]+1)}});
  },
@@ -183,7 +183,7 @@ try{
  const Offline=window.OfflineAudioContext||window.webkitOfflineAudioContext;
  if(Offline){const renderContext=new Offline(1,44100,44100);sample=createFactorySample(renderContext);}
 }catch(e){/* fallback: sample is created on first audio unlock */}
-$('sampleState').textContent='PRESET 1 READY · Mellotron-style tape flute · one 8-second sample';
-$('sampleTitle').textContent='MELLOTRON-STYLE TAPE FLUTE · PRESET 1';
+$('sampleState').textContent='READY · Mellotron-style tape flute · one 8-second sample';
+$('sampleTitle').textContent='MELLOTRON-STYLE TAPE FLUTE';
 window.addEventListener('pagehide',()=>{stopSequence();stopAll();stopRecording();micStream?.getTracks().forEach(t=>t.stop())});
 })();
