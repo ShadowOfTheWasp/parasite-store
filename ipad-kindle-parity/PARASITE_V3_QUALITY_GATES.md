@@ -46,3 +46,11 @@ Do not claim a 9/10 release while these mandatory gates remain unmet.
 - Offline readiness now counts every tool in the cached catalogue, not only the release's fixed precache list. The service worker cache version advances so installed clients update.
 - Reproducible JavaScript mock tests executed via V8 against the actual updated service-worker source: (a) complete catalogue and all tools: `ready=true`, catalogue committed; (b) one missing tool: `ready=false`, catalogue not committed; (c) unsafe external URL: `ready=false`, catalogue not committed. JavaScript syntax check passed. This is a mocked network/cache test, **not** a physical iPad/Kindle offline test.
 - Gate 6 remains **provisional**, not independently passed, until browser service-worker and real-device airplane-mode checks confirm installation, refresh, fallback and offline audio. No score increment awarded.
+
+## Gate 8: executable catalogue CI check (2026-11-23 20:24 UTC)
+
+- Feature branch `feature/v3-gate8-ci-catalogue-20261123-2024` based on live production SHA `7099b0bcc62c875a29e035dc8f41f788ee144498`.
+- Added dependency-free `ipad-kindle-parity/tests/catalogue-contract.cjs` to fail on invalid catalogue version, malformed tool IDs/URLs, duplicates, missing versioned instrument pages, missing offline precache references and absent Hub catalogue discovery.
+- Added `.github/workflows/v3-catalogue-contract.yml` to run this check on pull requests touching the app and on pushes to this feature branch.
+- Local Node syntax check passed; six positive/negative fixture assertions passed against the same source before committing. **The complete-repository test and GitHub Actions run have not been confirmed green**; fixture tests are not browser/device/audio tests.
+- No production deployment, catalogue contents, queue claims, DB records, instruments, or secrets changed. Gate 8 remains incomplete until full automated smoke/API/mobile/audio coverage and enforced release blocking are demonstrated.
