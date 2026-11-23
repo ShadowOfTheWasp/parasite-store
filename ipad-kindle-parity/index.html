@@ -48,7 +48,7 @@ header{flex:none;display:flex;align-items:center;justify-content:space-between;g
 .queue-empty{font-size:11px;color:#9eb4a0;padding:8px 16px}
 @media(max-width:600px){.invent{min-height:500px!important}.deploy-surface{min-height:340px}.invent-header h1{font-size:38px!important}.deploy-foot{font-size:9px}}
 </style><link rel="stylesheet" href="/parasite-v2.css"><script src="/parasite-v2.js"></script></head>
-<body><main class="app" id="home"><header><div><div class="mini">NOCTURNE INSTRUMENT LABORATORY / V2</div><div class="logo">parasite</div></div><div class="status"><span class="p2-plan" title="Subscriptions are not yet enabled"><span class="light"></span> V2 · EARLY ACCESS</span></div></header>
+<body><main class="app" id="home"><header><div><div class="mini">NOCTURNE INSTRUMENT LABORATORY / V2</div><div class="logo">parasite</div></div><div class="status"><span class="p2-plan" id="p2PlanState" title="Subscriptions are not yet enabled"><span class="light"></span> V2 · EARLY ACCESS</span></div></header>
 <div class="workspace"><aside class="library"><div class="library-header"><div class="label">COLLECTION / 004 MACHINES</div><h1>hub</h1><p class="sub">Your instruments, living in one laboratory. Touch to awaken.</p></div>
 <div class="queue-caption" id="queueCaption" hidden>Build queue <span id="queueCount"></span></div><div class="queue-jobs" id="queueJobs" aria-live="polite" style="padding:0 12px;display:flex;flex-direction:column;gap:8px;max-height:35%;overflow:auto"></div><div class="modules" id="modules"><button class="module " data-unit="orbit"><span class="orb">◎</span><span class="module-info"><h2>orbit</h2><p>Strings · 6 clocks · Space Echo</p></span><span class="arrow">↗</span></button><button class="module slice" data-unit="slice"><span class="orb">▥</span><span class="module-info"><h2>slice</h2><p>16 MPC pads · one chopped sample</p></span><span class="arrow">↗</span></button><button class="module " data-unit="bounce"><span class="orb">◉</span><span class="module-info"><h2>bounce</h2><p>Kinetic bouncing-ball instrument</p></span><span class="arrow">↗</span></button><button class="module " data-unit="relay"><span class="orb">↔</span><span class="module-info"><h2>relay</h2><p>Audio relay / hardware experiment</p></span><span class="arrow">↗</span></button></div>
 <div class="library-bottom"><small id="cacheState" role="status">Checking offline files…</small><button class="sync" id="offlineSync">SAVE FOR OFFLINE</button></div></aside>
@@ -160,6 +160,13 @@ deployFrame.addEventListener('load',()=>{
 setInterval(refreshQueue,9000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshQueue()});
 refreshQueue();
+// This is a display-only readiness check. Billing entitlements must be validated server-side.
+fetch('/api/subscription-status',{cache:'no-store',credentials:'same-origin'}).then(r=>r.ok?r.json():null).then(config=>{
+ const el=document.getElementById('p2PlanState');if(!el||!config)return;
+ el.title=config.message||'Subscription not configured';
+ // Never infer a paid plan from browser state.
+ if(config.billingEnabled===false)el.lastChild.textContent=' V2 · EARLY ACCESS';
+}).catch(()=>{});
 if('serviceWorker'in navigator){
  const label=document.getElementById('cacheState'),button=document.getElementById('offlineSync');
  function show(d){if(d.ready){label.textContent='Core files cached · test offline';button.textContent='CORE FILES SAVED';button.disabled=true}else{label.textContent=(d.saved||0)+' / '+(d.total||0)+' core files cached';button.textContent='SAVE FOR OFFLINE';button.disabled=false}}
