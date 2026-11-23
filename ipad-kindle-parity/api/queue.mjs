@@ -12,7 +12,7 @@ export default async function handler(req,res){
  // Requests are same-origin only. Browsers send Origin on JSON POST.
  if(req.method==='POST'&&origin!==`https://${host}`){return fail(res,403,'Cross-site request blocked')}
  try{
-  const headers={'Accept':'application/json'};
+  const headers={'Accept':'application/json','Origin':'https://parasite-creator.vercel.app','Referer':'https://parasite-creator.vercel.app/'};
   if(req.headers.cookie)headers.Cookie=String(req.headers.cookie);
   if(req.method==='POST')headers['Content-Type']='application/json';
   let body;
