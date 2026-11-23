@@ -1,0 +1,48 @@
+name: Build MARKUP Fire 7 APK
+on:
+  push:
+    branches: [markup-fire7-v1]
+    paths:
+      - 'markup-fire7/**'
+      - '.github/workflows/markup-fire7.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: markup-fire7-v1
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.10.2'
+      - name: Install Android SDK
+        run: sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+      - name: Assemble signed installable APK
+        run: |
+          mkdir -p markup-fire7/app/src/main/assets
+          cp markup-fire7/index.html markup-fire7/app/src/main/assets/index.html
+          gradle --no-daemon -p markup-fire7 :app:assembleRelease
+          keytool -genkeypair -v -keystore /tmp/markup-v1.jks -storepass 'MarkupFire7V1pass' -keypass 'MarkupFire7V1pass' -alias markup -keyalg RSA -keysize 3072 -validity 3650 -dname 'CN=MARKUP Fire7, O=Independent Software, C=GB'
+          "$ANDROID_HOME/build-tools/35.0.0/zipalign" -f -p 4 markup-fire7/app/build/outputs/apk/release/app-release-unsigned.apk /tmp/markup-aligned.apk
+          "$ANDROID_HOME/build-tools/35.0.0/apksigner" sign --ks /tmp/markup-v1.jks --ks-key-alias markup --ks-pass pass:MarkupFire7V1pass --key-pass pass:MarkupFire7V1pass --out MARKUP_Fire7_v1.apk /tmp/markup-aligned.apk
+          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs MARKUP_Fire7_v1.apk
+          test "$(stat -c %s MARKUP_Fire7_v1.apk)" -gt 10000
+      - uses: actions/upload-artifact@v4
+        with:
+          name: MARKUP-Fire7-v1-APK
+          path: MARKUP_Fire7_v1.apk
+      - name: Publish Kindle download
+        run: |
+          git config user.name 'MARKUP Build Bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add -f MARKUP_Fire7_v1.apk
+          git commit -m 'Publish signed MARKUP Fire7 v1 APK [skip ci]'
+          git push origin HEAD:markup-fire7-v1
