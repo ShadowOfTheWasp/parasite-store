@@ -272,7 +272,7 @@ function focusDeployReply(requestId){
  document.getElementById('deployBrief').value='';
  updateDeployDraft();
  document.getElementById('deployBrief').focus();
- document.getElementById('deployStatus').textContent='Answer the question here. Deploy will send a follow-up with the original request context.';
+ document.getElementById('deployStatus').textContent='Answer the question here. Your answer will be attached to the original request ID.';
 }
 async function refreshQueue(){
  if(queueLoading||document.hidden)return;queueLoading=true;
@@ -305,7 +305,7 @@ function updateDeployDraft(){
  const value=deployEditor.value;
  safeLocalSet(draftKey,value);
  const active=knownQueue.find(x=>x.id===selectedDeployId);
- const composed=active?String(active.brief||'')+'\n\nOwner follow-up for request '+active.id+'\n'+value.trim():value.trim();
+ const composed=active?value.trim():value.trim();
  document.getElementById('deployCount').textContent=composed.length.toLocaleString('en-GB')+' / 4,000';
  deploySend.disabled=deployBusy||value.trim().length<10||composed.length>4000;
  return composed;
@@ -337,14 +337,22 @@ deploySend.addEventListener('click',async()=>{
  deployBusy=true;deploySend.disabled=true;
  deploymentReply('Sending your request…');
  try{
-  let pending;try{pending=JSON.parse(safeLocalGet(pendingKey))}catch{}
-  const id=pending?.brief===brief?pending.id:crypto.randomUUID();
-  safeLocalSet(pendingKey,JSON.stringify({id,brief}));
-  const response=await deployApi({action:'submit',id,brief});
-  if(!response?.request?.id)throw Error('Submission was not confirmed. Please try again.');
+  let response;
+  if(selectedDeployId!==null){
+   const original=knownQueue.find(j=>String(j.id)===String(selectedDeployId));
+   if(!original||String(original.status||original.state||'').toLowerCase()!=='needs_input')throw Error('Original request is no longer awaiting a reply. Refresh the queue.');
+   response=await deployApi({action:'reply',id:original.id,answer:message});
+   if(String(response?.request?.id)!==String(original.id)||String(response?.request?.status||response?.request?.state||'').toLowerCase()!=='queued')throw Error('The server did not confirm resuming the original request.');
+  }else{
+   let pending;try{pending=JSON.parse(safeLocalGet(pendingKey))}catch{}
+   const id=pending?.brief===brief?pending.id:crypto.randomUUID();
+   safeLocalSet(pendingKey,JSON.stringify({id,brief}));
+   response=await deployApi({action:'submit',id,brief});
+   if(!response?.request?.id)throw Error('Submission was not confirmed. Please try again.');
+  }
   safeLocalSet(pendingKey,null);safeLocalSet(draftKey,null);
   deployEditor.value='';selectedDeployId=null;document.getElementById('deploySelection').hidden=true;
-  deploymentReply('CONFIRMED · Your request is Pending in the Hub. The builder will review it.');
+  deploymentReply('CONFIRMED · Original request updated or new request queued.');
   const queue=knownQueue.filter(j=>j.id!==response.request.id);
   paintQueue([response.request,...queue]);
   await refreshQueue();
