@@ -67,39 +67,27 @@ document.getElementById('back').addEventListener('click',closeUnit);
 window.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.body.classList.contains('playing'))closeUnit()});
 frame.addEventListener('load',()=>{
  try{
- const doc=frame.contentDocument;if(!doc?.head||!doc.body)return;
- let vp=doc.querySelector('meta[name="viewport"]');if(!vp){vp=doc.createElement('meta');vp.name='viewport';doc.head.append(vp)}
- vp.content='width=device-width,initial-scale=1,viewport-fit=cover';
- const style=doc.createElement('style');
- style.textContent='html,body{width:100%!important;margin:0!important;overflow:hidden!important;overscroll-behavior:none!important}body{max-width:none!important;background:#09140c!important}';
- doc.head.append(style);
- const src=frame.getAttribute('src')||'';
- window.ParasiteV2?.injectFrame(frame,window.ParasiteV2.detect(src));
- if(src.includes('/orbit/v4.1.0/')){
-   const inject=doc.createElement('script');inject.src='/orbit-clock/orbit-clock.js';doc.body.append(inject)
- }
- // Standard Parasite numbered preset strip for each supported instrument.
- if(!src.includes('/slice-dual/')){
-   const preset=doc.createElement('script');preset.src='/preset-bank.js';doc.body.append(preset)
- }
- if(src.includes('/tron/v4.0.0/')){const tron=doc.createElement('script');tron.src='/tron-touch/tron-keys.js';doc.body.append(tron)}
- // Legacy Kindle modules can be taller than an iPad. Scale the original panel
- // to the available viewport as a stop-gap; purpose-built layouts are preferred.
- if(!src.includes('/slice-dual/')&&!src.includes('/tron/v4.0.0/')){
-  const fit=()=>{
-   const el=doc.querySelector('main')||doc.body.firstElementChild;
-   if(!el||el.id==='parasite-preset-bank')return;
-   el.style.transform='none';el.style.width='';el.style.height='';
-   const vw=frame.clientWidth,vh=frame.clientHeight,iw=Math.max(el.scrollWidth,el.getBoundingClientRect().width),ih=Math.max(el.scrollHeight,el.getBoundingClientRect().height);
-   if(vw<1||vh<1||iw<1||ih<1)return;
-   const scale=Math.min(1,vw/iw,vh/ih);
-   if(scale<.985){el.style.transformOrigin='top left';el.style.transform='scale('+scale.toFixed(3)+')';el.style.width=iw+'px';}
-  };
-  setTimeout(fit,280);setTimeout(fit,1100);
- }
- }catch(e){console.warn('Parasite viewport adaptation:',e)}
+  const doc=frame.contentDocument;if(!doc?.head||!doc.body)return;
+  let vp=doc.querySelector('meta[name="viewport"]');
+  if(!vp){vp=doc.createElement('meta');vp.name='viewport';doc.head.append(vp)}
+  vp.content='width=device-width,initial-scale=1,viewport-fit=cover';
+  const src=frame.getAttribute('src')||'';
+  const unit=window.ParasiteV2?.detect(src)||'custom';
+  window.ParasiteV2?.injectFrame(frame,unit);
+  if(!doc.querySelector('link[data-p2-layout]')){
+   const style=doc.createElement('link');style.rel='stylesheet';style.href='/parasite-v2-layout.css';style.dataset.p2Layout='1';doc.head.append(style);
+  }
+  function inject(file,mark){
+   if(doc.querySelector('script[data-p2-script="'+mark+'"]'))return;
+   const script=doc.createElement('script');script.src=file;script.dataset.p2Script=mark;doc.body.append(script);
+  }
+  if(unit==='orbit')inject('/orbit-clock/orbit-clock.js','orbit-clock');
+  // One SAVE action — no 8-slot preset panel. Slice loads its Save control
+  // natively after its audio engine; other modules receive the same control here.
+  if(unit!=='slice')inject('/save-control.js','save');
+  if(unit==='bounce'||unit==='relay')inject('/parasite-v2-module-layout.js','layout');
+ }catch(e){console.warn('Parasite V2 interface:',e)}
 });
-
 const queueCaption=document.getElementById('queueCaption'),queueJobs=document.getElementById('queueJobs'),queueCount=document.getElementById('queueCount');
 let queueSignature='',queueLoading=false;
 const pretty={queued:'Pending',building:'Building',deployed:'Ready',needs_input:'Needs input',blocked:'Needs attention'};
