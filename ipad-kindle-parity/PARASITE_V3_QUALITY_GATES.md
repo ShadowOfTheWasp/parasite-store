@@ -46,3 +46,10 @@ Do not claim a 9/10 release while these mandatory gates remain unmet.
 - Offline readiness now counts every tool in the cached catalogue, not only the release's fixed precache list. The service worker cache version advances so installed clients update.
 - Reproducible JavaScript mock tests executed via V8 against the actual updated service-worker source: (a) complete catalogue and all tools: `ready=true`, catalogue committed; (b) one missing tool: `ready=false`, catalogue not committed; (c) unsafe external URL: `ready=false`, catalogue not committed. JavaScript syntax check passed. This is a mocked network/cache test, **not** a physical iPad/Kindle offline test.
 - Gate 6 remains **provisional**, not independently passed, until browser service-worker and real-device airplane-mode checks confirm installation, refresh, fallback and offline audio. No score increment awarded.
+
+## Gate 3 clarification contract guard (2026-11-23 14:35 UTC)
+
+- Feature branch `feature/v3-clarification-same-id-contract-20261123-1435` was created from live production SHA `7099b0bcc62c875a29e035dc8f41f788ee144498` (Vercel deployment `dpl_CJLTJWVGznWBGf7Ur9BbgH9FnrnS`, READY).
+- Hub reply path now submits `{action:'reply',id:<existing request ID>,answer:<text>}` rather than `{action:'submit',id:<new UUID>,brief:<duplicated context>}`. It checks that the selected request remains `needs_input` and that the response confirms the same ID and `queued` state. A rejected reply leaves the draft intact and does not silently create a new job.
+- Source transformation contract checks passed: reply action present, queued acknowledgement required, duplicate-context submission absent, new-request pending idempotency still retained. These are **source-level checks**, not authenticated API, browser, or device tests.
+- The actual production queue API's `reply` action, ownership enforcement, audit trail, and builder consumption remain unverified. **Gate 3 FAILS** until a real authenticated question-answer-resume-deploy run passes. No deployment was attempted, no queue records touched, and no gate score awarded.
