@@ -12,7 +12,8 @@ function adapt(){
  const children=[...main.children].filter(n=>n.tagName!=='SCRIPT'&&n.id!=='p2-toolbar');
  const lead=mode==='bounce'?(main.querySelector(':scope > .room')||main.querySelector('.room')||main.querySelector('canvas')?.parentElement):(main.querySelector(':scope > .surface')||main.querySelector('.surface')||main.querySelector('.voice')||main.querySelector('.compose'))
  if(!lead)return;
- const surface=lead.closest('.room,.surface')||lead;
+ let surface=lead.closest('.room,.surface')||lead;
+ while(surface.parentElement&&surface.parentElement!==main&&surface.parentElement!==d.body)surface=surface.parentElement;
  if(surface.parentElement!==main)return;
  main.dataset.p2Adapted='true';
  const intro=surface.previousElementSibling;
