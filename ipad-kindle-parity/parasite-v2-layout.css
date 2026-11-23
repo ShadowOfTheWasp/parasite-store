@@ -74,3 +74,11 @@ body.p2-unified #parasite-clock .step{min-height:0!important}
 }
 @media(orientation:portrait){body.p2-unified main>.room{flex-basis:45%}}
 @media(max-height:650px){#p2-toolbar{min-height:46px;max-height:48px}body.p2-unified main>.room{min-height:130px!important}body.p2-unified main>.p2-advanced{max-height:42%}}
+
+/* One actual SAVE per module. Orbit clock values still persist through the shared button. */
+body.p2-unified #clockSave{display:none!important}
+/* Legacy iPad panel animations and generic browser page scroll must never shrink controls. */
+body.p2-unified .p2-advanced :where(button,select,input:not([type=range]):not([type=checkbox])){min-height:44px!important}
+body.p2-unified .p2-advanced :where(button,select){padding:8px 11px!important}
+body.p2-unified .p2-advanced > :not(summary){margin-top:6px}
+body.p2-unified .p2-advanced:not([open]) > :not(summary){display:none}
