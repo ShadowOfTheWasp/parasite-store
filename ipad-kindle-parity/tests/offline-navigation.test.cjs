@@ -14,7 +14,7 @@ async function request(path,{cachedHub=false,cachedTool=false}={}){
  },put:async()=>{}};
  const sandbox={self:{location:{origin:'https://example.test'},addEventListener:(n,fn)=>listeners[n]=fn},caches:{open:async()=>cache},fetch:async()=>{throw Error('offline')},Request,Response,URL,console};
  vm.runInNewContext(source,sandbox,{filename:'sw.js'});
- const event={request:new Request('https://example.test'+path),respondWith:p=>{response=p}};
+ const event={request:{url:'https://example.test'+path,method:'GET',mode:path.endsWith('.js')?'cors':'navigate'},respondWith:p=>{response=p}};
  listeners.fetch(event);assert.ok(response,'fetch must be intercepted');
  return await response;
 }
