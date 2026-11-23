@@ -61,10 +61,29 @@
  .app .mode select{height:29px!important;min-height:29px!important}
  .app .control{grid-template-rows:10px 13px}
 }
+</style><style>
+/* Secondary sample shaping is one tap away; never let it cover the 16 pads. */
+.app .slice-drawer{border:1px solid #547365;border-radius:8px;background:#0c201c;min-height:27px;max-height:100%;overflow:auto;flex:1 1 auto}
+.app .slice-drawer>summary{min-height:29px;display:flex;align-items:center;padding:4px 9px;list-style:none;font-size:9px;font-weight:800;letter-spacing:1px;color:#c6ff91;cursor:pointer}
+.app .slice-drawer>summary::after{content:"+";margin-left:auto;color:#85e4f9;font-size:18px}
+.app .slice-drawer[open]>summary::after{content:"−"}
+.app .slice-drawer>summary::-webkit-details-marker{display:none}
+.app .slice-drawer>.controls{padding:5px 7px 8px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-auto-rows:minmax(27px,1fr);overflow:visible;flex:none}
+.app .slice-drawer:not([open])>.controls{display:none}
+.app .row>.btn{min-height:40px!important;height:40px!important}
+.app .transport>.btn{min-height:40px!important;height:40px!important}
+.app .mode select{min-height:40px!important;height:40px!important}
+@media(orientation:portrait){
+ .app .left{grid-template-rows:minmax(0,.64fr) minmax(0,1.56fr) minmax(0,.76fr)!important}
+ .app .slice-drawer{min-height:24px}
+}
+@media(max-height:680px){
+ .app .row>.btn,.app .transport>.btn,.app .mode select{min-height:29px!important;height:29px!important}
+}
 </style><link rel="stylesheet" href="../parasite-v2.css"><link rel="stylesheet" href="../parasite-v2-layout.css"></head><body class="parasite-v2-module" data-p2-module="slice"><main class="app"><header><div class="brand">slice <span class="eyebrow">/ PARASITE 02 · NOCTURNE</span></div><span class="eyebrow">ONE SAMPLE · 16 PADS · SAVE</span></header><div class="content"><div class="left">
 <section class="panel"><div class="head"><h2>TAPE SOURCE</h2><span class="label">16 CHOPS / SINGLE SOURCE</span></div><div class="sample-name" id="sampleTitle">TAPE FLUTE · FACTORY CHOP SAMPLE</div><div class="row"><button class="btn" id="record">● RECORD 8s</button><button class="btn" id="stopRecord" disabled>STOP</button><label class="btn" for="upload">IMPORT AUDIO</label><input id="upload" type="file" accept="audio/*"></div><div class="status" id="sampleState">One sample · 16 chops ready</div><div id="sourceInfo" class="note">One source sample, 16 independent pads and step triggers.</div>
-<div class="controls">
-<div class="control"><label for="sampleLevel">LEVEL</label><input id="sampleLevel" type="range" min="0" max="1" value="0.82" step=".01"><output></output></div><div class="control"><label for="sliceStart">START</label><input id="sliceStart" type="range" min="0" max="0.94" value="0" step=".01"><output></output></div><div class="control"><label for="sliceLength">LENGTH</label><input id="sliceLength" type="range" min="0.05" max="1" value="0.8" step=".01"><output></output></div><div class="control"><label for="flange">FLUTTER</label><input id="flange" type="range" min="0" max="1" value="0.26" step=".01"><output></output></div><div class="control"><label for="warmth">WARMTH</label><input id="warmth" type="range" min="0" max="1" value="0.72" step=".01"><output></output></div><div class="control"><label for="attack">ATTACK</label><input id="attack" type="range" min="0.005" max="0.8" value="0.018" step="0.005"><output></output></div><div class="control"><label for="release">RELEASE</label><input id="release" type="range" min="0.05" max="2.5" value="0.38" step=".01"><output></output></div><div class="control"><label for="tapeWear">TAPE AGE</label><input id="tapeWear" type="range" min="0" max="1" value="0.28" step=".01"><output></output></div><div class="control"><label for="master">MASTER</label><input id="master" type="range" min="0" max="1" value="0.7" step=".01"><output></output></div></div></section>
+<details class="slice-drawer"><summary>SAMPLE SHAPING</summary><div class="controls">
+<div class="control"><label for="sampleLevel">LEVEL</label><input id="sampleLevel" type="range" min="0" max="1" value="0.82" step=".01"><output></output></div><div class="control"><label for="sliceStart">START</label><input id="sliceStart" type="range" min="0" max="0.94" value="0" step=".01"><output></output></div><div class="control"><label for="sliceLength">LENGTH</label><input id="sliceLength" type="range" min="0.05" max="1" value="0.8" step=".01"><output></output></div><div class="control"><label for="flange">FLUTTER</label><input id="flange" type="range" min="0" max="1" value="0.26" step=".01"><output></output></div><div class="control"><label for="warmth">WARMTH</label><input id="warmth" type="range" min="0" max="1" value="0.72" step=".01"><output></output></div><div class="control"><label for="attack">ATTACK</label><input id="attack" type="range" min="0.005" max="0.8" value="0.018" step="0.005"><output></output></div><div class="control"><label for="release">RELEASE</label><input id="release" type="range" min="0.05" max="2.5" value="0.38" step=".01"><output></output></div><div class="control"><label for="tapeWear">TAPE AGE</label><input id="tapeWear" type="range" min="0" max="1" value="0.28" step=".01"><output></output></div><div class="control"><label for="master">MASTER</label><input id="master" type="range" min="0" max="1" value="0.7" step=".01"><output></output></div></details></div></section>
 <section class="panel"><div class="head"><h2>16 PERFORMANCE PADS</h2><span class="label">4 × 4 · CHOPPED FROM ONE SAMPLE</span></div><div class="padgrid" id="pads" role="group" aria-label="16 MPC-style sample trigger pads"></div></section>
 <section class="panel"><div class="head"><h2>16-STEP SEQUENCER</h2><span class="label">16 STEPS · LONG-PRESS STEP TO ASSIGN SELECTED PAD</span></div><div class="stepgrid" id="steps"></div><div class="transport"><div class="control"><label>BPM</label><input id="bpm" type="range" min="50" max="180" value="98" step="1"><output></output></div><button id="playSeq" class="btn hot">▶ PLAY</button><button id="stopSeq" class="btn">■ STOP</button><button id="panic" class="btn">PANIC</button></div></section>
 </div><div class="right">
