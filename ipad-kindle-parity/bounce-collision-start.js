@@ -59,10 +59,21 @@ function selectButton(){
  if(chosen.getAttribute('aria-pressed')!=='true'&&!chosen.classList.contains('active')&&!chosen.classList.contains('on'))chosen.click();
  return finish(chosen);
 }
+function disableArpCheckbox(){
+ for(const control of d.querySelectorAll('input[type="checkbox"]')){
+  const name=[control.id,control.name,control.getAttribute('aria-label'),control.closest('label')?.textContent,d.querySelector('label[for="'+control.id+'"]')?.textContent].join(' ');
+  if(!isArp(name)||!control.checked)continue;
+  control.checked=false;
+  control.dispatchEvent(new Event('input',{bubbles:true}));
+  control.dispatchEvent(new Event('change',{bubbles:true}));
+  return finish(control);
+ }
+ return false;
+}
 function boot(){
  if(done)return;
  attempts++;
- if(selectOption()||selectRadio()||selectButton())return;
+ if(selectOption()||selectRadio()||selectButton()||disableArpCheckbox())return;
  if(attempts>=14){observer?.disconnect();d.body?.setAttribute('data-bounce-mode-check','not-found')}
 }
 function start(){
