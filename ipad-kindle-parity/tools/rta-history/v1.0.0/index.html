@@ -75,7 +75,7 @@ function bandData(){
  analyser.getFloatFrequencyData(data);
  const sampleRate=ctx.sampleRate,fft=analyser.fftSize,nyquist=sampleRate/2;
  return hz.map((f,i)=>{
-  const lo=Math.max(20,f/Math.sqrt(maxF/minF)*Math.pow(maxF/minF,1/(2*(N-1))));
+  const lo=Math.max(20,f/Math.sqrt(Math.pow(maxF/minF,1/(N-1))));
   const hi=Math.min(nyquist,f*Math.pow(maxF/minF,1/(2*(N-1))));
   const first=Math.max(1,Math.floor(lo*fft/sampleRate));
   const last=Math.min(data.length-1,Math.max(first,Math.ceil(hi*fft/sampleRate)));
