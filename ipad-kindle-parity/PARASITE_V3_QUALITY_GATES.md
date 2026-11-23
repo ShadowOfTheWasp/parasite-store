@@ -46,3 +46,9 @@ Do not claim a 9/10 release while these mandatory gates remain unmet.
 - Offline readiness now counts every tool in the cached catalogue, not only the release's fixed precache list. The service worker cache version advances so installed clients update.
 - Reproducible JavaScript mock tests executed via V8 against the actual updated service-worker source: (a) complete catalogue and all tools: `ready=true`, catalogue committed; (b) one missing tool: `ready=false`, catalogue not committed; (c) unsafe external URL: `ready=false`, catalogue not committed. JavaScript syntax check passed. This is a mocked network/cache test, **not** a physical iPad/Kindle offline test.
 - Gate 6 remains **provisional**, not independently passed, until browser service-worker and real-device airplane-mode checks confirm installation, refresh, fallback and offline audio. No score increment awarded.
+
+## Gate 8 regression CI follow-up (2026-11-23)
+
+- Earlier draft PR #1 CI run `45107262321` failed **before executing any tests**: GitHub `ubuntu-latest` selected Ubuntu 26.04, unsupported by Playwright 1.57.0's `install --with-deps chromium` command. Log evidence: `Cannot install dependencies for ubuntu26.04-x64 with Playwright 1.57.0!`.
+- Fresh branch `feature/v3-ci-ubuntu24-regression` is based on current production branch `feature/v3-offline-catalogue-consistency` (production commit `7099b0bcc62c875a29e035dc8f41f788ee144498`) and ports the browser regression suite while explicitly pinning GitHub runner `ubuntu-24.04`.
+- This removes the known runner incompatibility but is **not** a test pass. Await actual CI evidence and fix any failing assertions; browser emulation is not real-device QA. Do not deploy this branch or award gate 8 until passing suite and production deployment enforcement are verified.
