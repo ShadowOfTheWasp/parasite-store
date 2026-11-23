@@ -1,5 +1,5 @@
 'use strict';
-const VERSION='parasite-v3-offline-integrity-20261123-v1',FILES=["/index.html","/manifest.webmanifest","/parasite-v2.css","/parasite-v2.js","/parasite-v2-layout.css","/save-control.js","/parasite-v2-module-layout.js","/tools/catalogue.json","/tools/rta-history/v1.0.0/index.html","/tools/tape-keys/v1.0.0/index.html","/tools/chorus-6/v1.0.0/index.html"];
+const VERSION='parasite-v3-offline-integrity-20261123-v2',FILES=["/index.html","/manifest.webmanifest","/parasite-v2.css","/parasite-v2.js","/parasite-v2-layout.css","/save-control.js","/parasite-v2-module-layout.js","/tools/catalogue.json","/tools/rta-history/v1.0.0/index.html","/tools/tape-keys/v1.0.0/index.html","/tools/chorus-6/v1.0.0/index.html"];
 const RESPONSE_CACHE=VERSION,offlineFallback='/index.html';
 const CATALOGUE='/tools/catalogue.json';
 const toolPath=/^\/tools\/[a-z0-9-]+\/v[0-9]+\.[0-9]+\.[0-9]+\/index\.html$/;
@@ -64,6 +64,6 @@ self.addEventListener('fetch',e=>{
   const existing=await cache.match(e.request,{ignoreSearch:false});
   if(existing)return existing;
   try{const response=await fetch(e.request);if(response.ok)cache.put(e.request,response.clone()).catch(()=>{});return response}
-  catch(e){if(e.request.mode==='navigate')return (await cache.match(offlineFallback))||Response.error();return Response.error()}
+  catch(e){if(e.request.mode==='navigate'&&!u.pathname.startsWith('/tools/'))return (await cache.match(offlineFallback))||Response.error();return Response.error()}
  })());
 });
