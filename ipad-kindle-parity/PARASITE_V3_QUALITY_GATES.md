@@ -46,3 +46,11 @@ Do not claim a 9/10 release while these mandatory gates remain unmet.
 - Offline readiness now counts every tool in the cached catalogue, not only the release's fixed precache list. The service worker cache version advances so installed clients update.
 - Reproducible JavaScript mock tests executed via V8 against the actual updated service-worker source: (a) complete catalogue and all tools: `ready=true`, catalogue committed; (b) one missing tool: `ready=false`, catalogue not committed; (c) unsafe external URL: `ready=false`, catalogue not committed. JavaScript syntax check passed. This is a mocked network/cache test, **not** a physical iPad/Kindle offline test.
 - Gate 6 remains **provisional**, not independently passed, until browser service-worker and real-device airplane-mode checks confirm installation, refresh, fallback and offline audio. No score increment awarded.
+
+## 2026-11-23 08:16 UTC — Gate 8 static release-integrity iteration
+
+- Production inspected first: Vercel deployment `dpl_CJLTJWVGznWBGf7Ur9BbgH9FnrnS` READY, source commit `7099b0bcc62c875a29e035dc8f41f788ee144498`, branch `feature/v3-offline-catalogue-consistency`. This feature branch starts from that exact commit.
+- Added `tests/release-static.cjs`, an offline dependency-free Node test checking Hub syntax, service worker syntax, catalogue schema and duplicate/versioned URLs, all published instrument script syntax, offline precache membership, in-app launch, API cache exclusion and catalogue credential-pattern exposure.
+- Added `.github/workflows/parasite-v3-release-integrity.yml` using pinned `ubuntu-24.04` and Node 22 to avoid prior Ubuntu 26.04 Playwright dependency mismatch.
+- **Eight checks passed** using fetched GitHub source files and a mocked Node fs/path environment with JavaScript parser validation. This is not a real GitHub Actions runner, Playwright browser, audio correctness, authenticated API or device test. CI execution and required production-blocking enforcement have not been verified.
+- No production deployment made: this is a nonfunctional CI-only branch pending actual runner evidence. **Gate 8 remains FAIL / INCOMPLETE**. No additional gate passes claimed.
