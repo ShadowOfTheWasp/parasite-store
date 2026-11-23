@@ -1,0 +1,13 @@
+{
+  "private": true,
+  "name": "parasite-v3-regression",
+  "version": "1.0.0",
+  "scripts": {
+    "test:e2e": "playwright test",
+    "test:syntax": "node tests/syntax-check.mjs",
+    "test:all": "npm run test:syntax && npm run test:e2e"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.57.0"
+  }
+}
