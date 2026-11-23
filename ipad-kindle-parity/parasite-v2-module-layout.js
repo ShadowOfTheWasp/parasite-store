@@ -10,7 +10,7 @@ if(!['bounce','relay'].includes(mode))return;
 function adapt(){
  const main=d.querySelector('main');if(!main||main.dataset.p2Adapted)return;
  const children=[...main.children].filter(n=>n.tagName!=='SCRIPT'&&n.id!=='p2-toolbar');
- const lead=mode==='bounce'?(main.querySelector('.room')||main.querySelector('canvas')?.parentElement):(main.querySelector('.voice')||main.querySelector('.surface')||main.querySelector('.compose'));
+ const lead=mode==='bounce'?(main.querySelector(':scope > .room')||main.querySelector('.room')||main.querySelector('canvas')?.parentElement):(main.querySelector(':scope > .surface')||main.querySelector('.surface')||main.querySelector('.voice')||main.querySelector('.compose'))
  if(!lead)return;
  const surface=lead.closest('.room,.surface')||lead;
  if(surface.parentElement!==main)return;
