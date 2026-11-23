@@ -76,6 +76,10 @@
 @media(orientation:portrait){
  .app .left{grid-template-rows:minmax(0,.64fr) minmax(0,1.56fr) minmax(0,.76fr)!important}
  .app .slice-drawer{min-height:24px}
+ .app .left>.panel:first-child{gap:2px!important}
+ .app .left>.panel:first-child .note{display:none}
+ .app .left>.panel:first-child .status{font-size:8px!important}
+ .app .left>.panel:first-child .row>.btn{height:34px!important;min-height:34px!important}
 }
 @media(max-height:680px){
  .app .row>.btn,.app .transport>.btn,.app .mode select{min-height:29px!important;height:29px!important}
