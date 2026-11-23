@@ -46,3 +46,10 @@ Do not claim a 9/10 release while these mandatory gates remain unmet.
 - Offline readiness now counts every tool in the cached catalogue, not only the release's fixed precache list. The service worker cache version advances so installed clients update.
 - Reproducible JavaScript mock tests executed via V8 against the actual updated service-worker source: (a) complete catalogue and all tools: `ready=true`, catalogue committed; (b) one missing tool: `ready=false`, catalogue not committed; (c) unsafe external URL: `ready=false`, catalogue not committed. JavaScript syntax check passed. This is a mocked network/cache test, **not** a physical iPad/Kindle offline test.
 - Gate 6 remains **provisional**, not independently passed, until browser service-worker and real-device airplane-mode checks confirm installation, refresh, fallback and offline audio. No score increment awarded.
+
+## Catalogue contract regression work (2026-11-23 15:46 UTC)
+
+- Fresh branch `feature/v3-catalogue-contract-20261123-1546` from live production commit `7099b0bcc62c875a29e035dc8f41f788ee144498`.
+- Added dependency-free `tests/catalogue-contract.test.cjs` to validate schema, unique IDs/URLs, slug and version consistency, versioned local tool file existence, Hub iframe/catalogue integration and service-worker catalogue validation. Four malformed catalogue fixtures must fail.
+- Execution command from repo root: `node ipad-kindle-parity/tests/catalogue-contract.test.cjs`. Test has been committed but no GitHub Actions or Node execution result was independently observed in this run. **No test pass claimed.**
+- This is an incremental gate 5/8 safeguard, not proof of iPad/Kindle behaviour or release enforcement. Production and the public catalogue remain unchanged; no gate awarded.
