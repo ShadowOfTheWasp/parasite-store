@@ -36,6 +36,8 @@ async function save(){
  try{
   const patch=capture();
   if(window.ParasitePresetBridge?.beforeSave)await window.ParasitePresetBridge.beforeSave(patch,1);
+  // Orbit's native clock has its own six-lane state, including step pitches.
+  if(moduleId.startsWith('orbit-'))doc.getElementById('clockSave')?.click();
   localStorage.setItem(storeKey,JSON.stringify({version:2,savedAt:new Date().toISOString(),values:patch}));
   message('SAVED ON THIS DEVICE');
  }catch(e){message('SAVE FAILED');console.error('Parasite save failed',e)}
@@ -55,7 +57,7 @@ async function restore(){
 function install(){
  if(doc.querySelector('#p2-toolbar'))return;
  const unit=doc.body?.dataset?.p2Module||location.pathname.split('/').filter(Boolean)[0]||'instrument';
- const primary=doc.querySelector('main.app > header')||doc.querySelector('main > header');
+ const primary=doc.querySelector('main.app > header,main.p2-machine > header')||doc.querySelector('main > header');
  const bar=doc.createElement('div');bar.id='p2-toolbar';bar.setAttribute('role','group');bar.setAttribute('aria-label','Parasite module controls');
  const title=doc.createElement('div');title.className='p2-toolbar-title';
  title.innerHTML='<small>PARASITE / NOCTURNE V2</small><strong></strong>';
@@ -64,7 +66,7 @@ function install(){
  const status=doc.createElement('span');status.id='p2-save-state';status.textContent='READY';status.setAttribute('role','status');
  const button=doc.createElement('button');button.id='p2-save';button.type='button';button.textContent='SAVE';button.setAttribute('aria-label','Save instrument settings on this device');button.addEventListener('click',save);
  actions.append(status,button);bar.append(title,actions);
- if(primary&&doc.querySelector('main.app')){primary.append(actions);bar.style.display='none'}
+ if(primary&&doc.querySelector('main.app,main.p2-machine')){primary.append(actions);bar.style.display='none'}
  else if(primary){primary.classList.add('p2-original-header');primary.parentElement?.insertBefore(bar,primary)}
  else {const main=doc.querySelector('main');if(main)main.prepend(bar);else doc.body.prepend(bar)}
  if(doc.body){doc.body.classList.add('p2-unified');doc.body.dataset.p2Module=unit}
