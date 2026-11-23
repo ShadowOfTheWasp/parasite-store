@@ -1,6 +1,14 @@
 {
   "rewrites": [
     {
+      "source": "/creator/index.html",
+      "destination": "https://parasite-creator.vercel.app/"
+    },
+    {
+      "source": "/creator/",
+      "destination": "https://parasite-creator.vercel.app/"
+    },
+    {
       "source": "/icon-192.png",
       "destination": "https://parasite-creator.vercel.app/icon-192.png"
     },
