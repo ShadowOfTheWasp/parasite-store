@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#060c0b">
 <title>Parasite / New Instrument</title>
-<link rel="stylesheet" href="/parasite-v2.css">
+<link rel="stylesheet" href="/parasite-v2.css"><link rel="stylesheet" href="/parasite-v2-layout.css">
 <style>
 :root{--p2-accent:#c6ff91;--p2-spectrum:linear-gradient(90deg,#c6ff91,#f6d18b,#85e4f9,#c4a8f7)}
 *{box-sizing:border-box}
@@ -44,6 +44,6 @@ html,body{margin:0;height:100%;overflow:hidden;touch-action:manipulation}
 </main>
 <script src="/parasite-v2.js"></script>
 <script>window.ParasiteV2?.apply(document,'custom')</script>
-<!-- Instrument DSP script and specific preset bridge must load BEFORE preset-bank.js. -->
-<script src="/preset-bank.js"></script>
+<!-- Load instrument DSP script first. Optional ParasitePresetBridge enables sample and pattern saves. -->
+<script src="/save-control.js"></script>
 </body></html>
