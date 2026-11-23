@@ -64,8 +64,8 @@ function install(){
  const status=doc.createElement('span');status.id='p2-save-state';status.textContent='READY';status.setAttribute('role','status');
  const button=doc.createElement('button');button.id='p2-save';button.type='button';button.textContent='SAVE';button.setAttribute('aria-label','Save instrument settings on this device');button.addEventListener('click',save);
  actions.append(status,button);bar.append(title,actions);
- if(primary&&unit!=='slice-dual'){primary.classList.add('p2-original-header');primary.parentElement?.insertBefore(bar,primary)}
- else if(primary&&doc.querySelector('main.app')){primary.append(actions);bar.style.display='none'}
+ if(primary&&doc.querySelector('main.app')){primary.append(actions);bar.style.display='none'}
+ else if(primary){primary.classList.add('p2-original-header');primary.parentElement?.insertBefore(bar,primary)}
  else {const main=doc.querySelector('main');if(main)main.prepend(bar);else doc.body.prepend(bar)}
  if(doc.body){doc.body.classList.add('p2-unified');doc.body.dataset.p2Module=unit}
  void restore();
