@@ -46,3 +46,11 @@ Do not claim a 9/10 release while these mandatory gates remain unmet.
 - Offline readiness now counts every tool in the cached catalogue, not only the release's fixed precache list. The service worker cache version advances so installed clients update.
 - Reproducible JavaScript mock tests executed via V8 against the actual updated service-worker source: (a) complete catalogue and all tools: `ready=true`, catalogue committed; (b) one missing tool: `ready=false`, catalogue not committed; (c) unsafe external URL: `ready=false`, catalogue not committed. JavaScript syntax check passed. This is a mocked network/cache test, **not** a physical iPad/Kindle offline test.
 - Gate 6 remains **provisional**, not independently passed, until browser service-worker and real-device airplane-mode checks confirm installation, refresh, fallback and offline audio. No score increment awarded.
+
+## Offline instrument navigation guard (2026-11-23, 23:53 UTC)
+
+- Live deployment was independently checked READY at production SHA `7099b0bcc62c875a29e035dc8f41f788ee144498`; this isolated branch starts from that SHA.
+- Fixed an actual service-worker offline fetch bug: `catch(e)` shadowed the fetch event `e`, causing `e.request` to throw on network failure. Renamed the exception variable and guarded the Hub navigation fallback so a missing versioned instrument cannot display the Hub as though the instrument loaded.
+- Bumped the cache version to `parasite-v3-offline-integrity-20261123-v2`; added `tests/offline-navigation-guard.test.cjs` for source guard and JavaScript syntax regression.
+- Executed four checks against fetched modified source in the connector JavaScript runtime: event scope PASS, tool-path fallback guard PASS, cache-version bump PASS, JavaScript parsing PASS. These are source assertions, **not** real-browser service-worker tests. The committed Node test has not yet run in CI.
+- No production deployment: offline airplane-mode behaviour on real iPad/Kindle and full regression coverage remain unverified. Gate 6 remains provisional. No quality score awarded. No existing instruments, catalogue, database, customer requests or secrets changed.
