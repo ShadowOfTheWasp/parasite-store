@@ -1,0 +1,6 @@
+'use strict';
+const fs=require('node:fs');const path=require('node:path');const assert=require('node:assert/strict');
+const root=process.argv[2]||path.resolve(__dirname,'..');
+function validate(c,files,hub,sw){assert.equal(c.version,1);assert.ok(Array.isArray(c.tools)&&c.tools.length>0);const ids=new Set(),urls=new Set();for(const t of c.tools){assert.match(t.id,/^[a-z0-9-]+$/);assert.match(t.version,/^\d+\.\d+\.\d+$/);assert.equal(t.url,`/tools/${t.id}/v${t.version}/index.html`);assert.ok(!ids.has(t.id),'duplicate id');assert.ok(!urls.has(t.url),'duplicate URL');ids.add(t.id);urls.add(t.url);assert.ok(files(t.url),'missing instrument: '+t.url);assert.ok(sw.includes(JSON.stringify(t.url)),'not precached: '+t.url)}assert.ok(hub.includes('/tools/catalogue.json'),'Hub catalogue discovery absent');return c.tools.length}
+if(require.main===module){const c=JSON.parse(fs.readFileSync(path.join(root,'tools/catalogue.json'),'utf8'));const hub=fs.readFileSync(path.join(root,'index.html'),'utf8');const sw=fs.readFileSync(path.join(root,'sw.js'),'utf8');const count=validate(c,u=>fs.existsSync(path.join(root,u.slice(1))),hub,sw);console.log('PASS catalogue contracts: '+count+' instruments');}
+module.exports={validate};
