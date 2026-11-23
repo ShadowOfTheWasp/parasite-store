@@ -58,6 +58,7 @@ public class MainActivity extends Activity {
                         return new WebResourceResponse("text/plain","UTF-8",new java.io.ByteArrayInputStream("Unable to load TYPELAB".getBytes()));
                     }
                 }
+                if ("https".equals(uri.getScheme()) && ("fonts.googleapis.com".equals(uri.getHost()) || "fonts.gstatic.com".equals(uri.getHost()))) return null;
                 return new WebResourceResponse("text/plain","UTF-8",new java.io.ByteArrayInputStream(new byte[0]));
             }
         });
