@@ -1,0 +1,34 @@
+name: Parasite V3 regression gate
+on:
+  push:
+    branches:
+      - 'feature/v3-*'
+      - 'release/v3-*'
+  pull_request:
+    paths:
+      - 'ipad-kindle-parity/**'
+      - '.github/workflows/parasite-v3-regression.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ipad-kindle-parity
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-package-lock
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:all
+      - name: Upload traces on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: parasite-v3-playwright-traces
+          path: ipad-kindle-parity/test-results/
+          retention-days: 7

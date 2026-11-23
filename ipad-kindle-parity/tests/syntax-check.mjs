@@ -1,0 +1,31 @@
+import { readFileSync, existsSync } from 'node:fs';
+import { Script } from 'node:vm';
+import assert from 'node:assert/strict';
+const read = path => readFileSync(new URL('../'+path, import.meta.url),'utf8');
+const html = read('index.html');
+const script = [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)].map(m=>m[1]).join('\n');
+assert(script.length>1000,'Expected inline Hub application script');
+new Script(script,{filename:'index.html:inline.js'});
+new Script(read('sw.js'),{filename:'sw.js'});
+const catalogue = JSON.parse(read('tools/catalogue.json'));
+assert.equal(catalogue.version,1);
+assert(Array.isArray(catalogue.tools)&&catalogue.tools.length>0);
+const ids = new Set(),urls = new Set();
+for(const item of catalogue.tools){
+ assert.match(item.id,/^[a-z0-9-]+$/);
+ assert(!ids.has(item.id),'Duplicate tool id: '+item.id);
+ assert.match(item.url,/^\/tools\/[a-z0-9-]+\/v\d+\.\d+\.\d+\/index\.html$/);
+ assert(!urls.has(item.url),'Duplicate tool url: '+item.url);
+ ids.add(item.id);urls.add(item.url);
+ const local=item.url.slice(1);
+ assert(existsSync(new URL('../'+local,import.meta.url)),'Missing tool '+local);
+ const toolHtml=read(local);
+ const scripts=[...toolHtml.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)].map(m=>m[1]);
+ assert(scripts.length>0,'Tool has no inline engine: '+item.id);
+ for(const js of scripts)new Script(js,{filename:local});
+}
+assert(html.includes("fetch('/tools/catalogue.json'"),'Hub must fetch catalogue');
+assert(html.includes('openTool(tool.url,tool.title)'),'Tool must open inside Hub');
+const sw=read('sw.js');
+for(const url of urls)assert(sw.includes(url),'Offline cache missing '+url);
+console.log('PASS: Hub, service worker and '+catalogue.tools.length+' tool engines parse; catalogue unique, versioned and cached.');
