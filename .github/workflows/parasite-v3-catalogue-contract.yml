@@ -1,0 +1,23 @@
+name: Parasite V3 catalogue contract
+on:
+  push:
+    branches: ['feature/v3-gate8-executed-contract-20261123-2239']
+  pull_request:
+    paths:
+      - 'ipad-kindle-parity/tools/**'
+      - 'ipad-kindle-parity/sw.js'
+      - 'ipad-kindle-parity/index.html'
+      - 'ipad-kindle-parity/tests/catalogue-contract.cjs'
+      - '.github/workflows/parasite-v3-catalogue-contract.yml'
+jobs:
+  catalogue:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --check ipad-kindle-parity/tests/catalogue-contract.cjs
+      - run: node ipad-kindle-parity/tests/catalogue-contract.cjs
