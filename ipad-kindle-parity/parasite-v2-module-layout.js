@@ -12,9 +12,9 @@ function adapt(){
  const children=[...main.children].filter(n=>n.tagName!=='SCRIPT'&&n.id!=='p2-toolbar');
  const lead=mode==='bounce'?(main.querySelector('.room')||main.querySelector('canvas')?.parentElement):(main.querySelector('.voice')||main.querySelector('.surface')||main.querySelector('.compose'));
  if(!lead)return;
- main.dataset.p2Adapted='true';
  const surface=lead.closest('.room,.surface')||lead;
  if(surface.parentElement!==main)return;
+ main.dataset.p2Adapted='true';
  const intro=surface.previousElementSibling;
  const panel=d.createElement('details');panel.className='p2-advanced';panel.id='p2-more-controls';
  const summary=d.createElement('summary');summary.textContent=mode==='bounce'?'SOUND / BALLS / PHYSICS':'SIGNAL ROUTING / HARDWARE / HISTORY';
