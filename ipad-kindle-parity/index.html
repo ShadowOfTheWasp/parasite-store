@@ -36,7 +36,27 @@ header{flex:none;display:flex;align-items:center;justify-content:space-between;g
 .invent-header{flex:none;max-width:none}.invent-header h1{margin:2px 0 4px!important;font-size:clamp(35px,5.3vw,59px)!important}
 .invent-header .sub{font-size:12px!important}
 .deploy-surface{border:1px solid #517a51;border-radius:16px;min-height:0;flex:1;overflow:hidden;background:#0c170f}
-#deployFrame{display:block;width:100%;height:100%;border:0;background:#0c170f;color-scheme:dark}
+/* Native Deploy composer: no iframe or inaccessible input */
+.deploy-native{display:flex!important;flex-direction:column;gap:12px;padding:clamp(12px,2vw,19px);overflow:auto!important;min-height:0}
+.deploy-native label{font-size:10px;letter-spacing:1.4px;font-weight:800;color:#baff92}
+.deploy-unlock{padding:12px;background:#17251c;border:1px solid #557357;border-radius:10px;display:flex;flex-direction:column;gap:8px;flex:none}
+.deploy-unlock[hidden]{display:none!important}
+.deploy-inline{display:flex;gap:8px;align-items:center}
+.deploy-inline input{flex:1;min-width:0;min-height:46px;background:#07160f;border:1px solid #64846b;border-radius:8px;padding:10px 12px;color:#efffeb;font-size:16px}
+.deploy-inline button,.deploy-actionrow button{min-height:46px;border:1px solid #608969;border-radius:8px;padding:9px 14px;background:#24432d;color:#ecfce6;font-size:11px;letter-spacing:.6px;font-weight:850}
+.deploy-compose{flex:1;display:flex;flex-direction:column;gap:10px;min-height:175px}
+#deployBrief{display:block;box-sizing:border-box;width:100%;flex:1;min-height:132px;resize:vertical;background:#071611;color:#efffea;border:1px solid #58745e;border-radius:11px;padding:15px;font:500 16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;outline:none;touch-action:auto;-webkit-user-select:text;user-select:text}
+#deployBrief:focus{border-color:#baff91;box-shadow:0 0 0 2px #9fea8629}
+#deployBrief::placeholder{color:#8fa798}
+.deploy-actionrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+#deployCount{font-size:10px;color:#97baa2;margin-right:auto}
+#deploySend{background:#c2f29a!important;color:#102519!important;border-color:#dafab8!important;font-weight:900;min-width:140px}
+#deploySend:disabled,.deploy-actionrow button:disabled{opacity:.48;cursor:not-allowed}
+.deploy-message{color:#b8d8bb;font-size:11px;line-height:1.5;min-height:20px}
+.deploy-selection{background:#243527;border:1px solid #6c8a65;padding:10px;border-radius:9px;font-size:11px;color:#e0efd8}
+.deploy-selection[hidden]{display:none!important}
+@media(max-width:600px){.deploy-inline{flex-wrap:wrap}.deploy-inline button{width:100%}.deploy-actionrow{gap:6px}#deployBrief{min-height:175px}#deploySend{flex:1}.deploy-native{overflow:visible!important}}
+
 .deploy-foot{font-size:10px;color:#a9c6a8;line-height:1.45;flex:none}
 .deploy-foot strong{color:#c3fb9b}
 .queue-caption{padding:12px 16px 3px;font-size:10px;color:#bbeb9f;letter-spacing:1.2px;text-transform:uppercase;font-weight:700}
@@ -64,7 +84,19 @@ header{flex:none;display:flex;align-items:center;justify-content:space-between;g
 <div class="queue-caption" id="queueCaption" hidden>Build queue <span id="queueCount"></span></div><div class="queue-jobs" id="queueJobs" aria-live="polite" style="padding:0 12px;display:flex;flex-direction:column;gap:8px;max-height:35%;overflow:auto"></div><div class="modules" id="modules"><button class="module " data-unit="orbit"><span class="orb">◎</span><span class="module-info"><h2>orbit</h2><p>Strings · 6 clocks · Space Echo</p></span><span class="arrow">↗</span></button><button class="module slice" data-unit="slice"><span class="orb">▥</span><span class="module-info"><h2>slice</h2><p>16 MPC pads · one chopped sample</p></span><span class="arrow">↗</span></button><button class="module " data-unit="bounce"><span class="orb">◉</span><span class="module-info"><h2>bounce</h2><p>Room collisions · kinetic instrument</p></span><span class="arrow">↗</span></button><button class="module " data-unit="relay"><span class="orb">↔</span><span class="module-info"><h2>relay</h2><p>Audio relay / hardware experiment</p></span><span class="arrow">↗</span></button></div>
 <div class="library-bottom"><small id="cacheState" role="status">Checking offline files…</small><button class="sync" id="offlineSync">SAVE FOR OFFLINE</button></div></aside>
 <section class="invent" id="deployWorkspace"><div class="invent-header"><div class="label">DEPLOY / YOUR INSTRUMENT FORGE</div><h1>deploy<span>.</span></h1><p class="sub">Build a new synth or request a change to any existing module. Submit here — the request appears in the Hub as soon as the build queue confirms it.</p></div>
-<div class="deploy-surface"><iframe id="deployFrame" title="Deploy a new instrument or modify an existing module" src="/creator" allow="clipboard-write; microphone"></iframe></div>
+<div class="deploy-surface deploy-native">
+<form id="deployUnlock" class="deploy-unlock" autocomplete="off">
+<label for="deployPassword">PRIVATE BUILDER ACCESS</label>
+<div class="deploy-inline"><input id="deployPassword" type="password" autocomplete="current-password" maxlength="90" placeholder="Your access password" required><button id="deployUnlockButton" type="submit">UNLOCK</button></div>
+</form>
+<div class="deploy-compose">
+<label for="deployBrief">DESCRIBE THE TOOL OR CHANGE</label>
+<textarea id="deployBrief" maxlength="4000" rows="7" spellcheck="true" placeholder="For example: Update Orbit so the sequencer has a glide control and a chug mode. Keep everything else working."></textarea>
+<div class="deploy-actionrow"><span id="deployCount">0 / 4,000</span><button id="deployNew" type="button">NEW REQUEST</button><button id="deploySend" type="button">DEPLOY REQUEST</button></div>
+<div id="deploySelection" class="deploy-selection" hidden></div>
+<div id="deployStatus" class="deploy-message" role="status" aria-live="polite">Describe a tool or update above. The request is only submitted when Deploy confirms it.</div>
+</div>
+</div>
 <div class="deploy-foot" id="deployHelp">Private builder. Confirmed requests appear in the collection as <strong>Pending</strong>. Queue pickup is checked about hourly; build completion time is not guaranteed.</div></section></div></main>
 <section class="player" aria-label="Playing instrument"><nav class="backbar" aria-label="Instrument navigation"><button id="back">← HUB + DEPLOY</button><span class="name" id="playingName">ORBIT</span></nav><iframe title="Parasite instrument" id="instrument" allow="autoplay; microphone" scrolling="yes"></iframe></section>
 <script>
@@ -101,7 +133,7 @@ frame.addEventListener('load',()=>{
  }catch(e){console.warn('Parasite V2 interface:',e)}
 });
 const queueCaption=document.getElementById('queueCaption'),queueJobs=document.getElementById('queueJobs'),queueCount=document.getElementById('queueCount');
-let queueSignature='',queueLoading=false;
+let queueSignature='',queueLoading=false,knownQueue=[],selectedDeployId=null,deployBusy=false;
 const pretty={queued:'Pending',building:'Building',deployed:'Ready',needs_input:'Needs response',blocked:'Needs attention'};
 const eta=state=>state==='queued'?'Estimated queue pickup: about 0–60 minutes. Build finish time is not yet known.':state==='building'?'Build underway · completion estimate unavailable.':state==='deployed'?'Build completed.':state==='needs_input'?'The builder is waiting for one answer before continuing.':'Check the request details in Deploy.';
 function safeRelease(url){try{const u=new URL(url);return u.protocol==='https:'?u.href:null}catch(e){return null}}
@@ -111,6 +143,7 @@ function extractJobs(value){
  return null;
 }
 function paintQueue(jobs){
+ knownQueue=jobs;
  const sig=JSON.stringify(jobs.map(j=>[j.id,j.state,j.note,j.release_url,j.updated_at,j.brief]));
  if(sig===queueSignature)return;queueSignature=sig;
  queueJobs.replaceChildren();queueCaption.hidden=jobs.length===0;
@@ -144,47 +177,97 @@ function paintQueue(jobs){
  }
 }
 function focusDeployReply(requestId){
- const workspace=document.getElementById('deployWorkspace'),frame=document.getElementById('deployFrame');
- if(!workspace||!frame)return;
- workspace.scrollIntoView({behavior:'smooth',block:'nearest'});
- frame.focus();
- const help=document.getElementById('deployHelp');
- if(help)help.textContent='Select this request in the private Deploy conversation and send your answer. Your existing request will continue, without creating another instrument.';
- try{
-  const doc=frame.contentDocument;
-  if(!doc)return;
-  // Select the exact request only when the Creator UI exposes its ID. Never
-  // guess which chat is selected or send text to another request.
-  const candidates=[...doc.querySelectorAll('[data-request-id],[data-id]')];
-  const item=candidates.find(el=>el.getAttribute('data-request-id')===String(requestId)||el.getAttribute('data-id')===String(requestId));
-  if(item){const target=item.closest('button,[role="button"]')||item;target.click()}
-  const editor=doc.getElementById('brief');
-  if(editor)editor.focus();
- }catch(e){/* Cross-origin or locked Creator: the user can unlock inside the same Hub. */}
+ const item=knownQueue.find(j=>String(j.id)===String(requestId));
+ if(!item)return;
+ selectedDeployId=item.id;
+ const selection=document.getElementById('deploySelection');
+ selection.hidden=false;
+ selection.textContent='FOLLOW-UP: '+String(item.brief||'Existing request').slice(0,120);
+ document.getElementById('deployBrief').value='';
+ updateDeployDraft();
+ document.getElementById('deployBrief').focus();
+ document.getElementById('deployStatus').textContent='Answer the question here. Deploy will send a follow-up with the original request context.';
 }
 async function refreshQueue(){
  if(queueLoading||document.hidden)return;queueLoading=true;
  try{
   const response=await fetch('/api/queue',{method:'GET',credentials:'same-origin',cache:'no-store',headers:{accept:'application/json'}});
-  if(response.status===401||response.status===403){queueCaption.hidden=true;queueJobs.replaceChildren();queueSignature='';return}
+  if(response.status===401||response.status===403){queueCaption.hidden=true;queueJobs.replaceChildren();queueSignature='';knownQueue=[];document.getElementById('deployUnlock').hidden=false;return}
   if(!response.ok)throw Error('Queue response '+response.status);
   const data=await response.json(),jobs=extractJobs(data);
-  if(jobs)paintQueue(jobs);
+  if(jobs){paintQueue(jobs);document.getElementById('deployUnlock').hidden=true;}
  }catch(e){/* Keep last confirmed queue view; do not invent or erase states. */}
  finally{queueLoading=false}
 }
-const deployFrame=document.getElementById('deployFrame');
-deployFrame.addEventListener('load',()=>{
- try{
-  const doc=deployFrame.contentDocument;if(!doc?.head)return;
-  const style=doc.createElement('style');
-  style.textContent='html,body{background:#0c170f!important}header{display:none!important}main{max-width:none!important;margin:0!important;padding:8px!important}#workspace{max-width:none!important}';
-  doc.head.append(style);
-  const body=doc.body;
-  if(body){const observer=new MutationObserver(()=>refreshQueue());observer.observe(body,{childList:true,subtree:true,attributes:false});}
- }catch(e){}
- refreshQueue();
+// Native composer. The password is used only to unlock the existing private
+// Creator session; it is never persisted, logged or put into the queue brief.
+const deployEditor=document.getElementById('deployBrief');
+const deployMsg=document.getElementById('deployStatus');
+const deploySend=document.getElementById('deploySend');
+const draftKey='parasite-hub-native-deploy-draft';
+const pendingKey='parasite-hub-native-deploy-pending';
+const deploymentReply=(value)=>{deployMsg.textContent=value};
+function safeLocalGet(key){try{return localStorage.getItem(key)||''}catch{return ''}}
+function safeLocalSet(key,val){try{if(val===null)localStorage.removeItem(key);else localStorage.setItem(key,val)}catch{}}
+async function deployApi(body){
+ const response=await fetch('/api/queue',body?{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify(body),cache:'no-store'}:{method:'GET',credentials:'same-origin',cache:'no-store'});
+ let result;try{result=await response.json()}catch{throw new Error('Deploy service returned an invalid response (HTTP '+response.status+').')}
+ if(!response.ok){const e=new Error(result.error||'Deploy service returned HTTP '+response.status);e.status=response.status;throw e}
+ return result;
+}
+function updateDeployDraft(){
+ const value=deployEditor.value;
+ safeLocalSet(draftKey,value);
+ const active=knownQueue.find(x=>x.id===selectedDeployId);
+ const composed=active?String(active.brief||'')+'\n\nOwner follow-up for request '+active.id+'\n'+value.trim():value.trim();
+ document.getElementById('deployCount').textContent=composed.length.toLocaleString('en-GB')+' / 4,000';
+ deploySend.disabled=deployBusy||value.trim().length<10||composed.length>4000;
+ return composed;
+}
+deployEditor.value=safeLocalGet(draftKey);
+deployEditor.addEventListener('input',updateDeployDraft);
+document.getElementById('deployNew').addEventListener('click',()=>{
+ selectedDeployId=null;document.getElementById('deploySelection').hidden=true;
+ deployEditor.value='';updateDeployDraft();deployEditor.focus();
 });
+document.getElementById('deployUnlock').addEventListener('submit',async event=>{
+ event.preventDefault();if(deployBusy)return;
+ const button=document.getElementById('deployUnlockButton');
+ deployBusy=true;button.disabled=true;deploymentReply('Connecting to the private builder…');
+ try{
+  const code=document.getElementById('deployPassword').value;
+  await deployApi({action:'unlock',code});
+  document.getElementById('deployPassword').value='';
+  await refreshQueue();
+  document.getElementById('deployUnlock').hidden=true;
+  deploymentReply('Private builder unlocked. Enter your request and tap DEPLOY REQUEST.');
+ }catch(e){deploymentReply('Unable to unlock: '+e.message)}
+ finally{deployBusy=false;button.disabled=false;updateDeployDraft()}
+});
+deploySend.addEventListener('click',async()=>{
+ if(deployBusy)return;
+ const message=deployEditor.value.trim(),brief=updateDeployDraft();
+ if(message.length<10||brief.length>4000){deploymentReply('Enter at least 10 characters (maximum 4,000 including follow-up context).');return}
+ deployBusy=true;deploySend.disabled=true;
+ deploymentReply('Sending your request…');
+ try{
+  let pending;try{pending=JSON.parse(safeLocalGet(pendingKey))}catch{}
+  const id=pending?.brief===brief?pending.id:crypto.randomUUID();
+  safeLocalSet(pendingKey,JSON.stringify({id,brief}));
+  const response=await deployApi({action:'submit',id,brief});
+  if(!response?.request?.id)throw Error('Submission was not confirmed. Please try again.');
+  safeLocalSet(pendingKey,null);safeLocalSet(draftKey,null);
+  deployEditor.value='';selectedDeployId=null;document.getElementById('deploySelection').hidden=true;
+  deploymentReply('CONFIRMED · Your request is Pending in the Hub. The builder will review it.');
+  const queue=knownQueue.filter(j=>j.id!==response.request.id);
+  paintQueue([response.request,...queue]);
+  await refreshQueue();
+ }catch(e){
+  deploymentReply('Not submitted: '+e.message+(e.status===401?' Unlock the private builder first.':''));
+  if(e.status===401)document.getElementById('deployUnlock').hidden=false;
+ }finally{deployBusy=false;updateDeployDraft()}
+});
+updateDeployDraft();
 setInterval(refreshQueue,9000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshQueue()});
 refreshQueue();
