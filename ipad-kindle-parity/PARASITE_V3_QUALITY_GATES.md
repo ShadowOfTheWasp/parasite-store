@@ -46,3 +46,9 @@ Do not claim a 9/10 release while these mandatory gates remain unmet.
 - Offline readiness now counts every tool in the cached catalogue, not only the release's fixed precache list. The service worker cache version advances so installed clients update.
 - Reproducible JavaScript mock tests executed via V8 against the actual updated service-worker source: (a) complete catalogue and all tools: `ready=true`, catalogue committed; (b) one missing tool: `ready=false`, catalogue not committed; (c) unsafe external URL: `ready=false`, catalogue not committed. JavaScript syntax check passed. This is a mocked network/cache test, **not** a physical iPad/Kindle offline test.
 - Gate 6 remains **provisional**, not independently passed, until browser service-worker and real-device airplane-mode checks confirm installation, refresh, fallback and offline audio. No score increment awarded.
+
+## Gate 8 — CI execution evidence (2026-11-23)
+
+- GitHub Actions run [45147736226](https://github.com/ShadowOfTheWasp/parasite-store/actions/runs/45147736226) for source commit `a81638ca949148c35672965045f80340dd11c361` completed with `conclusion=success`. Job `static-release` completed successfully; step 4, `Validate Hub and all published instruments`, completed successfully. This corrects earlier reports that no completed workflow run was available.
+- The previously tested suite is now copied onto a fresh feature branch based on live production commit `7099b0bcc62c875a29e035dc8f41f788ee144498`; the same Ubuntu 24.04 / Node 22 workflow runs eight static assertions for syntax, catalogue safety, tool files, offline precache references, internal launch and API exclusion.
+- **Gate 8 is still FAIL/INCOMPLETE:** static checks do not establish browser regression, real Web Audio output, authenticated API behaviour, mobile layout or an enforced production release gate. A green static job alone is not evidence of 9/10 readiness. Do not deploy solely on this evidence.
