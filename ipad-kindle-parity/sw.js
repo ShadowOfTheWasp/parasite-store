@@ -1,5 +1,5 @@
 'use strict';
-const VERSION='parasite-v3-offline-integrity-20261123-v1',FILES=["/index.html","/manifest.webmanifest","/parasite-v2.css","/parasite-v2.js","/parasite-v2-layout.css","/save-control.js","/parasite-v2-module-layout.js","/tools/catalogue.json","/tools/rta-history/v1.0.0/index.html","/tools/tape-keys/v1.0.0/index.html","/tools/chorus-6/v1.0.0/index.html"];
+const VERSION='parasite-v3-offline-integrity-20261127-v2',FILES=["/index.html","/manifest.webmanifest","/parasite-v2.css","/parasite-v2.js","/parasite-v2-layout.css","/save-control.js","/parasite-v2-module-layout.js","/tools/catalogue.json","/tools/rta-history/v1.0.0/index.html","/tools/tape-keys/v1.0.0/index.html","/tools/chorus-6/v1.0.0/index.html"];
 const RESPONSE_CACHE=VERSION,offlineFallback='/index.html';
 const CATALOGUE='/tools/catalogue.json';
 const toolPath=/^\/tools\/[a-z0-9-]+\/v[0-9]+\.[0-9]+\.[0-9]+\/index\.html$/;
@@ -45,7 +45,7 @@ async function sync(sender){
  const result=await status();sender?.postMessage(result);
  return {...result,error:failure};
 }
-self.addEventListener('install',e=>e.waitUntil((async()=>{await sync(null);await self.skipWaiting()})()));
+self.addEventListener('install',e=>e.waitUntil((async()=>{const result=await sync(null);if(result.error||!result.ready){await caches.delete(RESPONSE_CACHE);throw Error('Offline installation incomplete: '+(result.error||'missing assets'))}await self.skipWaiting()})()));
 self.addEventListener('activate',e=>e.waitUntil((async()=>{const keys=await caches.keys();await Promise.all(keys.filter(k=>(k.startsWith('parasite-kindle-originals-')||k.startsWith('parasite-orbit-four-osc-')||k.startsWith('parasite-orbit-strings-')||k.startsWith('parasite-hub-invent-')||k.startsWith('parasite-orbit-clock-16th-')||k.startsWith('parasite-slice-single-presets-')||k.startsWith('parasite-ipad-one-screen-')||k.startsWith('parasite-tron-keyboard-')||k.startsWith('parasite-slice-mpc-16-pad-')||k.startsWith('parasite-hub-deploy-ui-')||k.startsWith('parasite-inline-queue-')||k.startsWith('parasite-nocturne-v2-')||k.startsWith('parasite-spectrum-v2-')||k.startsWith('parasite-hard-unified-v2-')||k.startsWith('parasite-tide-space-bounce-')||k.startsWith('parasite-response-queue-')||k.startsWith('parasite-creator-routefix-')||k.startsWith('parasite-orbit-scrollfix-')||k.startsWith('parasite-native-deploy-')||k.startsWith('parasite-v3-fresh-workshop-')||k.startsWith('parasite-v3-rta-visible-')||k.startsWith('parasite-v3-tapekeys-')||k.startsWith('parasite-v3-library-catalogue-')||k.startsWith('parasite-v3-chorus6-')||k.startsWith('parasite-v3-offline-integrity-'))&&k!==VERSION).map(k=>caches.delete(k)));await self.clients.claim()})()));
 self.addEventListener('message',e=>{
  const client=e.source;
