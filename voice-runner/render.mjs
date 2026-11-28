@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import {narrationSections} from './sections.mjs';
 import path from 'node:path';
 import vm from 'node:vm';
 import crypto from 'node:crypto';
@@ -87,15 +88,16 @@ try {
   vm.runInThisContext(fs.readFileSync(path.join(engine,'pocket-worker.js'),'utf8'),{filename:path.join(engine,'pocket-worker.js')});
   await self.onmessage({data:{type:'load',data:{audio:reference}}});
   if(modelError) throw modelError;
-  const sections=job.script.trim().split(/\n\s*\n/u);
+  const sections=narrationSections(job.script,job.quality==='refined');
   let completed=0;
   fs.writeFileSync(path.join(output,'progress.json'),JSON.stringify({progress:0,total:sections.length}));
-  for(const paragraph of sections) {
-    if(!paragraph.trim()) continue;
+  for(const section of sections) {
+    const paragraph=section.text;
     await self.onmessage({data:{type:'generate',data:{text:paragraph.trim(),voice:'custom',steps:job.quality==='refined'?4:1}}});
     if(modelError) throw modelError;
-    const silence=Buffer.alloc(19200);
-    fs.writeSync(fd,silence);frames+=9600;
+    const silenceFrames=Math.round(section.pause*24000);
+    const silence=Buffer.alloc(silenceFrames*2);
+    fs.writeSync(fd,silence);frames+=silenceFrames;
     completed++;fs.writeFileSync(path.join(output,'progress.json'),JSON.stringify({progress:completed,total:sections.length}));
     if(frames*2>50331600)throw new Error('Take exceeds 48 MB. Split the script into parts.');
   }
