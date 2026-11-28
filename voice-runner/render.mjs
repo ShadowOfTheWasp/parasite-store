@@ -21,7 +21,7 @@ if(!source) {
 const job=JSON.parse(fs.readFileSync(source,'utf8'));
 if(!uuid.test(job.id || '') || typeof job.script!=='string' || !job.script.trim() || job.script.length>12000) throw new Error('Invalid voice job.');
 const wav=Buffer.from(job.reference,'base64');
-if(wav.length<44 || wav.length>576044 || wav.toString('ascii',0,4)!=='RIFF' || wav.toString('ascii',8,12)!=='WAVE' ||
+if(wav.length<44 || wav.length>1440044 || wav.toString('ascii',0,4)!=='RIFF' || wav.toString('ascii',8,12)!=='WAVE' ||
  wav.readUInt16LE(20)!==1 || wav.readUInt16LE(22)!==1 || wav.readUInt32LE(24)!==24000 || wav.readUInt16LE(34)!==16 ||
  wav.readUInt32LE(40)!==wav.length-44) throw new Error('Invalid voice WAV.');
 const reference=new Float32Array((wav.length-44)/2);
@@ -107,6 +107,6 @@ try {
   header.writeUInt32LE(24000,24);header.writeUInt32LE(48000,28);header.writeUInt16LE(2,32);header.writeUInt16LE(16,34);
   header.write('data',36);header.writeUInt32LE(frames*2,40);
   fs.writeSync(fd,header,0,44,0);
-  fs.writeFileSync(path.join(output,'result.json'),JSON.stringify({job_id:job.id,seconds:frames/24000,sample_rate:24000,engine:'Pocket TTS / ONNX CPU',quality:job.quality}));
+  fs.writeFileSync(path.join(output,'result.json'),JSON.stringify({job_id:job.id,seconds:frames/24000,sample_rate:24000,engine:'Pocket TTS / ONNX CPU',quality:job.quality,reference_seconds:reference.length/24000}));
   console.log('Voice job complete. Duration '+(frames/24000).toFixed(1)+' seconds.');
 }finally{fs.closeSync(fd);}
