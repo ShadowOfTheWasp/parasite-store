@@ -1,0 +1,1 @@
+{"name":"parasite-voice-runner","private":true,"type":"module","dependencies":{"onnxruntime-node":"1.18.0"}}

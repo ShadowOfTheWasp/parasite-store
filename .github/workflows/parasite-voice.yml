@@ -1,0 +1,44 @@
+name: Parasite private voice worker
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/parasite-voice.yml'
+      - 'voice-runner/**'
+permissions:
+  contents: read
+  id-token: write
+concurrency:
+  group: parasite-private-voice
+  cancel-in-progress: false
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          sparse-checkout: voice-runner
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check private queue
+        id: claim
+        run: node voice-runner/queue.mjs claim
+      - name: Install CPU inference runtime
+        if: steps.claim.outputs.has_job == 'true'
+        working-directory: voice-runner
+        run: |
+          npm ci
+          node bootstrap.mjs
+      - name: Render and save privately
+        if: steps.claim.outputs.has_job == 'true'
+        working-directory: voice-runner
+        env:
+          OMP_NUM_THREADS: '2'
+          MKL_NUM_THREADS: '2'
+        run: node queue.mjs run
