@@ -15,7 +15,7 @@ async function request(route,token,data={}){
   }catch(error){if(error.fatal||attempt===2)throw error;}
   await new Promise(r=>setTimeout(r,1500*(attempt+1)));
  }
- throw new Error('Queue unavailable.');
+ throw new Error('Queue unavailable during '+route.split('/').at(-1)+'.');
 }
 if(process.argv[2]==='claim'){
  const url=new URL(process.env.ACTIONS_ID_TOKEN_REQUEST_URL);url.searchParams.set('audience',api);
